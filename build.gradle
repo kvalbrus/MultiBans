@@ -1,0 +1,16 @@
+allprojects {
+    apply plugin: 'java'
+    group = 'me.kvalbrus.multibans'
+    version = '0.1.0'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
+        annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
+
+        compileOnly 'org.jetbrains:annotations:16.0.2'
+    }
+}

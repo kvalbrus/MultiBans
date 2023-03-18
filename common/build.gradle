@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+dependencies {
+    implementation project(':api')
+
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.1'
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.32'
+}
+
+shadowJar {
+//    dependencies {
+//        include(dependency('me.kvalbrus.multibans:.*'))
+//    }
+}

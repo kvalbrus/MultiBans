@@ -1,0 +1,6 @@
+name: TNBans
+version: 0.1.0
+main: me.kvalbrus.multibans.bukkit.BukkitPlugin
+api-version: 1.19
+authors: [ kvalbrus ]
+description: Plugin for minecraft
