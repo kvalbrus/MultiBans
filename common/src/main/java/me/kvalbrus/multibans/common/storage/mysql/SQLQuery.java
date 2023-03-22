@@ -10,7 +10,7 @@ public enum SQLQuery {
         + "creator_name VARCHAR(29) NOT NULL,"
         + "date_created BIGINT NOT NULL,"
         + "date_start BIGINT,"
-        + "duration BIGINT NOT NULL,"
+        + "duration BIGINT,"
         + "reason VARCHAR(255),"
         + "comment VARCHAR(999),"
         + "cancellation_creator VARCHAR(29),"

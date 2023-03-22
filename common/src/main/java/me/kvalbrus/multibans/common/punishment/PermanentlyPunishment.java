@@ -1,12 +1,10 @@
-package me.kvalbrus.multibans.common.punishment.punishments;
+package me.kvalbrus.multibans.common.punishment;
 
+import java.util.List;
 import java.util.UUID;
 import me.kvalbrus.multibans.api.punishment.PunishmentStatus;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.common.managers.PunishmentManager;
-import me.kvalbrus.multibans.common.punishment.Cancelable;
-import me.kvalbrus.multibans.common.punishment.IPunishment;
-import me.kvalbrus.multibans.common.punishment.Permanently;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,9 +25,45 @@ public abstract class PermanentlyPunishment extends MultiPunishment implements P
                                  @NotNull String targetName,
                                  @NotNull UUID targetUUID,
                                  @NotNull String creatorName,
-                                 long dateCreated) {
-        super(punishmentManager, type, id, targetIp, targetName, targetUUID, creatorName, dateCreated);
+                                 long dateCreated,
+                                 @Nullable String reason,
+                                 @Nullable String comment,
+                                 @Nullable String cancellationCreator,
+                                 long cancellationDate,
+                                 @Nullable String cancellationReason,
+                                 @NotNull List<String> servers,
+                                 boolean cancelled) {
+        super(punishmentManager, type, id, targetIp, targetName, targetUUID, creatorName,
+            dateCreated, reason, comment, servers);
+        this.cancellationCreator = cancellationCreator;
+        this.cancellationDate = cancellationDate;
+        this.cancellationReason = cancellationReason;
+        this.cancelled = cancelled;
     }
+
+    @Override
+    public synchronized void activate() {
+        super.activate();
+        this.cancelled = false;
+    }
+
+    @Override
+    public synchronized void deactivate() {
+        this.getPunishmentManager().getPluginManager().deactivatePunishment(this);
+        this.cancelled = true;
+    }
+
+    @Override
+    public synchronized void deactivate(@Nullable String cancellationCreator,
+                                        long cancellationDate,
+                                        @Nullable String cancellationReason) {
+        this.deactivate();
+        this.cancellationCreator = cancellationCreator;
+        this.cancellationDate = cancellationDate;
+        this.cancellationReason = cancellationReason;
+    }
+
+    public synchronized void delete() {}
 
     @NotNull
     @Override
@@ -84,7 +118,7 @@ public abstract class PermanentlyPunishment extends MultiPunishment implements P
     }
 
     @Override
-    public int compareTo(@NotNull IPunishment o) {
+    public int compareTo(@NotNull Punishment o) {
         return 0;
     }
 }

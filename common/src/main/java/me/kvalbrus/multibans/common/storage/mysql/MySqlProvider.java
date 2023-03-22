@@ -11,6 +11,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import me.kvalbrus.multibans.common.managers.PluginManager;
+import me.kvalbrus.multibans.common.punishment.Cancelable;
+import me.kvalbrus.multibans.common.punishment.MultiPunishment;
+import me.kvalbrus.multibans.common.punishment.Temporary;
 import org.jetbrains.annotations.NotNull;
 import me.kvalbrus.multibans.common.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
@@ -36,7 +39,7 @@ public class MySqlProvider implements DataProvider {
     public void connect() throws Exception {
         this.source = new HikariDataSource();
 
-        this.source.setPoolName("TNBans-Pool");
+        this.source.setPoolName("MultiBans-Pool");
         this.source.setJdbcUrl("jdbc:mysql://"
             + this.data.getAddress() + ":"
             + this.data.getPort() + "/"
@@ -85,14 +88,14 @@ public class MySqlProvider implements DataProvider {
             statement.setString(i++, punishment.getTargetName());
             statement.setString(i++, punishment.getTargetUniqueId().toString());
             statement.setString(i++, punishment.getCreatorName());
-            statement.setLong(i++, punishment.getDateCreated());
-            statement.setLong(i++, punishment.getDateStart());
-            statement.setLong(i++, punishment.getDuration());
-            statement.setString(i++, punishment.getReason());
+            statement.setLong(i++, punishment.getCreatedDate());
+            statement.setLong(i++, punishment.getCreatedDate());
+            statement.setLong(i++, punishment instanceof Temporary ? ((Temporary) punishment).getDuration() : -1L);
+            statement.setString(i++, punishment.getCreatedReason());
             statement.setString(i++, punishment.getComment());
-            statement.setString(i++, punishment.getCancellationCreator());
-            statement.setLong(i++, punishment.getCancellationDate());
-            statement.setString(i++, punishment.getCancellationReason());
+            statement.setString(i++, punishment instanceof Cancelable ? ((Cancelable) punishment).getCancellationCreator() : null);
+            statement.setLong(i++, punishment instanceof Cancelable ? ((Cancelable) punishment).getCancellationDate() : -1);
+            statement.setString(i++, punishment instanceof Cancelable ? ((Cancelable) punishment).getCancellationReason() : null);
 
             StringBuilder serversStringBuilder = new StringBuilder();
             for (int j = 0; j < punishment.getServers().size(); ++j) {
@@ -104,7 +107,7 @@ public class MySqlProvider implements DataProvider {
             }
 
             statement.setString(i++, serversStringBuilder.toString());
-            statement.setBoolean(i++, punishment.isCancelled());
+            statement.setBoolean(i++, punishment instanceof Cancelable ? ((Cancelable) punishment).isCancelled() : false);
 
             return statement.executeUpdate() > 0;
         } catch (SQLTimeoutException exception) {
@@ -123,13 +126,13 @@ public class MySqlProvider implements DataProvider {
                 SQLQuery.UPDATE_PUNISHMENT.toString())) {
             int i = 1;
 
-            statement.setLong(i++, punishment.getDateStart());
-            statement.setLong(i++, punishment.getDuration());
-            statement.setString(i++, punishment.getReason());
+            statement.setLong(i++, punishment.getCreatedDate());
+            statement.setLong(i++, punishment instanceof Temporary ? ((Temporary) punishment).getDuration() : -1L);
+            statement.setString(i++, punishment.getCreatedReason());
             statement.setString(i++, punishment.getComment());
-            statement.setString(i++, punishment.getCancellationCreator());
-            statement.setLong(i++, punishment.getCancellationDate());
-            statement.setString(i++, punishment.getCancellationReason());
+            statement.setString(i++, punishment instanceof Cancelable ? ((Cancelable) punishment).getCancellationCreator() : null);
+            statement.setLong(i++, punishment instanceof Cancelable ? ((Cancelable) punishment).getCancellationDate() : -1);
+            statement.setString(i++, punishment instanceof Cancelable ? ((Cancelable) punishment).getCancellationCreator() : null);
 
             StringBuilder serversStringBuilder = new StringBuilder();
             for (int j = 0; j < punishment.getServers().size(); ++j) {
@@ -141,7 +144,7 @@ public class MySqlProvider implements DataProvider {
             }
 
             statement.setString(i++, serversStringBuilder.toString());
-            statement.setBoolean(i++, punishment.isCancelled());
+            statement.setBoolean(i++, punishment instanceof Cancelable ? ((Cancelable) punishment).isCancelled() : false);
 
             statement.setString(i++, punishment.getId());
 
@@ -222,10 +225,11 @@ public class MySqlProvider implements DataProvider {
 
                 boolean cancelled = resultSet.getBoolean("cancelled");
 
-                Punishment punishment = new Punishment(
+                Punishment punishment = MultiPunishment.constructPunishment(
                     this.pluginManager.getPunishmentManager(), type, id, targetIp, targetName, targetUUID,
                     creatorName, dateCreated, dateStart, duration, reason, comment, cancellationCreator,
                     cancellationDate, cancellationReason, servers, cancelled);
+
 
                 return punishment;
             }
@@ -240,8 +244,8 @@ public class MySqlProvider implements DataProvider {
 
     @NotNull
     @Override
-    public List<Punishment> getTargetHistory(String target) {
-        List<Punishment> history = new ArrayList<>();
+    public <T extends Punishment> List<T> getTargetHistory(String target) {
+        List<T> history = new ArrayList<>();
 
         if (target != null) {
             try (Connection connection = this.source.getConnection();
@@ -272,10 +276,10 @@ public class MySqlProvider implements DataProvider {
 
                     boolean cancelled = resultSet.getBoolean("cancelled");
 
-                    Punishment punishment = new Punishment(
-                        this.pluginManager.getPunishmentManager(), type, id, targetIp, targetName, targetUUID,
-                        creatorName, dateCreated, dateStart, duration, reason, comment, cancellationCreator,
-                        cancellationDate, cancellationReason, servers, cancelled);
+                    T punishment = MultiPunishment.constructPunishment(
+                        this.pluginManager.getPunishmentManager(), type, id, targetIp, targetName,
+                        targetUUID, creatorName, dateCreated, dateStart, duration, reason, comment,
+                        cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
 
                     history.add(punishment);
                 }
@@ -291,8 +295,8 @@ public class MySqlProvider implements DataProvider {
 
     @NotNull
     @Override
-    public List<Punishment> getTargetHistory(UUID uuid) {
-        List<Punishment> history = new ArrayList<>();
+    public <T extends Punishment> List<T> getTargetHistory(UUID uuid) {
+        List<T> history = new ArrayList<>();
 
         if (uuid != null) {
             try (Connection connection = this.source.getConnection();
@@ -323,10 +327,10 @@ public class MySqlProvider implements DataProvider {
 
                     boolean cancelled = resultSet.getBoolean("cancelled");
 
-                    Punishment punishment = new Punishment(
-                        this.pluginManager.getPunishmentManager(), type, id, targetIp, targetName, targetUUID,
-                        creatorName, dateCreated, dateStart, duration, reason, comment, cancellationCreator,
-                        cancellationDate, cancellationReason, servers, cancelled);
+                    T punishment = MultiPunishment.constructPunishment(
+                        this.pluginManager.getPunishmentManager(), type, id, targetIp, targetName,
+                        targetUUID, creatorName, dateCreated, dateStart, duration, reason, comment,
+                        cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
 
                     history.add(punishment);
                 }
@@ -342,8 +346,8 @@ public class MySqlProvider implements DataProvider {
 
     @NotNull
     @Override
-    public List<Punishment> getCreatorHistory(String creator) {
-        List<Punishment> history = new ArrayList<>();
+    public <T extends Punishment> List<T> getCreatorHistory(String creator) {
+        List<T> history = new ArrayList<>();
 
         if (creator != null) {
             try (Connection connection = this.source.getConnection();
@@ -374,7 +378,7 @@ public class MySqlProvider implements DataProvider {
 
                     boolean cancelled = resultSet.getBoolean("cancelled");
 
-                    Punishment punishment = new Punishment(
+                    T punishment = MultiPunishment.constructPunishment(
                         this.pluginManager.getPunishmentManager(), type, id, targetIp, targetName, targetUUID,
                         creatorName, dateCreated, dateStart, duration, reason, comment, cancellationCreator,
                         cancellationDate, cancellationReason, servers, cancelled);
@@ -390,6 +394,4 @@ public class MySqlProvider implements DataProvider {
 
         return history;
     }
-
-
 }

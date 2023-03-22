@@ -28,11 +28,11 @@ public interface DataProvider {
     Punishment getPunishment(String id);
 
     @NotNull
-    List<Punishment> getTargetHistory(String target);
+    <T extends Punishment> List<T> getTargetHistory(String target);
 
     @NotNull
-    List<Punishment> getTargetHistory(UUID uuid);
+    <T extends Punishment> List<T> getTargetHistory(UUID uuid);
 
     @NotNull
-    List<Punishment> getCreatorHistory(String creator);
+    <T extends Punishment> List<T> getCreatorHistory(String creator);
 }

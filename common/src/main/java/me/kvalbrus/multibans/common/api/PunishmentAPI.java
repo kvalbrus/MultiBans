@@ -80,12 +80,12 @@ public class PunishmentAPI implements me.kvalbrus.multibans.api.punishment.Punis
 
     @Override
     public long getDateCreated() {
-        return this.punishment.getDateCreated();
+        return this.punishment.getCreatedDate();
     }
 
     @Override
     public long getDateStart() {
-        return this.punishment.getDateStart();
+        return this.punishment.getCreatedDate();
     }
 
     @Override
@@ -96,7 +96,7 @@ public class PunishmentAPI implements me.kvalbrus.multibans.api.punishment.Punis
     @NotNull
     @Override
     public String getReason() {
-        return this.punishment.getReason();
+        return this.punishment.getCreatedReason();
     }
 
     @Nullable
@@ -145,7 +145,7 @@ public class PunishmentAPI implements me.kvalbrus.multibans.api.punishment.Punis
 
     @Override
     public synchronized void setReason(String reason) {
-        this.punishment.setReason(reason);
+        this.punishment.setCreatedReason(reason);
     }
 
     @Override
