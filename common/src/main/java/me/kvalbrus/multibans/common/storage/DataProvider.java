@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import me.kvalbrus.multibans.common.punishment.Punishment;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface DataProvider {
 
@@ -22,6 +23,9 @@ public interface DataProvider {
     boolean deletePunishment(@NotNull Punishment punishment);
 
     boolean hasPunishment(String id);
+
+    @Nullable
+    Punishment getPunishment(String id);
 
     @NotNull
     List<Punishment> getTargetHistory(String target);

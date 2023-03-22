@@ -16,6 +16,7 @@ import me.kvalbrus.multibans.common.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.common.storage.DataProvider;
 import me.kvalbrus.multibans.common.storage.StorageData;
+import org.jetbrains.annotations.Nullable;
 
 public class MySqlProvider implements DataProvider {
 
@@ -189,6 +190,52 @@ public class MySqlProvider implements DataProvider {
         }
 
         return false;
+    }
+
+    @Nullable
+    public Punishment getPunishment(String id) {
+        if(id == null) {
+            return null;
+        }
+
+        try (Connection connection = this.source.getConnection();
+        PreparedStatement statement = connection.prepareStatement(SQLQuery.HAS_PUNISHMENT.toString())){
+            statement.setString(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if(resultSet.next()) {
+                PunishmentType type = PunishmentType.valueOf(resultSet.getString("type"));
+                String targetIp = resultSet.getString("target_ip");
+                String targetName = resultSet.getString("target_name");
+                UUID targetUUID = UUID.fromString(resultSet.getString("target_uuid"));
+                String creatorName = resultSet.getString("creator_name");
+                long dateCreated = resultSet.getLong("date_created");
+                long dateStart = resultSet.getLong("date_start");
+                long duration = resultSet.getLong("duration");
+                String reason = resultSet.getString("reason");
+                String comment = resultSet.getString("comment");
+                String cancellationCreator = resultSet.getString("cancellation_creator");
+                long cancellationDate = resultSet.getLong("cancellation_date");
+                String cancellationReason = resultSet.getString("cancellation_reason");
+
+                String[] serversString = resultSet.getString("servers").split(";");
+                List<String> servers = new ArrayList<>(Arrays.stream(serversString).toList());
+
+                boolean cancelled = resultSet.getBoolean("cancelled");
+
+                Punishment punishment = new Punishment(
+                    this.pluginManager.getPunishmentManager(), type, id, targetIp, targetName, targetUUID,
+                    creatorName, dateCreated, dateStart, duration, reason, comment, cancellationCreator,
+                    cancellationDate, cancellationReason, servers, cancelled);
+
+                return punishment;
+            }
+        } catch (SQLTimeoutException exception) {
+            // TODO: logger
+        } catch (SQLException exception) {
+            // TODO: logger
+        }
+
+        return null;
     }
 
     @NotNull

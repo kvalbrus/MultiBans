@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 public enum PunishmentType {
 
     BAN_IP("BAN_IP"),
+    TEMP_BAN("TEMP_BAN"),
     BAN("BAN"),
     MUTE("MUTE"),
     KICK("KICK");

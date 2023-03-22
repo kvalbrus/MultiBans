@@ -44,6 +44,11 @@ public interface PunishmentManager {
     @NotNull
     Map<PunishmentType, List<Punishment>> getMapActivePunishments(UUID uuid);
 
+    boolean hasPunishments(String id);
+
+    @Nullable
+    Punishment getPunishment(String id);
+
     @NotNull
     Punishment generatePunishment(@NotNull final PunishmentType type,
                                   @NotNull final String ip,

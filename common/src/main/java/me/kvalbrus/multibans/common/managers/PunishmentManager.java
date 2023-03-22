@@ -139,6 +139,14 @@ public class PunishmentManager {
         return activePunishments;
     }
 
+    public boolean hasPunishment(@NotNull String id) {
+        return this.pluginManager.getDataProvider().hasPunishment(id);
+    }
+
+    public Punishment getPunishment(String id) {
+        return this.pluginManager.getDataProvider().getPunishment(id);
+    }
+
     @NotNull
     public synchronized Punishment generatePunishment(@NotNull final PunishmentType type,
                                                       @NotNull final String targetIp,
@@ -159,7 +167,6 @@ public class PunishmentManager {
         return new Punishment(this, type, id, targetIp, targetName, targetUUID,
             creatorName, realTime, realTime, duration, reason, comment, servers, false);
     }
-
 
     @NotNull
     private synchronized String generateId() {

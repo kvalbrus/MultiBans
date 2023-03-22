@@ -161,6 +161,22 @@ public class PunishmentManagerAPI implements
         return copyMap;
     }
 
+    @Override
+    public boolean hasPunishments(String id) {
+        return this.punishmentManager.hasPunishment(id);
+    }
+
+    @Nullable
+    @Override
+    public me.kvalbrus.multibans.api.punishment.Punishment getPunishment(String id) {
+        Punishment punishment = this.punishmentManager.getPunishment(id);
+        if(punishment != null) {
+            return new PunishmentAPI(punishment);
+        }
+
+        return null;
+    }
+
     @NotNull
     @Override
     public me.kvalbrus.multibans.api.punishment.Punishment generatePunishment(@NotNull PunishmentType type,

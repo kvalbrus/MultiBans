@@ -204,9 +204,14 @@ public class Punishment implements Comparable<Punishment> {
 
     @NotNull
     public PunishmentStatus getStatus() {
-        return this.cancelled ? PunishmentStatus.CANCELLED :
-            (this.dateStart + this.duration > System.currentTimeMillis() ?
-                PunishmentStatus.ACTIVE : PunishmentStatus.PASSED);
+        if(this.cancelled) {
+            return PunishmentStatus.CANCELLED;
+        } else if(this.duration <= 0) {
+            return PunishmentStatus.ACTIVE;
+        } else {
+            return this.dateStart + this.duration > System.currentTimeMillis() ?
+                    PunishmentStatus.ACTIVE : PunishmentStatus.PASSED;
+        }
     }
 
     @NotNull
@@ -290,7 +295,63 @@ public class Punishment implements Comparable<Punishment> {
     }
 
     public synchronized void setDuration(long duration) {
-        this.duration = duration;
+        if(this.getStatus() == PunishmentStatus.CANCELLED) {
+            this.duration = duration;
+            this.updateData();
+            return;
+        }
+
+        if(this.duration <= 0 && duration <= 0) {
+            this.duration = duration;
+        } else {
+            this.duration = duration;
+            List<Punishment> history = this.punishmentManager.getPlayerHistory(this.targetUUID);
+            history.sort(null);
+            history.removeIf(p -> p.type != this.type || p.getStatus() == PunishmentStatus.CANCELLED ||
+                (!p.id.equals(this.id) && p.duration <= 0));
+
+            if (history.stream().noneMatch(p -> p.id.equals(this.id))) {
+                this.updateData();
+                return;
+            }
+
+            int indexPun = -1;
+            for (Punishment punishment : history) {
+                if (punishment.getId().equals(this.id)) {
+                    indexPun = history.indexOf(punishment);
+                    break;
+                }
+            }
+
+            if(indexPun == -1) {
+                throw new ArrayIndexOutOfBoundsException("List is invalid");
+            }
+
+            if(this.duration <= 0) {
+                if(indexPun == 0) {
+                    this.dateStart = this.dateCreated;
+                } else {
+                    Punishment prev = history.get(indexPun - 1);
+                    this.dateStart = prev.dateStart + prev.duration;
+                }
+
+                for (int i = indexPun + 1; i < history.size(); ++i) {
+                    Punishment prev = history.get(i - 1), curr = history.get(i);
+                    curr.dateStart = prev.dateStart + prev.duration;
+
+                    curr.updateData();
+                }
+            } else if(duration <= 0) {
+                if(indexPun == 0) {
+
+                }
+            }
+
+
+        }
+
+
+
         this.updateData();
     }
 
