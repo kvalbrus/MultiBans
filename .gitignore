@@ -1,0 +1,6 @@
+api/build/
+bukkit/build/
+common/build/
+build/
+.gradle/
+.idea/
