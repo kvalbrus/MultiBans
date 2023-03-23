@@ -1,7 +1,6 @@
 package me.kvalbrus.multibans.bukkit;
 
 import me.kvalbrus.multibans.api.MultiBans;
-import me.kvalbrus.multibans.common.api.PunishmentManagerAPI;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import org.jetbrains.annotations.NotNull;
 import me.kvalbrus.multibans.api.punishment.PunishmentManager;
@@ -14,7 +13,7 @@ public class MultiBansBukkit implements MultiBans {
 
     public MultiBansBukkit(final PluginManager pluginManager) {
         this.pluginManager = pluginManager;
-        this.punishmentManager = new PunishmentManagerAPI(this.pluginManager.getPunishmentManager());
+        this.punishmentManager = new me.kvalbrus.multibans.common.managers.PunishmentManager(pluginManager);
     }
 
     @Override

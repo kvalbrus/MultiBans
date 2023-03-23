@@ -2,7 +2,7 @@ package me.kvalbrus.multibans.common.storage;
 
 import java.util.List;
 import java.util.UUID;
-import me.kvalbrus.multibans.common.punishment.Punishment;
+import me.kvalbrus.multibans.api.punishment.Punishment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

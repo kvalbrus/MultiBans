@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.UUID;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.common.managers.PunishmentManager;
-import me.kvalbrus.multibans.common.punishment.TemporaryPunishment;
+import me.kvalbrus.multibans.common.punishment.MultiTemporaryPunishment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TemporaryChatMute extends TemporaryPunishment {
+public class MultiTemporaryBan extends MultiTemporaryPunishment {
 
-    public TemporaryChatMute(@NotNull PunishmentManager punishmentManager,
+    public MultiTemporaryBan(@NotNull PunishmentManager punishmentManager,
                              @NotNull String id,
                              @NotNull String targetIp,
                              @NotNull String targetName,
@@ -24,8 +24,9 @@ public class TemporaryChatMute extends TemporaryPunishment {
                              @Nullable String cancellationCreator,
                              long cancellationDate,
                              @Nullable String cancellationReason,
-                             @NotNull List<String> servers, boolean cancelled) {
-        super(punishmentManager, PunishmentType.TEMP_MUTE, id, targetIp, targetName, targetUUID,
+                             @NotNull List<String> servers,
+                             boolean cancelled) {
+        super(punishmentManager, PunishmentType.TEMP_BAN, id, targetIp, targetName, targetUUID,
             creatorName, createdDate, startedDate, duration, reason, comment, cancellationCreator,
             cancellationDate, cancellationReason, servers, cancelled);
     }

@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.UUID;
 import me.kvalbrus.multibans.api.punishment.PunishmentStatus;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
+import me.kvalbrus.multibans.api.punishment.TemporaryPunishment;
 import me.kvalbrus.multibans.common.managers.PunishmentManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class TemporaryPunishment extends MultiPunishment implements Temporary, Cancelable {
+public abstract class MultiTemporaryPunishment extends MultiPunishment implements
+    TemporaryPunishment {
 
     private long startedDate;
 
@@ -22,23 +24,23 @@ public abstract class TemporaryPunishment extends MultiPunishment implements Tem
 
     private long duration;
 
-    public TemporaryPunishment(@NotNull PunishmentManager punishmentManager,
-                               @NotNull PunishmentType type,
-                               @NotNull String id,
-                               @NotNull String targetIp,
-                               @NotNull String targetName,
-                               @NotNull UUID targetUUID,
-                               @NotNull String creatorName,
-                               long createdDate,
-                               long startedDate,
-                               long duration,
-                               @Nullable String reason,
-                               @Nullable String comment,
-                               @Nullable String cancellationCreator,
-                               long cancellationDate,
-                               @Nullable String cancellationReason,
-                               @NotNull List<String> servers,
-                               boolean cancelled) {
+    public MultiTemporaryPunishment(@NotNull PunishmentManager punishmentManager,
+                                    @NotNull PunishmentType type,
+                                    @NotNull String id,
+                                    @NotNull String targetIp,
+                                    @NotNull String targetName,
+                                    @NotNull UUID targetUUID,
+                                    @NotNull String creatorName,
+                                    long createdDate,
+                                    long startedDate,
+                                    long duration,
+                                    @Nullable String reason,
+                                    @Nullable String comment,
+                                    @Nullable String cancellationCreator,
+                                    long cancellationDate,
+                                    @Nullable String cancellationReason,
+                                    @NotNull List<String> servers,
+                                    boolean cancelled) {
         super(punishmentManager, type, id, targetIp, targetName, targetUUID, creatorName,
             createdDate, reason, comment, servers);
         this.startedDate = startedDate;
@@ -57,14 +59,14 @@ public abstract class TemporaryPunishment extends MultiPunishment implements Tem
 
         super.activate();
 
-        List<? extends TemporaryPunishment> activePunishments = this.getPunishmentManager()
+        List<? extends MultiTemporaryPunishment> activePunishments = this.getPunishmentManager()
             .getActivePunishments(this.getTargetUniqueId(), this.getClass());
 
         final int size = activePunishments.size();
         if (size > 0) {
             activePunishments.sort(null);
 
-            TemporaryPunishment last = activePunishments.get(size - 1);
+            MultiTemporaryPunishment last = activePunishments.get(size - 1);
             this.startedDate = last.startedDate + last.duration;
         } else {
             this.startedDate = this.getCreatedDate();
@@ -84,7 +86,7 @@ public abstract class TemporaryPunishment extends MultiPunishment implements Tem
             return;
         }
 
-        List<? extends TemporaryPunishment> history = this.getPunishmentManager()
+        List<? extends MultiTemporaryPunishment> history = this.getPunishmentManager()
             .getPlayerHistory(this.getTargetUniqueId(), this.getClass());
 
         if(history.stream().noneMatch(punishment -> punishment.getId().equals(this.getId()))) {
@@ -92,12 +94,12 @@ public abstract class TemporaryPunishment extends MultiPunishment implements Tem
         }
 
         history.sort(null);
-        history.removeIf(TemporaryPunishment::isCancelled);
+        history.removeIf(MultiTemporaryPunishment::isCancelled);
         int size = history.size();
         if (this.duration > 0 && size > 0) {
-            TemporaryPunishment prev = null, curr = null;
+            MultiTemporaryPunishment prev = null, curr = null;
             int index = -1;
-            for (TemporaryPunishment punishment : history) {
+            for (MultiTemporaryPunishment punishment : history) {
                 if (punishment.getId().equals(this.getId())) {
                     index = history.indexOf(punishment);
                     break;
@@ -140,7 +142,10 @@ public abstract class TemporaryPunishment extends MultiPunishment implements Tem
         this.cancellationReason = cancellationReason;
     }
 
+    @Override
     public synchronized void delete() {
+        this.deactivate();
+        super.delete();
     }
 
     @NotNull
@@ -155,14 +160,8 @@ public abstract class TemporaryPunishment extends MultiPunishment implements Tem
         }
     }
 
-    @Override
     public long getStartedDate() {
         return this.startedDate;
-    }
-
-    @Override
-    public synchronized void setStartedDate(long startedDate) {
-        this.startedDate = startedDate;
     }
 
     @Nullable
@@ -172,18 +171,8 @@ public abstract class TemporaryPunishment extends MultiPunishment implements Tem
     }
 
     @Override
-    public synchronized void setCancellationCreator(@Nullable String creator) {
-        this.cancellationCreator = creator;
-    }
-
-    @Override
     public final long getCancellationDate() {
         return this.cancellationDate;
-    }
-
-    @Override
-    public synchronized void setCancellationDate(long date) {
-        this.cancellationDate = date;
     }
 
     @Nullable
@@ -192,9 +181,8 @@ public abstract class TemporaryPunishment extends MultiPunishment implements Tem
         return this.cancellationReason;
     }
 
-    @Override
-    public synchronized void setCancellationReason(@NotNull String reason) {
-        this.cancellationReason = reason;
+    public final long getDuration() {
+        return this.duration;
     }
 
     @Override
@@ -203,22 +191,34 @@ public abstract class TemporaryPunishment extends MultiPunishment implements Tem
     }
 
     @Override
+    public synchronized void setCancellationCreator(@Nullable String creator) {
+        this.cancellationCreator = creator;
+    }
+
+    public synchronized void setStartedDate(long startedDate) {
+        this.startedDate = startedDate;
+    }
+
+    @Override
+    public synchronized void setCancellationDate(long date) {
+        this.cancellationDate = date;
+    }
+
+    @Override
+    public synchronized void setCancellationReason(@NotNull String reason) {
+        this.cancellationReason = reason;
+    }
+
+    @Override
     public synchronized void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
 
-    @Override
-    public final long getDuration() {
-        return this.duration;
-    }
-
-    @Override
     public synchronized void setDuration(long duration) {
         this.duration = duration;
     }
 
-    @Override
-    public int compareTo(@NotNull Punishment o) {
-        return 0;
-    }
+
+
+
 }

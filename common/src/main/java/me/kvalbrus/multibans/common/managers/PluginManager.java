@@ -1,8 +1,8 @@
 package me.kvalbrus.multibans.common.managers;
 
 import java.io.File;
+import me.kvalbrus.multibans.api.punishment.Punishment;
 import org.jetbrains.annotations.NotNull;
-import me.kvalbrus.multibans.common.punishment.Punishment;
 import me.kvalbrus.multibans.common.storage.DataProvider;
 
 public interface PluginManager {

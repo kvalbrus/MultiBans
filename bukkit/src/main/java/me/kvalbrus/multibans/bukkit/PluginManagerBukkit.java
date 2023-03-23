@@ -2,10 +2,9 @@ package me.kvalbrus.multibans.bukkit;
 
 import java.io.File;
 import me.kvalbrus.multibans.api.MultiBans;
-import me.kvalbrus.multibans.common.api.PunishmentAPI;
+import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.managers.PunishmentManager;
-import me.kvalbrus.multibans.common.punishment.Punishment;
 import me.kvalbrus.multibans.common.storage.DataProvider;
 import me.kvalbrus.multibans.common.storage.StorageData;
 import me.kvalbrus.multibans.common.storage.mysql.MySqlProvider;
@@ -100,13 +99,13 @@ public class PluginManagerBukkit implements PluginManager {
             }
         }
 
-        Event event = new ActivatePunishmentEvent(new PunishmentAPI(punishment));
+        Event event = new ActivatePunishmentEvent(punishment);
         this.plugin.getServer().getPluginManager().callEvent(event);
     }
 
     @Override
     public void deactivatePunishment(@NotNull Punishment punishment) {
-        Event event = new DeactivatePunishmentEvent(new PunishmentAPI(punishment));
+        Event event = new DeactivatePunishmentEvent(punishment);
         this.plugin.getServer().getPluginManager().callEvent(event);
     }
 

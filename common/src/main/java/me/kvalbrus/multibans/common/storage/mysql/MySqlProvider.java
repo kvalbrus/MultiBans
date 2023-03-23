@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.common.managers.PluginManager;
-import me.kvalbrus.multibans.common.punishment.Cancelable;
+import me.kvalbrus.multibans.api.punishment.Cancelable;
 import me.kvalbrus.multibans.common.punishment.MultiPunishment;
-import me.kvalbrus.multibans.common.punishment.Temporary;
+import me.kvalbrus.multibans.common.punishment.MultiTemporaryPunishment;
 import org.jetbrains.annotations.NotNull;
-import me.kvalbrus.multibans.common.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.common.storage.DataProvider;
 import me.kvalbrus.multibans.common.storage.StorageData;
@@ -90,7 +90,7 @@ public class MySqlProvider implements DataProvider {
             statement.setString(i++, punishment.getCreatorName());
             statement.setLong(i++, punishment.getCreatedDate());
             statement.setLong(i++, punishment.getCreatedDate());
-            statement.setLong(i++, punishment instanceof Temporary ? ((Temporary) punishment).getDuration() : -1L);
+            statement.setLong(i++, punishment instanceof MultiTemporaryPunishment temporary ? temporary.getDuration() : -1L);
             statement.setString(i++, punishment.getCreatedReason());
             statement.setString(i++, punishment.getComment());
             statement.setString(i++, punishment instanceof Cancelable ? ((Cancelable) punishment).getCancellationCreator() : null);
@@ -127,7 +127,7 @@ public class MySqlProvider implements DataProvider {
             int i = 1;
 
             statement.setLong(i++, punishment.getCreatedDate());
-            statement.setLong(i++, punishment instanceof Temporary ? ((Temporary) punishment).getDuration() : -1L);
+            statement.setLong(i++, punishment instanceof MultiTemporaryPunishment temporary ? temporary.getDuration() : -1L);
             statement.setString(i++, punishment.getCreatedReason());
             statement.setString(i++, punishment.getComment());
             statement.setString(i++, punishment instanceof Cancelable ? ((Cancelable) punishment).getCancellationCreator() : null);

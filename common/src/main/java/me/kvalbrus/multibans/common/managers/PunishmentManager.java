@@ -1,17 +1,18 @@
 package me.kvalbrus.multibans.common.managers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import lombok.Getter;
+import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.common.punishment.MultiPunishment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import me.kvalbrus.multibans.api.punishment.PunishmentStatus;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
-import me.kvalbrus.multibans.common.punishment.Punishment;
 
-public class PunishmentManager {
+public class PunishmentManager implements me.kvalbrus.multibans.api.punishment.PunishmentManager {
 
     @Getter
     @NotNull
@@ -21,17 +22,21 @@ public class PunishmentManager {
         this.pluginManager = pluginManager;
     }
 
+    @Deprecated
     @NotNull
+    @Override
     public <T extends Punishment> List<T> getPlayerHistory(String target) {
         return this.pluginManager.getDataProvider().getTargetHistory(target);
     }
 
     @NotNull
+    @Override
     public <T extends Punishment> List<T> getPlayerHistory(UUID uuid) {
         return this.pluginManager.getDataProvider().getTargetHistory(uuid);
     }
 
     @NotNull
+    @Override
     public <T extends Punishment> List<T> getPlayerHistory(UUID uuid, @NotNull Class<T> clazz) {
         List<T> punishments = this.getActivePunishments(uuid);
 
@@ -41,11 +46,14 @@ public class PunishmentManager {
     }
 
     @NotNull
+    @Override
     public <T extends Punishment> List<T> getCreatorHistory(String creator) {
         return this.pluginManager.getDataProvider().getCreatorHistory(creator);
     }
 
+    @Deprecated
     @NotNull
+    @Override
     public <T extends Punishment> List<T> getActivePunishments(String target) {
         List<T> punishments = this.getPlayerHistory(target);
 
@@ -55,6 +63,7 @@ public class PunishmentManager {
     }
 
     @NotNull
+    @Override
     public <T extends Punishment> List<T> getActivePunishments(UUID uuid) {
         List<T> punishments = this.getPlayerHistory(uuid);
 
@@ -64,6 +73,7 @@ public class PunishmentManager {
     }
 
     @NotNull
+    @Override
     public <T extends Punishment> List<T> getActivePunishments(UUID uuid, @NotNull Class<T> clazz) {
         List<T> punishments = this.getActivePunishments(uuid);
         punishments.removeIf(punishment -> !clazz.isInstance(punishment));
@@ -71,97 +81,31 @@ public class PunishmentManager {
         return punishments;
     }
 
-//    @NotNull
-//    public Map<PunishmentType, List<Punishment>> getMapActivePunishments(String target) {
-//        Map<PunishmentType, List<Punishment>> activePunishments = new HashMap<>();
-//
-//        Arrays.stream(PunishmentType.values()).toList()
-//            .forEach(type -> activePunishments.put(type, new ArrayList<>()));
-//        if (target == null) {
-//            return activePunishments;
-//        }
-//
-//        List<Punishment> punishments = this.getPluginManager().getDataProvider()
-//            .getTargetHistory(target);
-//        punishments.removeIf(Punishment::isCancelled);
-//
-//        long realTime = System.currentTimeMillis();
-//
-//        List<Punishment> temporary = new ArrayList<>();
-//        for (Punishment punishment : punishments) {
-//            if (!punishment.isCancelled()) {
-//                temporary.add(punishment);
-//            }
-//        }
-//
-//        temporary.sort(null);
-//
-//        long sumDurations = 0L;
-//        for (Punishment punishment : temporary) {
-//            if (punishment.getDuration() > 0) {
-//                sumDurations += punishment.getDuration();
-//
-//                if (punishment.getCreatedDate() + sumDurations >= realTime) {
-//                    activePunishments.get(punishment.getType()).add(punishment);
-//                }
-//            } else {
-//                activePunishments.get(punishment.getType()).add(punishment);
-//            }
-//        }
-//
-//        return activePunishments;
-//    }
-
-//    @NotNull
-//    public Map<PunishmentType, List<Punishment>> getMapActivePunishments(UUID uuid) {
-//        Map<PunishmentType, List<Punishment>> activePunishments = new HashMap<>();
-//
-//        Arrays.stream(PunishmentType.values()).toList()
-//            .forEach(type -> activePunishments.put(type, new ArrayList<>()));
-//        if (uuid == null) {
-//            return activePunishments;
-//        }
-//
-//        List<Punishment> punishments = this.getPluginManager().getDataProvider()
-//            .getTargetHistory(uuid);
-//        punishments.removeIf(Punishment::isCancelled);
-//
-//        long realTime = System.currentTimeMillis();
-//
-//        List<Punishment> temporary = new ArrayList<>();
-//        for (Punishment punishment : punishments) {
-//            if (!punishment.isCancelled()) {
-//                temporary.add(punishment);
-//            }
-//        }
-//
-//        temporary.sort(null);
-//
-//        long sumDurations = 0L;
-//        for (Punishment punishment : temporary) {
-//            if (punishment.getDuration() > 0) {
-//                sumDurations += punishment.getDuration();
-//
-//                if (punishment.getCreatedDate() + sumDurations >= realTime) {
-//                    activePunishments.get(punishment.getType()).add(punishment);
-//                }
-//            } else {
-//                activePunishments.get(punishment.getType()).add(punishment);
-//            }
-//        }
-//
-//        return activePunishments;
-//    }
-
+    @Override
     public boolean hasPunishment(@NotNull String id) {
         return this.pluginManager.getDataProvider().hasPunishment(id);
     }
 
+    @Override
     public Punishment getPunishment(String id) {
         return this.pluginManager.getDataProvider().getPunishment(id);
     }
 
     @NotNull
+    @Override
+    public synchronized Punishment generatePunishment(@NotNull final PunishmentType type,
+                                                      @NotNull final String targetIp,
+                                                      @NotNull final String targetName,
+                                                      @NotNull final UUID targetUUID,
+                                                      @NotNull final String creatorName,
+                                                      long duration,
+                                                      @NotNull String reason) {
+        return this.generatePunishment(type, targetIp, targetName, targetUUID, creatorName,
+            duration, reason, null, new ArrayList<>());
+    }
+
+    @NotNull
+    @Override
     public synchronized Punishment generatePunishment(@NotNull final PunishmentType type,
                                                       @NotNull final String targetIp,
                                                       @NotNull final String targetName,

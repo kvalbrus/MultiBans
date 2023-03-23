@@ -9,10 +9,6 @@ public interface Punishment {
 
     void activate();
 
-    void deactivate();
-
-    void deactivate(String creator, String reason);
-
     void delete();
 
     @NotNull
@@ -36,46 +32,20 @@ public interface Punishment {
     @NotNull
     String getCreatorName();
 
-    long getDateCreated();
-
-    long getDateStart();
-
-    long getDuration();
+    long getCreatedDate();
 
     @NotNull
-    String getReason();
+    String getCreatedReason();
 
     @Nullable
     String getComment();
 
-    long getCancellationDate();
-
-    @Nullable
-    String getCancellationCreator();
-
-    @Nullable
-    String getCancellationReason();
-
     @NotNull
     List<String> getServers();
 
-    boolean isCancelled();
-
-    void setDateStart(long dateStart);
-
-    void setDuration(long duration);
-
-    void setReason(String reason);
+    void setCreatedReason(String createdReason);
 
     void setComment(String comment);
 
-    void setCancellationDate(long date);
-
-    void setCancellationCreator(String creator);
-
-    void setCancellationReason(String reason);
-
     void setServers(@NotNull List<String> servers);
-
-    void setCancelled(boolean cancelled);
 }

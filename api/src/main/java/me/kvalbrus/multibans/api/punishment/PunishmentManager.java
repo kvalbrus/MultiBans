@@ -1,50 +1,36 @@
 package me.kvalbrus.multibans.api.punishment;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface PunishmentManager {
 
+    @Deprecated
     @NotNull
-    List<Punishment> getPlayerHistory(String target);
+    <T extends Punishment> List<T> getPlayerHistory(String target);
 
     @NotNull
-    List<Punishment> getPlayerHistory(String target, Comparator<Punishment> comparator);
+    <T extends Punishment> List<T> getPlayerHistory(UUID uuid);
 
     @NotNull
-    List<Punishment> getPlayerHistory(UUID uuid);
+    <T extends Punishment> List<T> getPlayerHistory(UUID uuid, Class<T> clazz);
 
     @NotNull
-    List<Punishment> getPlayerHistory(UUID uuid, Comparator<Punishment> comparator);
-
-    @NotNull
-    List<Punishment> getCreatorHistory(String creator);
-
-    @NotNull
-    List<Punishment> getActivePunishments(String target);
-
-    @NotNull
-    List<Punishment> getActivePunishments(String target, Comparator<Punishment> comparator);
-
-    @NotNull
-    List<Punishment> getActivePunishments(UUID uuid);
-
-    @NotNull
-    List<Punishment> getActivePunishments(UUID uuid, Comparator<Punishment> comparator);
+    <T extends Punishment> List<T> getCreatorHistory(String creator);
 
     @Deprecated
     @NotNull
-    Map<PunishmentType, List<Punishment>> getMapActivePunishments(String target);
+    <T extends Punishment> List<T> getActivePunishments(String target);
 
-    @Deprecated
     @NotNull
-    Map<PunishmentType, List<Punishment>> getMapActivePunishments(UUID uuid);
+    <T extends Punishment> List<T> getActivePunishments(UUID uuid);
 
-    boolean hasPunishments(String id);
+    @NotNull
+    <T extends Punishment> List<T> getActivePunishments(UUID uuid, Class<T> clazz);
+
+    boolean hasPunishment(String id);
 
     @Nullable
     Punishment getPunishment(String id);

@@ -2,13 +2,14 @@ package me.kvalbrus.multibans.common.punishment;
 
 import java.util.List;
 import java.util.UUID;
+import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.common.managers.PunishmentManager;
-import me.kvalbrus.multibans.common.punishment.punishments.PermanentlyBan;
-import me.kvalbrus.multibans.common.punishment.punishments.PermanentlyChatMute;
-import me.kvalbrus.multibans.common.punishment.punishments.TemporaryBan;
-import me.kvalbrus.multibans.common.punishment.punishments.TemporaryBanIp;
-import me.kvalbrus.multibans.common.punishment.punishments.TemporaryChatMute;
+import me.kvalbrus.multibans.common.punishment.punishments.MultiPermanentlyBan;
+import me.kvalbrus.multibans.common.punishment.punishments.MultiPermanentlyChatMute;
+import me.kvalbrus.multibans.common.punishment.punishments.MultiTemporaryBan;
+import me.kvalbrus.multibans.common.punishment.punishments.MultiTemporaryBanIp;
+import me.kvalbrus.multibans.common.punishment.punishments.MultiTemporaryChatMute;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,6 +68,11 @@ public abstract class MultiPunishment implements Punishment {
     @Override
     public synchronized void activate() {
         this.punishmentManager.getPluginManager().activatePunishment(this);
+    }
+
+    @Override
+    public synchronized void delete() {
+        this.punishmentManager.getPluginManager().getDataProvider().deletePunishment(this);
     }
 
     @NotNull
@@ -157,38 +163,38 @@ public abstract class MultiPunishment implements Punishment {
         Punishment punishment;
         switch (type) {
             case BAN:
-                punishment = new TemporaryBan(punishmentManager, id, targetIp, targetName, targetUniqueId,
+                punishment = new MultiTemporaryBan(punishmentManager, id, targetIp, targetName, targetUniqueId,
                     creatorName, createdDate, startedDate, duration, createdReason, comment,
                     cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
                 break;
 
             case TEMP_BAN:
-                 punishment = new TemporaryBan(punishmentManager, id, targetIp, targetName, targetUniqueId,
+                 punishment = new MultiTemporaryBan(punishmentManager, id, targetIp, targetName, targetUniqueId,
                     creatorName, createdDate, startedDate, duration, createdReason, comment,
                     cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
                  break;
 
             case BAN_IP:
-                punishment = new PermanentlyBan(punishmentManager, id, targetIp, targetName,
+                punishment = new MultiPermanentlyBan(punishmentManager, id, targetIp, targetName,
                     targetUniqueId, creatorName, createdDate, createdReason, comment,
                     cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
                 break;
 
             case TEMP_BAN_IP:
-                punishment = new TemporaryBanIp(punishmentManager, id, targetIp, targetName,
+                punishment = new MultiTemporaryBanIp(punishmentManager, id, targetIp, targetName,
                     targetUniqueId, creatorName, createdDate, startedDate, duration, createdReason,
                     comment, cancellationCreator, cancellationDate, cancellationReason, servers,
                     cancelled);
                 break;
 
             case MUTE:
-                punishment = new PermanentlyChatMute(punishmentManager, id, targetIp, targetName,
+                punishment = new MultiPermanentlyChatMute(punishmentManager, id, targetIp, targetName,
                     targetUniqueId, creatorName, createdDate, createdReason, comment,
                     cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
                 break;
 
             case TEMP_MUTE:
-                punishment = new TemporaryChatMute(punishmentManager, id, targetIp, targetName,
+                punishment = new MultiTemporaryChatMute(punishmentManager, id, targetIp, targetName,
                     targetUniqueId, creatorName, createdDate, startedDate, duration, createdReason,
                     comment, cancellationCreator, cancellationDate, cancellationReason, servers,
                     cancelled);

@@ -1,6 +1,6 @@
-package me.kvalbrus.multibans.common.punishment;
+package me.kvalbrus.multibans.api.punishment;
 
-public interface Temporary {
+public interface TemporaryPunishment extends Punishment, Cancelable {
 
     long getDuration();
 

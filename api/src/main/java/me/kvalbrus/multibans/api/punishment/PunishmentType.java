@@ -1,13 +1,12 @@
 package me.kvalbrus.multibans.api.punishment;
 
 import lombok.Getter;
-import me.kvalbrus.multibans.common.punishment.Punishment;
-import me.kvalbrus.multibans.common.punishment.punishments.PermanentlyBan;
-import me.kvalbrus.multibans.common.punishment.punishments.PermanentlyBanIp;
-import me.kvalbrus.multibans.common.punishment.punishments.PermanentlyChatMute;
-import me.kvalbrus.multibans.common.punishment.punishments.TemporaryBan;
-import me.kvalbrus.multibans.common.punishment.punishments.TemporaryBanIp;
-import me.kvalbrus.multibans.common.punishment.punishments.TemporaryChatMute;
+import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyBan;
+import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyBanIp;
+import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyChatMute;
+import me.kvalbrus.multibans.api.punishment.punishments.TemporaryBan;
+import me.kvalbrus.multibans.api.punishment.punishments.TemporaryBanIp;
+import me.kvalbrus.multibans.api.punishment.punishments.TemporaryChatMute;
 import org.jetbrains.annotations.NotNull;
 
 public enum PunishmentType {
@@ -16,7 +15,6 @@ public enum PunishmentType {
     BAN_IP("BAN_IP", PermanentlyBanIp.class),
 
     TEMP_BAN("TEMP_BAN", TemporaryBan.class),
-
     BAN("BAN", PermanentlyBan.class),
 
     TEMP_MUTE("TEMP_MUTE", TemporaryChatMute.class),

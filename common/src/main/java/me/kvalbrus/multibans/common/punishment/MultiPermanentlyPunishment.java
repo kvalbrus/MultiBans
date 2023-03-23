@@ -2,13 +2,15 @@ package me.kvalbrus.multibans.common.punishment;
 
 import java.util.List;
 import java.util.UUID;
+import me.kvalbrus.multibans.api.punishment.PermanentlyPunishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentStatus;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.common.managers.PunishmentManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class PermanentlyPunishment extends MultiPunishment implements Permanently, Cancelable {
+public abstract class MultiPermanentlyPunishment
+    extends MultiPunishment implements PermanentlyPunishment {
 
     private String cancellationCreator;
 
@@ -18,21 +20,21 @@ public abstract class PermanentlyPunishment extends MultiPunishment implements P
 
     private boolean cancelled;
 
-    public PermanentlyPunishment(@NotNull PunishmentManager punishmentManager,
-                                 @NotNull PunishmentType type,
-                                 @NotNull String id,
-                                 @NotNull String targetIp,
-                                 @NotNull String targetName,
-                                 @NotNull UUID targetUUID,
-                                 @NotNull String creatorName,
-                                 long dateCreated,
-                                 @Nullable String reason,
-                                 @Nullable String comment,
-                                 @Nullable String cancellationCreator,
-                                 long cancellationDate,
-                                 @Nullable String cancellationReason,
-                                 @NotNull List<String> servers,
-                                 boolean cancelled) {
+    public MultiPermanentlyPunishment(@NotNull PunishmentManager punishmentManager,
+                                      @NotNull PunishmentType type,
+                                      @NotNull String id,
+                                      @NotNull String targetIp,
+                                      @NotNull String targetName,
+                                      @NotNull UUID targetUUID,
+                                      @NotNull String creatorName,
+                                      long dateCreated,
+                                      @Nullable String reason,
+                                      @Nullable String comment,
+                                      @Nullable String cancellationCreator,
+                                      long cancellationDate,
+                                      @Nullable String cancellationReason,
+                                      @NotNull List<String> servers,
+                                      boolean cancelled) {
         super(punishmentManager, type, id, targetIp, targetName, targetUUID, creatorName,
             dateCreated, reason, comment, servers);
         this.cancellationCreator = cancellationCreator;
@@ -115,10 +117,5 @@ public abstract class PermanentlyPunishment extends MultiPunishment implements P
     @Override
     public synchronized void setCancellationReason(@NotNull String reason) {
         this.cancellationReason = reason;
-    }
-
-    @Override
-    public int compareTo(@NotNull Punishment o) {
-        return 0;
     }
 }
