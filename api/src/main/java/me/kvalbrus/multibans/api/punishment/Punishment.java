@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface Punishment {
+public interface Punishment extends Comparable<Punishment> {
 
     void activate();
 
@@ -34,7 +34,7 @@ public interface Punishment {
 
     long getCreatedDate();
 
-    @NotNull
+    @Nullable
     String getCreatedReason();
 
     @Nullable
@@ -43,9 +43,9 @@ public interface Punishment {
     @NotNull
     List<String> getServers();
 
-    void setCreatedReason(String createdReason);
+    void setCreatedReason(@Nullable String createdReason);
 
-    void setComment(String comment);
+    void setComment(@Nullable String comment);
 
     void setServers(@NotNull List<String> servers);
 }

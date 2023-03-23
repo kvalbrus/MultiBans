@@ -27,6 +27,7 @@ public interface DataProvider {
     @Nullable
     Punishment getPunishment(String id);
 
+    @Deprecated
     @NotNull
     <T extends Punishment> List<T> getTargetHistory(String target);
 

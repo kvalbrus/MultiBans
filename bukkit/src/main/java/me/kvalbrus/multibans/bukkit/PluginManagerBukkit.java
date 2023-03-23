@@ -23,7 +23,7 @@ public class PluginManagerBukkit implements PluginManager {
 
     private final PunishmentManager punishmentManager;
 
-    private MultiBans tnBansProvider;
+    private MultiBans multiBandProvider;
 
     private DataProvider dataProvider;
 
@@ -44,9 +44,9 @@ public class PluginManagerBukkit implements PluginManager {
             // TODO: logger
         }
 
-        this.tnBansProvider = new MultiBansBukkit(this);
+        this.multiBandProvider = new MultiBansBukkit(this);
         this.plugin.getServer().getServicesManager()
-            .register(MultiBans.class, this.tnBansProvider, this.plugin, ServicePriority.Normal);
+            .register(MultiBans.class, this.multiBandProvider, this.plugin, ServicePriority.Normal);
     }
 
     @Override

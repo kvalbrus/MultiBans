@@ -38,7 +38,7 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.punishment.P
     @NotNull
     @Override
     public <T extends Punishment> List<T> getPlayerHistory(UUID uuid, @NotNull Class<T> clazz) {
-        List<T> punishments = this.getActivePunishments(uuid);
+        List<T> punishments = this.getPlayerHistory(uuid);
 
         punishments.removeIf(punishment -> !clazz.isInstance(punishment));
 

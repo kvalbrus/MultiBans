@@ -1,7 +1,5 @@
 package me.kvalbrus.multibans.bukkit;
 
-import java.lang.reflect.Method;
-import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;

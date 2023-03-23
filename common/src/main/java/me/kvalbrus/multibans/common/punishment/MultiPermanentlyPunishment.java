@@ -6,6 +6,7 @@ import me.kvalbrus.multibans.api.punishment.PermanentlyPunishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentStatus;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.common.managers.PunishmentManager;
+import me.kvalbrus.multibans.common.storage.DataProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,27 +46,56 @@ public abstract class MultiPermanentlyPunishment
 
     @Override
     public synchronized void activate() {
-        super.activate();
         this.cancelled = false;
+        super.activate();
     }
 
     @Override
     public synchronized void deactivate() {
-        this.getPunishmentManager().getPluginManager().deactivatePunishment(this);
-        this.cancelled = true;
+        this.deactivate(null, -1, null);
+    }
+
+    @Override
+    public synchronized void delete() {
+        this.deactivate();
+        this.deleteData();
     }
 
     @Override
     public synchronized void deactivate(@Nullable String cancellationCreator,
                                         long cancellationDate,
                                         @Nullable String cancellationReason) {
-        this.deactivate();
+        if (this.cancelled) {
+            return;
+        }
+
+        this.cancelled = true;
         this.cancellationCreator = cancellationCreator;
         this.cancellationDate = cancellationDate;
         this.cancellationReason = cancellationReason;
+
+        this.updateData();
     }
 
-    public synchronized void delete() {}
+    @Override
+    public synchronized void updateData() {
+        DataProvider dataProvider = this.getPunishmentManager().getPluginManager().getDataProvider();
+        if (dataProvider != null) {
+            if (dataProvider.hasPunishment(this.getId())) {
+                dataProvider.updatePunishment(this);
+            } else {
+                dataProvider.createPunishment(this);
+            }
+        }
+    }
+
+    @Override
+    public synchronized void deleteData() {
+        DataProvider dataProvider = this.getPunishmentManager().getPluginManager().getDataProvider();
+        if (dataProvider != null && dataProvider.hasPunishment(this.getId())) {
+            dataProvider.deletePunishment(this);
+        }
+    }
 
     @NotNull
     @Override
@@ -100,22 +130,26 @@ public abstract class MultiPermanentlyPunishment
     }
 
     @Override
+    public synchronized void setCancellationCreator(@Nullable String cancellationCreator) {
+        this.cancellationCreator = cancellationCreator;
+        this.updateData();
+    }
+
+    @Override
+    public synchronized void setCancellationDate(long cancellationDate) {
+        this.cancellationDate = cancellationDate;
+        this.updateData();
+    }
+
+    @Override
+    public synchronized void setCancellationReason(@NotNull String cancellationReason) {
+        this.cancellationReason = cancellationReason;
+        this.updateData();
+    }
+
+    @Override
     public synchronized void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
-    }
-
-    @Override
-    public synchronized void setCancellationCreator(@Nullable String creator) {
-        this.cancellationCreator = creator;
-    }
-
-    @Override
-    public synchronized void setCancellationDate(long date) {
-        this.cancellationDate = date;
-    }
-
-    @Override
-    public synchronized void setCancellationReason(@NotNull String reason) {
-        this.cancellationReason = reason;
+        this.updateData();
     }
 }

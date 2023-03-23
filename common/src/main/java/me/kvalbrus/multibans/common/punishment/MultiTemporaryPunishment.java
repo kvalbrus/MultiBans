@@ -6,6 +6,7 @@ import me.kvalbrus.multibans.api.punishment.PunishmentStatus;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment;
 import me.kvalbrus.multibans.common.managers.PunishmentManager;
+import me.kvalbrus.multibans.common.storage.DataProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,11 +54,7 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
 
     @Override
     public synchronized void activate() {
-        if (!this.cancelled) {
-            return;
-        }
-
-        super.activate();
+        this.cancelled = false;
 
         List<? extends MultiTemporaryPunishment> activePunishments = this.getPunishmentManager()
             .getActivePunishments(this.getTargetUniqueId(), this.getClass());
@@ -67,10 +64,15 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
             activePunishments.sort(null);
 
             MultiTemporaryPunishment last = activePunishments.get(size - 1);
+
             this.startedDate = last.startedDate + last.duration;
+
         } else {
             this.startedDate = this.getCreatedDate();
         }
+
+        this.getPunishmentManager().getPluginManager().activatePunishment(this);
+        this.updateData();
     }
 
     @Override
@@ -96,7 +98,7 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
         history.sort(null);
         history.removeIf(MultiTemporaryPunishment::isCancelled);
         int size = history.size();
-        if (this.duration > 0 && size > 0) {
+        if (size > 0) {
             MultiTemporaryPunishment prev = null, curr = null;
             int index = -1;
             for (MultiTemporaryPunishment punishment : history) {
@@ -111,7 +113,8 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
                     while (index < size - 1) {
                         curr = history.get(index + 1);
                         if (prev == null) {
-                            curr.startedDate = curr.getCreatedDate();
+                            curr.startedDate = history.get(0).getStartedDate();
+
                         } else {
                             curr.startedDate = prev.startedDate + prev.duration;
                         }
@@ -140,12 +143,35 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
         this.cancellationCreator = cancellationCreator;
         this.cancellationDate = cancellationDate;
         this.cancellationReason = cancellationReason;
+
+        this.getPunishmentManager().getPluginManager().deactivatePunishment(this);
+        this.updateData();
     }
 
     @Override
     public synchronized void delete() {
         this.deactivate();
-        super.delete();
+        this.deleteData();
+    }
+
+    @Override
+    public synchronized void updateData() {
+        DataProvider dataProvider = this.getPunishmentManager().getPluginManager().getDataProvider();
+        if (dataProvider != null) {
+            if (dataProvider.hasPunishment(this.getId())) {
+                dataProvider.updatePunishment(this);
+            } else {
+                dataProvider.createPunishment(this);
+            }
+        }
+    }
+
+    @Override
+    public synchronized void deleteData() {
+        DataProvider dataProvider = this.getPunishmentManager().getPluginManager().getDataProvider();
+        if (dataProvider != null && dataProvider.hasPunishment(this.getId())) {
+            dataProvider.deletePunishment(this);
+        }
     }
 
     @NotNull
@@ -158,10 +184,6 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
         } else {
             return PunishmentStatus.ACTIVE;
         }
-    }
-
-    public long getStartedDate() {
-        return this.startedDate;
     }
 
     @Nullable
@@ -181,44 +203,54 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
         return this.cancellationReason;
     }
 
-    public final long getDuration() {
-        return this.duration;
-    }
-
     @Override
     public final boolean isCancelled() {
         return this.cancelled;
     }
 
     @Override
-    public synchronized void setCancellationCreator(@Nullable String creator) {
-        this.cancellationCreator = creator;
-    }
-
-    public synchronized void setStartedDate(long startedDate) {
-        this.startedDate = startedDate;
+    public final long getDuration() {
+        return this.duration;
     }
 
     @Override
-    public synchronized void setCancellationDate(long date) {
-        this.cancellationDate = date;
+    public final long getStartedDate() {
+        return this.startedDate;
     }
 
     @Override
-    public synchronized void setCancellationReason(@NotNull String reason) {
-        this.cancellationReason = reason;
+    public final synchronized void setCancellationCreator(@Nullable String cancellationCreator) {
+        this.cancellationCreator = cancellationCreator;
+        this.updateData();
     }
 
     @Override
-    public synchronized void setCancelled(boolean cancelled) {
+    public final synchronized void setCancellationDate(long cancellationDate) {
+        this.cancellationDate = cancellationDate;
+        this.updateData();
+    }
+
+    @Override
+    public final synchronized void setCancellationReason(@Nullable String cancellationReason) {
+        this.cancellationReason = cancellationReason;
+        this.updateData();
+    }
+
+    @Override
+    public final synchronized void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
+        this.updateData();
     }
 
-    public synchronized void setDuration(long duration) {
+    @Override
+    public final synchronized void setDuration(long duration) {
         this.duration = duration;
+        this.updateData();
     }
 
-
-
-
+    @Override
+    public final synchronized void setStartedDate(long startedDate) {
+        this.startedDate = startedDate;
+        this.updateData();
+    }
 }

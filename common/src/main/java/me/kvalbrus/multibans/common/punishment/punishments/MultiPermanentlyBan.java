@@ -3,12 +3,13 @@ package me.kvalbrus.multibans.common.punishment.punishments;
 import java.util.List;
 import java.util.UUID;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
+import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyBan;
 import me.kvalbrus.multibans.common.managers.PunishmentManager;
 import me.kvalbrus.multibans.common.punishment.MultiPermanentlyPunishment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MultiPermanentlyBan extends MultiPermanentlyPunishment {
+public class MultiPermanentlyBan extends MultiPermanentlyPunishment implements PermanentlyBan {
 
     public MultiPermanentlyBan(@NotNull PunishmentManager punishmentManager,
                                @NotNull String id,

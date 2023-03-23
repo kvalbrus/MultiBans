@@ -3,12 +3,13 @@ package me.kvalbrus.multibans.common.punishment.punishments;
 import java.util.List;
 import java.util.UUID;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
+import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyBanIp;
 import me.kvalbrus.multibans.common.managers.PunishmentManager;
 import me.kvalbrus.multibans.common.punishment.MultiPermanentlyPunishment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MultiPermanentlyBanIp extends MultiPermanentlyPunishment {
+public class MultiPermanentlyBanIp extends MultiPermanentlyPunishment implements PermanentlyBanIp {
 
     public MultiPermanentlyBanIp(@NotNull PunishmentManager punishmentManager,
                                  @NotNull String id,
@@ -21,7 +22,7 @@ public class MultiPermanentlyBanIp extends MultiPermanentlyPunishment {
                                  @Nullable String cancellationCreator, long cancellationDate,
                                  @Nullable String cancellationReason,
                                  @NotNull List<String> servers, boolean cancelled) {
-        super(punishmentManager, PunishmentType.TEMP_BAN_IP, id, targetIp, targetName, targetUUID,
+        super(punishmentManager, PunishmentType.BAN_IP, id, targetIp, targetName, targetUUID,
             creatorName, dateCreated, reason, comment, cancellationCreator, cancellationDate,
             cancellationReason, servers, cancelled);
     }
