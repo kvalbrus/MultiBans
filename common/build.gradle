@@ -8,10 +8,13 @@ dependencies {
 
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.1'
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.32'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
 }
 
 shadowJar {
-//    dependencies {
-//        include(dependency('me.kvalbrus.multibans:.*'))
-//    }
+}
+
+test {
+    useJUnitPlatform()
 }
