@@ -8,13 +8,19 @@ import org.jetbrains.annotations.Nullable;
 
 public interface DataProvider {
 
-    void connect() throws Exception;
+    String getName();
 
-    void disconnect();
+    void initialization();
 
+    void shutdown();
+
+    @Deprecated
     boolean createPunishmentsTable();
 
+    @Deprecated
     boolean deletePunishmentTable();
+
+    void wipe();
 
     boolean createPunishment(@NotNull Punishment punishment);
 
@@ -26,10 +32,6 @@ public interface DataProvider {
 
     @Nullable
     Punishment getPunishment(String id);
-
-    @Deprecated
-    @NotNull
-    <T extends Punishment> List<T> getTargetHistory(String target);
 
     @NotNull
     <T extends Punishment> List<T> getTargetHistory(UUID uuid);

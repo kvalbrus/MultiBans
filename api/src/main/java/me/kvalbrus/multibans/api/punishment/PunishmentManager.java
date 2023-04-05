@@ -2,14 +2,11 @@ package me.kvalbrus.multibans.api.punishment;
 
 import java.util.List;
 import java.util.UUID;
+import me.kvalbrus.multibans.api.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface PunishmentManager {
-
-    @Deprecated
-    @NotNull
-    <T extends Punishment> List<T> getPlayerHistory(String target);
 
     @NotNull
     <T extends Punishment> List<T> getPlayerHistory(UUID uuid);
@@ -19,10 +16,6 @@ public interface PunishmentManager {
 
     @NotNull
     <T extends Punishment> List<T> getCreatorHistory(String creator);
-
-    @Deprecated
-    @NotNull
-    <T extends Punishment> List<T> getActivePunishments(String target);
 
     @NotNull
     <T extends Punishment> List<T> getActivePunishments(UUID uuid);
@@ -35,20 +28,22 @@ public interface PunishmentManager {
     @Nullable
     Punishment getPunishment(String id);
 
+    boolean hasActiveBan(UUID uuid);
+
+    boolean hasActiveBanIp(UUID uuid);
+
+    boolean hasActiveChatMute(UUID uuid);
+
     @NotNull
     Punishment generatePunishment(@NotNull final PunishmentType type,
-                                  @NotNull final String ip,
-                                  @NotNull final String target,
-                                  @NotNull final UUID targetUUID,
+                                  @NotNull final Player target,
                                   @NotNull final String creator,
                                   long duration,
                                   @NotNull final String reason);
 
     @NotNull
     Punishment generatePunishment(@NotNull final PunishmentType type,
-                                  @NotNull final String ip,
-                                  @NotNull final String target,
-                                  @NotNull final UUID targetUUID,
+                                  @NotNull final Player target,
                                   @NotNull final String creator,
                                   long duration,
                                   @NotNull final String reason,

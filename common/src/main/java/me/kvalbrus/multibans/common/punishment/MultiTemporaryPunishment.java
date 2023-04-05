@@ -77,7 +77,7 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
 
     @Override
     public synchronized void deactivate() {
-        this.deactivate(null, -1, null);
+        this.deactivate(null, System.currentTimeMillis(), null);
     }
 
     @Override
@@ -95,8 +95,9 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
             return;
         }
 
-        history.sort(null);
         history.removeIf(MultiTemporaryPunishment::isCancelled);
+        history.sort(null);
+
         int size = history.size();
         if (size > 0) {
             MultiTemporaryPunishment prev = null, curr = null;
@@ -108,33 +109,30 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
                 }
             }
 
-            if (index != -1) {
-                if (index == 0) {
-                    while (index < size - 1) {
-                        curr = history.get(index + 1);
-                        if (prev == null) {
-                            curr.startedDate = history.get(0).getStartedDate();
-
-                        } else {
-                            curr.startedDate = prev.startedDate + prev.duration;
-                        }
-
-                        prev = curr;
-                        index++;
-
-                        curr.updateData();
-                    }
-                } else if (index != size - 1) {
-                    prev = history.get(index - 1);
-                    while (index < size - 1) {
-                        curr = history.get(index + 1);
+            if (index == 0) {
+                while (index < size - 1) {
+                    curr = history.get(index + 1);
+                    if (prev == null) {
+                        curr.startedDate = history.get(0).getStartedDate();
+                    } else {
                         curr.startedDate = prev.startedDate + prev.duration;
-
-                        prev = curr;
-                        index++;
-
-                        curr.updateData();
                     }
+
+                    prev = curr;
+                    index++;
+
+                    curr.updateData();
+                }
+            } else if (index != size - 1) {
+                prev = history.get(index - 1);
+                while (index < size - 1) {
+                    curr = history.get(index + 1);
+                    curr.startedDate = prev.startedDate + prev.duration;
+
+                    prev = curr;
+                    index++;
+
+                    curr.updateData();
                 }
             }
         }

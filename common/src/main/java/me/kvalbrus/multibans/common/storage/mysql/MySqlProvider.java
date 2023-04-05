@@ -37,7 +37,12 @@ public class MySqlProvider implements DataProvider {
     }
 
     @Override
-    public void connect() throws Exception {
+    public String getName() {
+        return "MySQL";
+    }
+
+    @Override
+    public void initialization() {
         this.source = new HikariDataSource();
 
         this.source.setPoolName("MultiBans-Pool");
@@ -51,7 +56,7 @@ public class MySqlProvider implements DataProvider {
     }
 
     @Override
-    public void disconnect() {
+    public void shutdown() {
         if (this.source != null) {
             this.source.close();
         }
@@ -75,6 +80,11 @@ public class MySqlProvider implements DataProvider {
     @Override
     public boolean deletePunishmentTable() {
         return false;
+    }
+
+    @Override
+    public void wipe() {
+
     }
 
     @Override
@@ -259,58 +269,6 @@ public class MySqlProvider implements DataProvider {
         }
 
         return null;
-    }
-
-    @NotNull
-    @Override
-    public <T extends Punishment> List<T> getTargetHistory(String target) {
-        List<T> history = new ArrayList<>();
-
-        if (target != null) {
-            try (Connection connection = this.source.getConnection();
-                PreparedStatement statement = connection.prepareStatement(
-                    SQLQuery.HISTORY_PUNISHMENTS_TARGET_NAME.toString())) {
-
-                statement.setString(1, target);
-
-                ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    String id = resultSet.getString("id");
-                    PunishmentType type = PunishmentType.valueOf(resultSet.getString("type"));
-                    String targetIp = resultSet.getString("target_ip");
-                    String targetName = resultSet.getString("target_name");
-                    UUID targetUUID = UUID.fromString(resultSet.getString("target_uuid"));
-                    String creatorName = resultSet.getString("creator_name");
-                    long dateCreated = resultSet.getLong("date_created");
-                    long dateStart = resultSet.getLong("date_start");
-                    long duration = resultSet.getLong("duration");
-                    String reason = resultSet.getString("reason");
-                    String comment = resultSet.getString("comment");
-                    String cancellationCreator = resultSet.getString("cancellation_creator");
-                    long cancellationDate = resultSet.getLong("cancellation_date");
-                    String cancellationReason = resultSet.getString("cancellation_reason");
-
-                    String[] serversString = resultSet.getString("servers").split(";");
-                    List<String> servers = new ArrayList<>(Arrays.stream(serversString).toList());
-
-                    boolean cancelled = resultSet.getBoolean("cancelled");
-
-                    T punishment = MultiPunishment.constructPunishment(
-                        this.pluginManager.getPunishmentManager(), type, id, targetIp, targetName,
-                        targetUUID, creatorName, dateCreated, dateStart, duration, reason, comment,
-                        cancellationCreator, cancellationDate, cancellationReason, servers,
-                        cancelled);
-
-                    history.add(punishment);
-                }
-            } catch (SQLTimeoutException exception) {
-                // TODO: logger
-            } catch (SQLException exception) {
-                // TODO: logger
-            }
-        }
-
-        return history;
     }
 
     @NotNull

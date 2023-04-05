@@ -1,6 +1,9 @@
 package me.kvalbrus.multibans.bukkit;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import me.kvalbrus.multibans.api.MultiBans;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.common.managers.PluginManager;
@@ -8,6 +11,7 @@ import me.kvalbrus.multibans.common.managers.PunishmentManager;
 import me.kvalbrus.multibans.common.storage.DataProvider;
 import me.kvalbrus.multibans.common.storage.StorageData;
 import me.kvalbrus.multibans.common.storage.mysql.MySqlProvider;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -34,10 +38,11 @@ public class PluginManagerBukkit implements PluginManager {
 
     @Override
     public void onLoad() {
-        loadConfiguration();
+        this.loadConfiguration();
+        this.loadCommands();
 
         try {
-            this.dataProvider.connect();
+            this.dataProvider.initialization();
             this.dataProvider.createPunishmentsTable();
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -58,7 +63,7 @@ public class PluginManagerBukkit implements PluginManager {
     @Override
     public void onDisable() {
         if (this.dataProvider != null) {
-            this.dataProvider.disconnect();
+            this.dataProvider.shutdown();
         }
     }
 
@@ -87,6 +92,28 @@ public class PluginManagerBukkit implements PluginManager {
     @Override
     public void saveResource(String path, boolean replace) {
         this.plugin.saveResource(path, replace);
+    }
+
+    @NotNull
+    @Override
+    public List<String> getPlayers() {
+        OfflinePlayer[] offlinePlayers = this.plugin.getServer().getOfflinePlayers();
+        List<String> players = new ArrayList<>();
+        for (OfflinePlayer offlinePlayer : offlinePlayers) {
+            players.add(offlinePlayer.getName());
+        }
+
+        return players;
+    }
+
+    @Override
+    public me.kvalbrus.multibans.api.Player getPlayer(UUID uuid) {
+        return null;
+    }
+
+    @Override
+    public me.kvalbrus.multibans.api.Player getPlayer(String name) {
+        return null;
     }
 
     @Override
@@ -131,9 +158,12 @@ public class PluginManagerBukkit implements PluginManager {
             String password = config.getString("database.password", "");
             String properties = config.getString("database.properties", "");
 
-            this.dataProvider = new MySqlProvider
-                (this,
-                    new StorageData(databaseName, address, port, username, password, properties));
+            this.dataProvider = new MySqlProvider(
+                this, new StorageData(databaseName, address, port, username, password, properties));
         }
+    }
+
+    private void loadCommands() {
+
     }
 }

@@ -40,7 +40,7 @@ public class Ban extends Command {
 
             if (length == 2) {
                 try {
-                    long date = StringUtil.getTime(args[1]);
+                    StringUtil.getTime(args[1]);
                     throw new NotEnoughArgumentsException(3);
                 } catch (IllegalDateFormatException exception) {
                     Punishment punishment = super.getPluginManager().getPunishmentManager()

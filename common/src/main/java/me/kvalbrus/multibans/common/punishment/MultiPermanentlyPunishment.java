@@ -56,12 +56,6 @@ public abstract class MultiPermanentlyPunishment
     }
 
     @Override
-    public synchronized void delete() {
-        this.deactivate();
-        this.deleteData();
-    }
-
-    @Override
     public synchronized void deactivate(@Nullable String cancellationCreator,
                                         long cancellationDate,
                                         @Nullable String cancellationReason) {
@@ -75,6 +69,12 @@ public abstract class MultiPermanentlyPunishment
         this.cancellationReason = cancellationReason;
 
         this.updateData();
+    }
+
+    @Override
+    public synchronized void delete() {
+        this.deactivate();
+        this.deleteData();
     }
 
     @Override
