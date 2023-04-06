@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.UUID;
 import me.kvalbrus.multibans.api.MultiBans;
 import me.kvalbrus.multibans.api.punishment.Punishment;
+import me.kvalbrus.multibans.bukkit.commands.BanBukkit;
+import me.kvalbrus.multibans.bukkit.implementations.BukkitPlayer;
+import me.kvalbrus.multibans.bukkit.listeners.PlayerJoinListener;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.managers.PunishmentManager;
 import me.kvalbrus.multibans.common.storage.DataProvider;
@@ -27,7 +30,7 @@ public class PluginManagerBukkit implements PluginManager {
 
     private final PunishmentManager punishmentManager;
 
-    private MultiBans multiBandProvider;
+    private MultiBans multiBansProvider;
 
     private DataProvider dataProvider;
 
@@ -39,7 +42,6 @@ public class PluginManagerBukkit implements PluginManager {
     @Override
     public void onLoad() {
         this.loadConfiguration();
-        this.loadCommands();
 
         try {
             this.dataProvider.initialization();
@@ -49,9 +51,9 @@ public class PluginManagerBukkit implements PluginManager {
             // TODO: logger
         }
 
-        this.multiBandProvider = new MultiBansBukkit(this);
+        this.multiBansProvider = new MultiBansBukkit(this);
         this.plugin.getServer().getServicesManager()
-            .register(MultiBans.class, this.multiBandProvider, this.plugin, ServicePriority.Normal);
+            .register(MultiBans.class, this.multiBansProvider, this.plugin, ServicePriority.Normal);
     }
 
     @Override
@@ -108,21 +110,23 @@ public class PluginManagerBukkit implements PluginManager {
 
     @Override
     public me.kvalbrus.multibans.api.Player getPlayer(UUID uuid) {
-        return null;
+        return new BukkitPlayer(this.plugin.getServer().getPlayer(uuid));
     }
 
     @Override
     public me.kvalbrus.multibans.api.Player getPlayer(String name) {
-        return null;
+        return new BukkitPlayer(this.plugin.getServer().getPlayer(name));
     }
 
     @Override
     public void activatePunishment(@NotNull Punishment punishment) {
         if (punishment.getType() == PunishmentType.BAN ||
-            punishment.getType() == PunishmentType.BAN_IP) {
+            punishment.getType() == PunishmentType.TEMP_BAN ||
+            punishment.getType() == PunishmentType.BAN_IP ||
+            punishment.getType() == PunishmentType.TEMP_BAN_IP) {
             Player player = this.plugin.getServer().getPlayer(punishment.getTargetUniqueId());
             if (player != null) {
-                player.kickPlayer("");
+                player.kickPlayer(this.punishmentManager.getPlayerTitle(player.getUniqueId()));
             }
         }
 
@@ -137,9 +141,11 @@ public class PluginManagerBukkit implements PluginManager {
     }
 
     private void registerCommands() {
+        new BanBukkit(this, this.plugin);
     }
 
     private void registerListeners() {
+        this.plugin.getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this.plugin);
     }
 
     private void loadConfiguration() {
@@ -161,9 +167,5 @@ public class PluginManagerBukkit implements PluginManager {
             this.dataProvider = new MySqlProvider(
                 this, new StorageData(databaseName, address, port, username, password, properties));
         }
-    }
-
-    private void loadCommands() {
-
     }
 }

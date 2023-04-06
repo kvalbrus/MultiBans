@@ -4,3 +4,8 @@ main: me.kvalbrus.multibans.bukkit.BukkitPlugin
 api-version: 1.19
 authors: [ kvalbrus ]
 description: Plugin for minecraft
+
+commands:
+  ban:
+    aliases: []
+    description: Ban command
