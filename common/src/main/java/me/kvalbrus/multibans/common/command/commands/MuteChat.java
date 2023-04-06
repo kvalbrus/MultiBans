@@ -1,13 +1,14 @@
 package me.kvalbrus.multibans.common.command.commands;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import me.kvalbrus.multibans.api.CommandSender;
+import me.kvalbrus.multibans.api.Player;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.common.Permission;
-import me.kvalbrus.multibans.api.Player;
 import me.kvalbrus.multibans.common.command.Command;
-import me.kvalbrus.multibans.api.CommandSender;
 import me.kvalbrus.multibans.common.exceptions.IllegalDateFormatException;
 import me.kvalbrus.multibans.common.exceptions.NotEnoughArgumentsException;
 import me.kvalbrus.multibans.common.exceptions.NotMatchArgumentsException;
@@ -16,12 +17,14 @@ import me.kvalbrus.multibans.common.exceptions.PlayerNotFoundException;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.utils.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class Ban extends Command {
+public class MuteChat extends Command {
 
-    public Ban(@NotNull PluginManager pluginManager) {
-        super(pluginManager, "ban", Permission.PUNISHMENT_BAN.getName(), null);
+    public MuteChat(@NotNull PluginManager pluginManager) {
+        super(pluginManager, "mute", Permission.PUNISHMENT_CHATMUTE.getName(), null);
     }
+
 
     @Override
     public boolean execute(@NotNull CommandSender sender, String[] args)
@@ -46,7 +49,7 @@ public class Ban extends Command {
                     throw new NotMatchArgumentsException();
                 } catch (IllegalDateFormatException exception) {
                     Punishment punishment = super.getPluginManager().getPunishmentManager()
-                        .generatePunishment(PunishmentType.BAN, player, sender.getName(), -1, args[1]);
+                        .generatePunishment(PunishmentType.MUTE, player, sender.getName(), -1, args[1]);
 
                     punishment.activate();
 
@@ -63,7 +66,7 @@ public class Ban extends Command {
                     }
 
                     Punishment punishment = super.getPluginManager().getPunishmentManager()
-                        .generatePunishment(PunishmentType.BAN, player, sender.getName(),
+                        .generatePunishment(PunishmentType.MUTE, player, sender.getName(),
                             -1, reason.toString());
 
                     punishment.activate();

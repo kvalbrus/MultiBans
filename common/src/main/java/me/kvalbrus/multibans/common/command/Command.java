@@ -5,6 +5,7 @@ import java.util.HashMap;
 import lombok.Getter;
 import me.kvalbrus.multibans.api.CommandSender;
 import me.kvalbrus.multibans.common.exceptions.NotEnoughArgumentsException;
+import me.kvalbrus.multibans.common.exceptions.NotMatchArgumentsException;
 import me.kvalbrus.multibans.common.exceptions.NotPermissionException;
 import me.kvalbrus.multibans.common.exceptions.PlayerNotFoundException;
 import me.kvalbrus.multibans.common.managers.PluginManager;
@@ -35,7 +36,7 @@ public abstract class Command {
     }
 
     public abstract boolean execute(@NotNull CommandSender sender, String[] args)
-        throws NotEnoughArgumentsException, NotPermissionException, PlayerNotFoundException;
+        throws NotEnoughArgumentsException, NotPermissionException, PlayerNotFoundException, NotMatchArgumentsException;
 
     public abstract List<String> tab(@NotNull CommandSender sender,
                                      String[] args);
