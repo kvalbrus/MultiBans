@@ -2,8 +2,8 @@ package me.kvalbrus.multibans.bukkit.commands;
 
 import java.util.List;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitCommandSender;
-import me.kvalbrus.multibans.common.command.commands.Ban;
-import me.kvalbrus.multibans.common.command.commands.TempBan;
+import me.kvalbrus.multibans.common.command.commands.MuteChat;
+import me.kvalbrus.multibans.common.command.commands.TempMuteChat;
 import me.kvalbrus.multibans.common.exceptions.NotEnoughArgumentsException;
 import me.kvalbrus.multibans.common.exceptions.NotMatchArgumentsException;
 import me.kvalbrus.multibans.common.exceptions.NotPermissionException;
@@ -18,20 +18,20 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BanBukkit implements CommandExecutor, TabCompleter {
+public class MuteChatBukkit implements CommandExecutor, TabCompleter {
 
     private final PluginManager pluginManager;
 
-    private final me.kvalbrus.multibans.common.command.Command banCommand;
+    private final me.kvalbrus.multibans.common.command.Command muteChatCommand;
 
-    private final me.kvalbrus.multibans.common.command.Command tempbanCommand;
+    private final me.kvalbrus.multibans.common.command.Command tempMuteChatCommand;
 
-    public BanBukkit(@NotNull PluginManager pluginManager, @NotNull JavaPlugin plugin) {
+    public MuteChatBukkit(@NotNull PluginManager pluginManager, @NotNull JavaPlugin plugin) {
         this.pluginManager = pluginManager;
-        this.banCommand = new Ban(pluginManager);
-        this.tempbanCommand = new TempBan(pluginManager);
+        this.muteChatCommand = new MuteChat(pluginManager);
+        this.tempMuteChatCommand = new TempMuteChat(pluginManager);
 
-        PluginCommand pluginCommand = plugin.getCommand(this.banCommand.getName());
+        PluginCommand pluginCommand = plugin.getCommand(this.muteChatCommand.getName());
         if (pluginCommand != null) {
             pluginCommand.setExecutor(this);
         }
@@ -47,9 +47,9 @@ public class BanBukkit implements CommandExecutor, TabCompleter {
 
         try {
             try {
-                return this.tempbanCommand.execute(bukkitCommandSender, args);
+                return this.tempMuteChatCommand.execute(bukkitCommandSender, args);
             } catch (NotMatchArgumentsException exception) {
-                return this.banCommand.execute(bukkitCommandSender, args);
+                return this.muteChatCommand.execute(bukkitCommandSender, args);
             }
         } catch (NotEnoughArgumentsException exception) {
             return false;
@@ -69,6 +69,6 @@ public class BanBukkit implements CommandExecutor, TabCompleter {
                                       @NotNull String label,
                                       @NotNull String[] args) {
         BukkitCommandSender bukkitCommandSender = new BukkitCommandSender(sender);
-        return this.banCommand.tab(bukkitCommandSender, args);
+        return this.muteChatCommand.tab(bukkitCommandSender, args);
     }
 }

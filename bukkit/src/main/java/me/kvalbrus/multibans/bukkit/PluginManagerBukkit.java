@@ -13,6 +13,8 @@ import java.util.UUID;
 import me.kvalbrus.multibans.api.MultiBans;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.bukkit.commands.BanBukkit;
+import me.kvalbrus.multibans.bukkit.commands.BanIpBukkit;
+import me.kvalbrus.multibans.bukkit.commands.MuteChatBukkit;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitPlayer;
 import me.kvalbrus.multibans.bukkit.listeners.PlayerJoinListener;
 import me.kvalbrus.multibans.common.managers.PluginManager;
@@ -149,6 +151,8 @@ public class PluginManagerBukkit implements PluginManager {
 
     private void registerCommands() {
         new BanBukkit(this, this.plugin);
+        new BanIpBukkit(this, this.plugin);
+        new MuteChatBukkit(this, this.plugin);
     }
 
     private void registerListeners() {
