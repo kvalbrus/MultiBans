@@ -1,6 +1,10 @@
 package me.kvalbrus.multibans.api;
 
-public interface Player extends CommandSender {
+import java.util.UUID;
+
+public interface Player extends CommandSender, OfflinePlayer {
+
+    UUID getUniqueId();
 
     String getHostAddress();
 

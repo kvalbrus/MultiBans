@@ -30,9 +30,15 @@ public interface PunishmentManager {
 
     boolean hasActiveBan(UUID uuid);
 
+    boolean hasActiveBan(String name);
+
     boolean hasActiveBanIp(UUID uuid);
 
+    boolean hasActiveBanIp(String name);
+
     boolean hasActiveChatMute(UUID uuid);
+
+    boolean hasActiveChatMute(String name);
 
     @NotNull
     Punishment generatePunishment(@NotNull final PunishmentType type,
