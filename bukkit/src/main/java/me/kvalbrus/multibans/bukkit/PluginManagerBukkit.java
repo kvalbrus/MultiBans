@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.bukkit.commands.BanBukkit;
 import me.kvalbrus.multibans.bukkit.commands.BanIpBukkit;
 import me.kvalbrus.multibans.bukkit.commands.MuteChatBukkit;
+import me.kvalbrus.multibans.bukkit.implementations.BukkitOfflinePlayer;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitPlayer;
 import me.kvalbrus.multibans.bukkit.listeners.PlayerJoinListener;
 import me.kvalbrus.multibans.common.managers.PluginManager;
@@ -107,14 +109,27 @@ public class PluginManagerBukkit implements PluginManager {
 
     @NotNull
     @Override
-    public List<String> getPlayers() {
-        OfflinePlayer[] offlinePlayers = this.plugin.getServer().getOfflinePlayers();
-        List<String> players = new ArrayList<>();
-        for (OfflinePlayer offlinePlayer : offlinePlayers) {
-            players.add(offlinePlayer.getName());
+    public me.kvalbrus.multibans.api.OfflinePlayer[] getOfflinePlayers() {
+        OfflinePlayer[] players = this.plugin.getServer().getOfflinePlayers();
+        me.kvalbrus.multibans.api.OfflinePlayer[] offlinePlayers = new me.kvalbrus.multibans.api.OfflinePlayer[players.length];
+        for (int i = 0; i < players.length; ++i) {
+            offlinePlayers[i] = new BukkitOfflinePlayer(players[i]);
         }
 
-        return players;
+        return offlinePlayers;
+    }
+
+    @NotNull
+    @Override
+    public me.kvalbrus.multibans.api.Player[] getOnlinePlayers() {
+        Collection<? extends Player> players = this.plugin.getServer().getOnlinePlayers();
+        me.kvalbrus.multibans.api.Player[] onlinePlayers = new me.kvalbrus.multibans.api.Player[players.size()];
+        int i = 0;
+        for (Player player : players) {
+            onlinePlayers[i++] = new BukkitPlayer(player);
+        }
+
+        return onlinePlayers;
     }
 
     @Override

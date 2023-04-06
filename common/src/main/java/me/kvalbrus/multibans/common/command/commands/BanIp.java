@@ -1,6 +1,7 @@
 package me.kvalbrus.multibans.common.command.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import me.kvalbrus.multibans.api.CommandSender;
 import me.kvalbrus.multibans.api.Player;
@@ -14,13 +15,15 @@ import me.kvalbrus.multibans.common.exceptions.NotMatchArgumentsException;
 import me.kvalbrus.multibans.common.exceptions.NotPermissionException;
 import me.kvalbrus.multibans.common.exceptions.PlayerNotFoundException;
 import me.kvalbrus.multibans.common.managers.PluginManager;
+import me.kvalbrus.multibans.common.utils.Message;
+import me.kvalbrus.multibans.common.utils.ReplacedString;
 import me.kvalbrus.multibans.common.utils.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class BanIp extends Command {
 
     public BanIp(@NotNull PluginManager pluginManager) {
-        super(pluginManager, "ban-ip", Permission.PUNISHMENT_BANIP.getName(), null);
+        super(pluginManager, "ban-ip", Permission.PUNISHMENT_BANIP_EXECUTE.getName(), null);
     }
 
     @Override
@@ -40,36 +43,36 @@ public class BanIp extends Command {
                 throw new PlayerNotFoundException(args[0]);
             }
 
-            if (length == 2) {
-                try {
-                    StringUtil.getTime(args[1]);
-                    throw new NotMatchArgumentsException();
-                } catch (IllegalDateFormatException exception) {
-                    Punishment punishment = super.getPluginManager().getPunishmentManager()
-                        .generatePunishment(PunishmentType.BAN_IP, player, sender.getName(), -1, args[1]);
-
-                    punishment.activate();
-
-                    return true;
+            try {
+                StringUtil.getTime(args[1]);
+                throw new NotMatchArgumentsException();
+            } catch (IllegalDateFormatException exception) {
+                StringBuilder reason = new StringBuilder();
+                for (int i = 1; i < length; ++i) {
+                    reason.append(args[i]);
                 }
-            } else {
-                try {
-                    StringUtil.getTime(args[1]);
-                    throw new NotMatchArgumentsException();
-                } catch (IllegalDateFormatException exception) {
-                    StringBuilder reason = new StringBuilder();
-                    for (int i = 1; i < length; ++i) {
-                        reason.append(args[i]);
+
+                Punishment punishment = super.getPluginManager().getPunishmentManager()
+                    .generatePunishment(PunishmentType.BAN_IP, player, sender.getName(),
+                        -1, reason.toString());
+
+                punishment.activate();
+
+                ReplacedString listenMessage = new ReplacedString(Message.BANIP_LISTEN.message)
+                    .replacePlayerName(player)
+                    .replaceCreatorName(sender::getName);
+
+                for (Player p : this.getPluginManager().getOnlinePlayers()) {
+                    if (p.hasPermission(Permission.PUNISHMENT_BANIP_LISTEN.getName())) {
+                        p.sendMessage(listenMessage.string());
                     }
-
-                    Punishment punishment = super.getPluginManager().getPunishmentManager()
-                        .generatePunishment(PunishmentType.BAN_IP, player, sender.getName(),
-                            -1, reason.toString());
-
-                    punishment.activate();
-
-                    return true;
                 }
+
+                ReplacedString creatorMessage = new ReplacedString(Message.BANIP_CREATOR.message)
+                    .replacePlayerName(player);
+                sender.sendMessage(creatorMessage.string());
+
+                return true;
             }
         }
     }
@@ -78,7 +81,9 @@ public class BanIp extends Command {
     @Override
     public List<String> tab(@NotNull CommandSender sender, String[] args) {
         if(args.length == 1) {
-            return this.getPluginManager().getPlayers();
+            List<String> list = new ArrayList<>();
+            Arrays.stream(this.getPluginManager().getOfflinePlayers()).forEach(p -> list.add(p.getName()));
+            return list;
         } else if (args.length == 2) {
             List<String> list = new ArrayList<>();
             list.add("1d");

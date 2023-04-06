@@ -1,6 +1,7 @@
 package me.kvalbrus.multibans.common.command.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import me.kvalbrus.multibans.api.CommandSender;
 import me.kvalbrus.multibans.api.Player;
@@ -14,13 +15,15 @@ import me.kvalbrus.multibans.common.exceptions.NotMatchArgumentsException;
 import me.kvalbrus.multibans.common.exceptions.NotPermissionException;
 import me.kvalbrus.multibans.common.exceptions.PlayerNotFoundException;
 import me.kvalbrus.multibans.common.managers.PluginManager;
+import me.kvalbrus.multibans.common.utils.Message;
+import me.kvalbrus.multibans.common.utils.ReplacedString;
 import me.kvalbrus.multibans.common.utils.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class TempBan extends Command {
 
     public TempBan(@NotNull PluginManager pluginManager) {
-        super(pluginManager, "ban", Permission.PUNISHMENT_TEMPBAN.getName(), null);
+        super(pluginManager, "ban", Permission.PUNISHMENT_TEMPBAN_EXECUTE.getName(), null);
     }
 
     @Override
@@ -63,6 +66,20 @@ public class TempBan extends Command {
 
                     punishment.activate();
 
+                    ReplacedString listenMessage = new ReplacedString(Message.TEMPBAN_LISTEN.message)
+                        .replacePlayerName(player)
+                        .replaceCreatorName(sender::getName);
+
+                    for (Player p : this.getPluginManager().getOnlinePlayers()) {
+                        if (p.hasPermission(Permission.PUNISHMENT_TEMPBAN_LISTEN.getName())) {
+                            p.sendMessage(listenMessage.string());
+                        }
+                    }
+
+                    ReplacedString creatorMessage = new ReplacedString(Message.TEMPBAN_CREATOR.message)
+                        .replacePlayerName(player);
+                    sender.sendMessage(creatorMessage.string());
+
                     return true;
                 } catch (IllegalDateFormatException exception) {
                     throw new NotMatchArgumentsException();
@@ -75,7 +92,9 @@ public class TempBan extends Command {
     @Override
     public List<String> tab(@NotNull CommandSender sender, String[] args) {
         if(args.length == 1) {
-            return this.getPluginManager().getPlayers();
+            List<String> list = new ArrayList<>();
+            Arrays.stream(this.getPluginManager().getOfflinePlayers()).forEach(p -> list.add(p.getName()));
+            return list;
         } else {
             return new ArrayList<>();
         }

@@ -1,7 +1,6 @@
 package me.kvalbrus.multibans.common.utils;
 
 import lombok.Getter;
-import me.kvalbrus.multibans.api.OfflinePlayer;
 
 public enum Message {
 
