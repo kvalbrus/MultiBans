@@ -70,7 +70,7 @@ public class MySqlProvider implements DataProvider {
             statement.execute();
             return true;
         } catch (SQLException exception) {
-            exception.printStackTrace();
+            exception.printStackTrace(); // delete
             // TODO: logger
         }
 

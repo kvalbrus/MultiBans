@@ -1,8 +1,14 @@
 package me.kvalbrus.multibans.bukkit;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.UUID;
 import me.kvalbrus.multibans.api.MultiBans;
 import me.kvalbrus.multibans.api.punishment.Punishment;
@@ -14,6 +20,7 @@ import me.kvalbrus.multibans.common.managers.PunishmentManager;
 import me.kvalbrus.multibans.common.storage.DataProvider;
 import me.kvalbrus.multibans.common.storage.StorageData;
 import me.kvalbrus.multibans.common.storage.mysql.MySqlProvider;
+import me.kvalbrus.multibans.common.utils.Message;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -166,6 +173,50 @@ public class PluginManagerBukkit implements PluginManager {
 
             this.dataProvider = new MySqlProvider(
                 this, new StorageData(databaseName, address, port, username, password, properties));
+        }
+
+        File messages = new File(this.plugin.getDataFolder(), "messages_en.properties");
+        if (!messages.exists()) {
+            try {
+                if (messages.createNewFile()) {
+                    try (FileOutputStream output = new FileOutputStream(messages)) {
+                        StringBuilder write = new StringBuilder();
+                        for (Message message : Message.values()) {
+                            write.append("# ").append(message.getDescription()).append('\n');
+                            write.append(message.getKey())
+                                .append('=')
+                                .append(message.message)
+                                .append('\n');
+                        }
+
+                        output.write(write.toString().getBytes());
+                    }
+                }
+            } catch (IOException exception) {
+                // TODO: Logger
+            }
+        } else {
+            Properties properties = new Properties();
+            try (OutputStream output = new FileOutputStream(messages);
+                 InputStream input = new FileInputStream(messages)
+                 ) {
+                properties.load(input);
+
+                for (Message message : Message.values()) {
+                    if (properties.contains(message.getKey())) {
+                        message.message = properties.getProperty(message.getKey());
+                    } else {
+                        String write = "# " + message.getDescription() + '\n' + message.getKey() +
+                            '=' + message.message + '\n';
+                        output.write(write.getBytes());
+                    }
+                }
+
+                output.close();
+                input.close();
+            } catch (IOException exception) {
+                // TODO: Logger
+            }
         }
     }
 }
