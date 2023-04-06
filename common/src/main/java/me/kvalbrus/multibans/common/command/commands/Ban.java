@@ -23,7 +23,8 @@ public class Ban extends Command {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender sender, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, String[] args)
+        throws NotEnoughArgumentsException, NotPermissionException, PlayerNotFoundException {
         int length = args.length;
 
         if (length < 2) {
@@ -87,9 +88,9 @@ public class Ban extends Command {
     @NotNull
     @Override
     public List<String> tab(@NotNull CommandSender sender, String[] args) {
-        if(args.length == 0) {
+        if(args.length == 1) {
             return this.getPluginManager().getPlayers();
-        } else if (args.length == 1) {
+        } else if (args.length == 2) {
             List<String> list = new ArrayList<>();
             list.add("1d");
             list.add("2d");

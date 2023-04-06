@@ -37,5 +37,8 @@ public interface DataProvider {
     <T extends Punishment> List<T> getTargetHistory(UUID uuid);
 
     @NotNull
+    <T extends Punishment> List<T> getTargetHistory(String name);
+
+    @NotNull
     <T extends Punishment> List<T> getCreatorHistory(String creator);
 }

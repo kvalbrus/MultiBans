@@ -325,6 +325,58 @@ public class MySqlProvider implements DataProvider {
 
     @NotNull
     @Override
+    public <T extends Punishment> List<T> getTargetHistory(String name) {
+        List<T> history = new ArrayList<>();
+
+        if (name != null) {
+            try (Connection connection = this.source.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                    SQLQuery.HISTORY_PUNISHMENTS_TARGET_NAME.toString())) {
+
+                statement.setString(1, name.toString());
+
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    String id = resultSet.getString("id");
+                    PunishmentType type = PunishmentType.valueOf(resultSet.getString("type"));
+                    String targetIp = resultSet.getString("target_ip");
+                    String targetName = resultSet.getString("target_name");
+                    UUID targetUUID = UUID.fromString(resultSet.getString("target_uuid"));
+                    String creatorName = resultSet.getString("creator_name");
+                    long dateCreated = resultSet.getLong("date_created");
+                    long dateStart = resultSet.getLong("date_start");
+                    long duration = resultSet.getLong("duration");
+                    String reason = resultSet.getString("reason");
+                    String comment = resultSet.getString("comment");
+                    String cancellationCreator = resultSet.getString("cancellation_creator");
+                    long cancellationDate = resultSet.getLong("cancellation_date");
+                    String cancellationReason = resultSet.getString("cancellation_reason");
+
+                    String[] serversString = resultSet.getString("servers").split(";");
+                    List<String> servers = new ArrayList<>(Arrays.stream(serversString).toList());
+
+                    boolean cancelled = resultSet.getBoolean("cancelled");
+
+                    T punishment = MultiPunishment.constructPunishment(
+                        this.pluginManager.getPunishmentManager(), type, id, targetIp, targetName,
+                        targetUUID, creatorName, dateCreated, dateStart, duration, reason, comment,
+                        cancellationCreator, cancellationDate, cancellationReason, servers,
+                        cancelled);
+
+                    history.add(punishment);
+                }
+            } catch (SQLTimeoutException exception) {
+                // TODO: logger
+            } catch (SQLException exception) {
+                // TODO: logger
+            }
+        }
+
+        return history;
+    }
+
+    @NotNull
+    @Override
     public <T extends Punishment> List<T> getCreatorHistory(String creator) {
         List<T> history = new ArrayList<>();
 
