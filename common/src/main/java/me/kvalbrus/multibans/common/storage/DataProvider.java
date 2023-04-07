@@ -1,5 +1,6 @@
 package me.kvalbrus.multibans.common.storage;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 import me.kvalbrus.multibans.api.punishment.Punishment;
@@ -10,15 +11,9 @@ public interface DataProvider {
 
     String getName();
 
-    void initialization();
+    void initialization() throws SQLException;
 
     void shutdown();
-
-    @Deprecated
-    boolean createPunishmentsTable();
-
-    @Deprecated
-    boolean deletePunishmentTable();
 
     void wipe();
 

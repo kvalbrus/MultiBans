@@ -5,6 +5,7 @@ import java.util.UUID;
 import me.kvalbrus.multibans.api.OfflinePlayer;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.Player;
+import me.kvalbrus.multibans.api.punishment.PunishmentManager;
 import org.jetbrains.annotations.NotNull;
 import me.kvalbrus.multibans.common.storage.DataProvider;
 

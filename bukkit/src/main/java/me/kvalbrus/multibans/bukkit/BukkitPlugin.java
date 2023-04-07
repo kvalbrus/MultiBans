@@ -15,7 +15,7 @@ public class BukkitPlugin extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
-        this.pluginManager = new PluginManagerBukkit(this);
+        this.pluginManager = new BukkitPluginManager(this);
 
         this.pluginManager.onLoad();
     }

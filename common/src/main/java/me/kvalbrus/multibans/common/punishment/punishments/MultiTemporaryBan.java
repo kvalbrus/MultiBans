@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.UUID;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.punishments.TemporaryBan;
-import me.kvalbrus.multibans.common.managers.PunishmentManager;
+import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.punishment.MultiTemporaryPunishment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MultiTemporaryBan extends MultiTemporaryPunishment implements TemporaryBan {
 
-    public MultiTemporaryBan(@NotNull PunishmentManager punishmentManager,
+    public MultiTemporaryBan(@NotNull PluginManager pluginManager,
                              @NotNull String id,
                              @NotNull String targetIp,
                              @NotNull String targetName,
@@ -27,7 +27,7 @@ public class MultiTemporaryBan extends MultiTemporaryPunishment implements Tempo
                              @Nullable String cancellationReason,
                              @NotNull List<String> servers,
                              boolean cancelled) {
-        super(punishmentManager, PunishmentType.TEMP_BAN, id, targetIp, targetName, targetUUID,
+        super(pluginManager, PunishmentType.TEMP_BAN, id, targetIp, targetName, targetUUID,
             creatorName, createdDate, startedDate, duration, reason, comment, cancellationCreator,
             cancellationDate, cancellationReason, servers, cancelled);
     }

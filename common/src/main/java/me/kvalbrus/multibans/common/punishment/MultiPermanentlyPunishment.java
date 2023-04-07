@@ -5,7 +5,7 @@ import java.util.UUID;
 import me.kvalbrus.multibans.api.punishment.PermanentlyPunishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentStatus;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
-import me.kvalbrus.multibans.common.managers.PunishmentManager;
+import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.storage.DataProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +21,7 @@ public abstract class MultiPermanentlyPunishment
 
     private boolean cancelled;
 
-    public MultiPermanentlyPunishment(@NotNull PunishmentManager punishmentManager,
+    public MultiPermanentlyPunishment(@NotNull PluginManager pluginManager,
                                       @NotNull PunishmentType type,
                                       @NotNull String id,
                                       @NotNull String targetIp,
@@ -36,7 +36,7 @@ public abstract class MultiPermanentlyPunishment
                                       @Nullable String cancellationReason,
                                       @NotNull List<String> servers,
                                       boolean cancelled) {
-        super(punishmentManager, type, id, targetIp, targetName, targetUUID, creatorName,
+        super(pluginManager, type, id, targetIp, targetName, targetUUID, creatorName,
             dateCreated, reason, comment, servers);
         this.cancellationCreator = cancellationCreator;
         this.cancellationDate = cancellationDate;
@@ -79,7 +79,7 @@ public abstract class MultiPermanentlyPunishment
 
     @Override
     public synchronized void updateData() {
-        DataProvider dataProvider = this.getPunishmentManager().getPluginManager().getDataProvider();
+        DataProvider dataProvider = this.getPluginManager().getDataProvider();
         if (dataProvider != null) {
             if (dataProvider.hasPunishment(this.getId())) {
                 dataProvider.updatePunishment(this);
@@ -91,7 +91,7 @@ public abstract class MultiPermanentlyPunishment
 
     @Override
     public synchronized void deleteData() {
-        DataProvider dataProvider = this.getPunishmentManager().getPluginManager().getDataProvider();
+        DataProvider dataProvider = this.getPluginManager().getDataProvider();
         if (dataProvider != null && dataProvider.hasPunishment(this.getId())) {
             dataProvider.deletePunishment(this);
         }

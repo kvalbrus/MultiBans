@@ -1,15 +1,20 @@
 package me.kvalbrus.multibans.common.storage.mysql;
 
+import com.mysql.cj.jdbc.MysqlDataSource;
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
 import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.UUID;
+import javax.sql.DataSource;
 import me.kvalbrus.multibans.api.punishment.Cancelable;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
@@ -18,7 +23,8 @@ import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.punishment.MultiPunishment;
 import me.kvalbrus.multibans.common.punishment.MultiTemporaryPunishment;
 import me.kvalbrus.multibans.common.storage.DataProvider;
-import me.kvalbrus.multibans.common.storage.StorageData;
+import me.kvalbrus.multibans.common.storage.DataProviderSettings;
+import me.kvalbrus.multibans.common.storage.DataProviderType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,14 +32,14 @@ public class MySqlProvider implements DataProvider {
 
     private final PluginManager pluginManager;
 
-    private final StorageData data;
+    private final DataProviderSettings dataProviderSettings;
 
     private HikariDataSource source;
 
     public MySqlProvider(@NotNull PluginManager pluginManager,
-                         @NotNull StorageData data) {
+                         @NotNull DataProviderSettings dataProviderSettings) {
         this.pluginManager = pluginManager;
-        this.data = data;
+        this.dataProviderSettings = dataProviderSettings;
     }
 
     @Override
@@ -42,17 +48,39 @@ public class MySqlProvider implements DataProvider {
     }
 
     @Override
-    public void initialization() {
-        this.source = new HikariDataSource();
+    public void initialization() throws SQLException {
+        if (this.dataProviderSettings.getType() == DataProviderType.MY_SQL) {
+            this.source = new HikariDataSource();
+
+            Properties properties = this.dataProviderSettings.getProperties();
+            this.source.setJdbcUrl("jdbc:mysql://" +
+                properties.getProperty("dataSource.serverName") + ":" +
+                properties.getProperty("dataSource.portNumber") + "/" +
+                properties.getProperty("dataSource.databaseName"));
+            this.source.setUsername(properties.getProperty("dataSource.user"));
+            this.source.setPassword(properties.getProperty("dataSource.password"));
+        } else {
+            this.source = new HikariDataSource(new HikariConfig(this.dataProviderSettings.getProperties()));
+        }
 
         this.source.setPoolName("MultiBans-Pool");
-        this.source.setJdbcUrl("jdbc:mysql://"
-            + this.data.getAddress() + ":"
-            + this.data.getPort() + "/"
-            + this.data.getDatabaseName() + "?"
-            + this.data.getProperties());
-        this.source.setUsername(this.data.getUsername());
-        this.source.setPassword(this.data.getPassword());
+
+        try (Connection connection = this.source.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                SQLQuery.CREATE_TABLE_PUNISHMENTS.toString())) {
+            statement.execute();
+        } catch (SQLSyntaxErrorException exception) {
+            exception.printStackTrace();//
+        }
+
+        //        this.source.setPoolName("MultiBans-Pool");
+//        this.source.setJdbcUrl("jdbc:mysql://"
+//            + this.dataProviderSettings.getAddress() + ":"
+//            + this.dataProviderSettings.getPort() + "/"
+//            + this.dataProviderSettings.getDatabaseName() + "?"
+//            + this.dataProviderSettings.getProperties());
+//        this.source.setUsername(this.dataProviderSettings.getUsername());
+//        this.source.setPassword(this.dataProviderSettings.getPassword());
     }
 
     @Override
@@ -62,25 +90,25 @@ public class MySqlProvider implements DataProvider {
         }
     }
 
-    @Override
-    public synchronized boolean createPunishmentsTable() {
-        try (Connection connection = this.source.getConnection();
-            PreparedStatement statement = connection.prepareStatement(
-                SQLQuery.CREATE_TABLE_PUNISHMENTS.toString())) {
-            statement.execute();
-            return true;
-        } catch (SQLException exception) {
-            exception.printStackTrace(); // delete
-            // TODO: logger
-        }
+//    @Override
+//    public synchronized boolean createPunishmentsTable() {
+//        try (Connection connection = this.source.getConnection();
+//            PreparedStatement statement = connection.prepareStatement(
+//                SQLQuery.CREATE_TABLE_PUNISHMENTS.toString())) {
+//            statement.execute();
+//            return true;
+//        } catch (SQLException exception) {
+//            exception.printStackTrace(); // delete
+//            // TODO: logger
+//        }
+//
+//        return false;
+//    }
 
-        return false;
-    }
-
-    @Override
-    public boolean deletePunishmentTable() {
-        return false;
-    }
+//    @Override
+//    public boolean deletePunishmentTable() {
+//        return false;
+//    }
 
     @Override
     public void wipe() {
@@ -254,7 +282,7 @@ public class MySqlProvider implements DataProvider {
                 boolean cancelled = resultSet.getBoolean("cancelled");
 
                 Punishment punishment = MultiPunishment.constructPunishment(
-                    this.pluginManager.getPunishmentManager(), type, id, targetIp, targetName,
+                    this.pluginManager, type, id, targetIp, targetName,
                     targetUUID,
                     creatorName, dateCreated, dateStart, duration, reason, comment,
                     cancellationCreator,
@@ -306,7 +334,7 @@ public class MySqlProvider implements DataProvider {
                     boolean cancelled = resultSet.getBoolean("cancelled");
 
                     T punishment = MultiPunishment.constructPunishment(
-                        this.pluginManager.getPunishmentManager(), type, id, targetIp, targetName,
+                        this.pluginManager, type, id, targetIp, targetName,
                         targetUUID, creatorName, dateCreated, dateStart, duration, reason, comment,
                         cancellationCreator, cancellationDate, cancellationReason, servers,
                         cancelled);
@@ -358,7 +386,7 @@ public class MySqlProvider implements DataProvider {
                     boolean cancelled = resultSet.getBoolean("cancelled");
 
                     T punishment = MultiPunishment.constructPunishment(
-                        this.pluginManager.getPunishmentManager(), type, id, targetIp, targetName,
+                        this.pluginManager, type, id, targetIp, targetName,
                         targetUUID, creatorName, dateCreated, dateStart, duration, reason, comment,
                         cancellationCreator, cancellationDate, cancellationReason, servers,
                         cancelled);
@@ -410,7 +438,7 @@ public class MySqlProvider implements DataProvider {
                     boolean cancelled = resultSet.getBoolean("cancelled");
 
                     T punishment = MultiPunishment.constructPunishment(
-                        this.pluginManager.getPunishmentManager(), type, id, targetIp, targetName,
+                        this.pluginManager, type, id, targetIp, targetName,
                         targetUUID,
                         creatorName, dateCreated, dateStart, duration, reason, comment,
                         cancellationCreator,

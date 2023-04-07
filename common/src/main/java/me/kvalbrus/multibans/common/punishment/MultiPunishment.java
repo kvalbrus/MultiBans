@@ -5,7 +5,8 @@ import java.util.UUID;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment;
-import me.kvalbrus.multibans.common.managers.PunishmentManager;
+import me.kvalbrus.multibans.api.punishment.PunishmentManager;
+import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiPermanentlyBan;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiPermanentlyBanIp;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiPermanentlyChatMute;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class MultiPunishment implements Punishment {
 
-    private final PunishmentManager punishmentManager;
+    private final PluginManager pluginManager;
 
     private final PunishmentType type;
 
@@ -39,7 +40,7 @@ public abstract class MultiPunishment implements Punishment {
 
     private List<String> servers;
 
-    public MultiPunishment(@NotNull PunishmentManager punishmentManager,
+    public MultiPunishment(@NotNull PluginManager pluginManager,
                            @NotNull final PunishmentType type,
                            @NotNull final String id,
                            @NotNull final String targetIp,
@@ -50,7 +51,7 @@ public abstract class MultiPunishment implements Punishment {
                            @Nullable String reason,
                            @Nullable String comment,
                            @NotNull List<String> servers) {
-        this.punishmentManager = punishmentManager;
+        this.pluginManager = pluginManager;
         this.type = type;
         this.id = id;
         this.targetIp = targetIp;
@@ -65,7 +66,7 @@ public abstract class MultiPunishment implements Punishment {
 
     @NotNull
     public static <T extends Punishment> T constructPunishment(
-        @NotNull PunishmentManager punishmentManager,
+        @NotNull PluginManager pluginManager,
         @NotNull PunishmentType type,
         @NotNull String id,
         @NotNull String targetIp,
@@ -85,40 +86,40 @@ public abstract class MultiPunishment implements Punishment {
         Punishment punishment;
         switch (type) {
             case BAN:
-                punishment = new MultiPermanentlyBan(punishmentManager, id, targetIp, targetName,
+                punishment = new MultiPermanentlyBan(pluginManager, id, targetIp, targetName,
                     targetUniqueId, creatorName, createdDate, createdReason, comment,
                     cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
                 break;
 
             case TEMP_BAN:
-                punishment = new MultiTemporaryBan(punishmentManager, id, targetIp, targetName,
+                punishment = new MultiTemporaryBan(pluginManager, id, targetIp, targetName,
                     targetUniqueId,
                     creatorName, createdDate, startedDate, duration, createdReason, comment,
                     cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
                 break;
 
             case BAN_IP:
-                punishment = new MultiPermanentlyBanIp(punishmentManager, id, targetIp, targetName,
+                punishment = new MultiPermanentlyBanIp(pluginManager, id, targetIp, targetName,
                     targetUniqueId, creatorName, createdDate, createdReason, comment,
                     cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
                 break;
 
             case TEMP_BAN_IP:
-                punishment = new MultiTemporaryBanIp(punishmentManager, id, targetIp, targetName,
+                punishment = new MultiTemporaryBanIp(pluginManager, id, targetIp, targetName,
                     targetUniqueId, creatorName, createdDate, startedDate, duration, createdReason,
                     comment, cancellationCreator, cancellationDate, cancellationReason, servers,
                     cancelled);
                 break;
 
             case MUTE:
-                punishment = new MultiPermanentlyChatMute(punishmentManager, id, targetIp,
+                punishment = new MultiPermanentlyChatMute(pluginManager, id, targetIp,
                     targetName,
                     targetUniqueId, creatorName, createdDate, createdReason, comment,
                     cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
                 break;
 
             case TEMP_MUTE:
-                punishment = new MultiTemporaryChatMute(punishmentManager, id, targetIp, targetName,
+                punishment = new MultiTemporaryChatMute(pluginManager, id, targetIp, targetName,
                     targetUniqueId, creatorName, createdDate, startedDate, duration, createdReason,
                     comment, cancellationCreator, cancellationDate, cancellationReason, servers,
                     cancelled);
@@ -133,19 +134,19 @@ public abstract class MultiPunishment implements Punishment {
 
     @Override
     public synchronized void activate() {
-        this.punishmentManager.getPluginManager().activatePunishment(this);
+        this.pluginManager.activatePunishment(this);
         this.updateData();
     }
 
     @Override
     public synchronized void delete() {
-        this.punishmentManager.getPluginManager().getDataProvider().deletePunishment(this);
+        this.pluginManager.getDataProvider().deletePunishment(this);
         this.deleteData();
     }
 
     @NotNull
-    public final PunishmentManager getPunishmentManager() {
-        return this.punishmentManager;
+    public final PluginManager getPluginManager() {
+        return this.pluginManager;
     }
 
     @NotNull

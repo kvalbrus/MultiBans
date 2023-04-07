@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyChatMute;
-import me.kvalbrus.multibans.common.managers.PunishmentManager;
+import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.punishment.MultiPermanentlyPunishment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 public class MultiPermanentlyChatMute extends MultiPermanentlyPunishment implements
     PermanentlyChatMute {
 
-    public MultiPermanentlyChatMute(@NotNull PunishmentManager punishmentManager,
+    public MultiPermanentlyChatMute(@NotNull PluginManager pluginManager,
                                     @NotNull String id,
                                     @NotNull String targetIp,
                                     @NotNull String targetName,
@@ -23,7 +23,7 @@ public class MultiPermanentlyChatMute extends MultiPermanentlyPunishment impleme
                                     @Nullable String cancellationCreator, long cancellationDate,
                                     @Nullable String cancellationReason,
                                     @NotNull List<String> servers, boolean cancelled) {
-        super(punishmentManager, PunishmentType.MUTE, id, targetIp, targetName, targetUUID,
+        super(pluginManager, PunishmentType.MUTE, id, targetIp, targetName, targetUUID,
             creatorName, dateCreated, reason, comment, cancellationCreator, cancellationDate,
             cancellationReason, servers, cancelled);
     }

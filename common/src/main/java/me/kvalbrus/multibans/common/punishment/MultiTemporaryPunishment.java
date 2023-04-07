@@ -5,7 +5,7 @@ import java.util.UUID;
 import me.kvalbrus.multibans.api.punishment.PunishmentStatus;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment;
-import me.kvalbrus.multibans.common.managers.PunishmentManager;
+import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.storage.DataProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +25,7 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
 
     private long duration;
 
-    public MultiTemporaryPunishment(@NotNull PunishmentManager punishmentManager,
+    public MultiTemporaryPunishment(@NotNull PluginManager pluginManager,
                                     @NotNull PunishmentType type,
                                     @NotNull String id,
                                     @NotNull String targetIp,
@@ -42,7 +42,7 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
                                     @Nullable String cancellationReason,
                                     @NotNull List<String> servers,
                                     boolean cancelled) {
-        super(punishmentManager, type, id, targetIp, targetName, targetUUID, creatorName,
+        super(pluginManager, type, id, targetIp, targetName, targetUUID, creatorName,
             createdDate, reason, comment, servers);
         this.startedDate = startedDate;
         this.cancellationCreator = cancellationCreator;
@@ -56,8 +56,8 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
     public synchronized void activate() {
         this.cancelled = false;
 
-        List<? extends MultiTemporaryPunishment> activePunishments = this.getPunishmentManager()
-            .getActivePunishments(this.getTargetUniqueId(), this.getClass());
+        List<? extends MultiTemporaryPunishment> activePunishments = this.getPluginManager()
+            .getPunishmentManager().getActivePunishments(this.getTargetUniqueId(), this.getClass());
 
         final int size = activePunishments.size();
         if (size > 0) {
@@ -71,7 +71,7 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
             this.startedDate = this.getCreatedDate();
         }
 
-        this.getPunishmentManager().getPluginManager().activatePunishment(this);
+        this.getPluginManager().activatePunishment(this);
         this.updateData();
     }
 
@@ -88,8 +88,8 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
             return;
         }
 
-        List<? extends MultiTemporaryPunishment> history = this.getPunishmentManager()
-            .getPlayerHistory(this.getTargetUniqueId(), this.getClass());
+        List<? extends MultiTemporaryPunishment> history = this.getPluginManager()
+            .getPunishmentManager().getPlayerHistory(this.getTargetUniqueId(), this.getClass());
 
         if(history.stream().noneMatch(punishment -> punishment.getId().equals(this.getId()))) {
             return;
@@ -142,7 +142,7 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
         this.cancellationDate = cancellationDate;
         this.cancellationReason = cancellationReason;
 
-        this.getPunishmentManager().getPluginManager().deactivatePunishment(this);
+        this.getPluginManager().deactivatePunishment(this);
         this.updateData();
     }
 
@@ -154,7 +154,7 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
 
     @Override
     public synchronized void updateData() {
-        DataProvider dataProvider = this.getPunishmentManager().getPluginManager().getDataProvider();
+        DataProvider dataProvider = this.getPluginManager().getDataProvider();
         if (dataProvider != null) {
             if (dataProvider.hasPunishment(this.getId())) {
                 dataProvider.updatePunishment(this);
@@ -166,7 +166,7 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment implement
 
     @Override
     public synchronized void deleteData() {
-        DataProvider dataProvider = this.getPunishmentManager().getPluginManager().getDataProvider();
+        DataProvider dataProvider = this.getPluginManager().getDataProvider();
         if (dataProvider != null && dataProvider.hasPunishment(this.getId())) {
             dataProvider.deletePunishment(this);
         }

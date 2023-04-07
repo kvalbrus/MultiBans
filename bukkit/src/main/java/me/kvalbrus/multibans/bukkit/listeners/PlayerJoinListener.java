@@ -19,7 +19,7 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onJoinEvent(AsyncPlayerPreLoginEvent event) {
 
-        PunishmentManager punManager = pluginManager.getPunishmentManager();
+        PunishmentManager punManager = (PunishmentManager) pluginManager.getPunishmentManager();
 
         if (punManager.hasActiveBan(event.getUniqueId()) || punManager.hasActiveBanIp(event.getUniqueId())) {
             event.disallow(Result.KICK_BANNED, punManager.getPlayerTitle(event.getUniqueId()));

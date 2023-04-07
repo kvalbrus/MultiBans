@@ -173,7 +173,7 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.punishment.P
 
         long realTime = System.currentTimeMillis();
 
-        return MultiPunishment.constructPunishment(this, type, id,
+        return MultiPunishment.constructPunishment(this.pluginManager, type, id,
             target.getHostAddress(), target.getName(), target.getUniqueId(), creatorName, realTime,
             realTime, duration, reason, comment, null, -1, null, servers, false);
     }
