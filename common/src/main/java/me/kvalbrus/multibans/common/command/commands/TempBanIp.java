@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 public class TempBanIp extends Command {
 
     public TempBanIp(@NotNull PluginManager pluginManager) {
-        super(pluginManager, "ban", Permission.PUNISHMENT_TEMPBANIP_EXECUTE.getName(), null);
+        super(pluginManager, "ban-ip", Permission.PUNISHMENT_TEMPBANIP_EXECUTE.getName(), null);
     }
 
     @Override
@@ -36,6 +36,7 @@ public class TempBanIp extends Command {
             throw new NotEnoughArgumentsException(2);
         } else {
             if (!sender.hasPermission(super.getPermission())) {
+                sender.sendMessage(Message.NOT_PERMISSION_TEMPBANIP_EXECUTE.message);
                 throw new NotPermissionException();
             }
 

@@ -167,6 +167,42 @@ public enum Message {
         "unbanip.creator",
         "",
         ""
+    ),
+
+    NOT_PERMISSION_BAN_EXECUTE(
+        "error.permission.ban.execute",
+        "",
+        ""
+    ),
+
+    NOT_PERMISSION_TEMPBAN_EXECUTE(
+        "error.permission.tempban.execute",
+        "",
+        ""
+    ),
+
+    NOT_PERMISSION_BANIP_EXECUTE(
+        "error.permission.banip.execute",
+        "",
+        ""
+    ),
+
+    NOT_PERMISSION_TEMPBANIP_EXECUTE(
+        "error.permission.tempbanip.execute",
+        "",
+        ""
+    ),
+
+    NOT_PERMISSION_MUTECHAT_EXECUTE(
+        "error.permission.mutechat.execute",
+        "",
+        ""
+    ),
+
+    NOT_PERMISSION_TEMPMUTECHAT_EXECUTE(
+        "error.permission.tempmutechat.execute",
+        "",
+        ""
     );
 
     @Getter

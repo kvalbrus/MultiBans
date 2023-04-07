@@ -36,6 +36,7 @@ public class TempMuteChat extends Command {
             throw new NotEnoughArgumentsException(2);
         } else {
             if (!sender.hasPermission(super.getPermission())) {
+                sender.sendMessage(Message.NOT_PERMISSION_TEMPMUTECHAT_EXECUTE.message);
                 throw new NotPermissionException();
             }
 
