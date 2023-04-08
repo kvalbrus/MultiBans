@@ -2,12 +2,12 @@ package me.kvalbrus.multibans.common.managers;
 
 import java.io.File;
 import java.util.UUID;
+import me.kvalbrus.multibans.api.DataProvider;
 import me.kvalbrus.multibans.api.OfflinePlayer;
-import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.Player;
-import me.kvalbrus.multibans.api.punishment.PunishmentManager;
+import me.kvalbrus.multibans.api.punishment.Punishment;
+import me.kvalbrus.multibans.api.managers.PunishmentManager;
 import org.jetbrains.annotations.NotNull;
-import me.kvalbrus.multibans.common.storage.DataProvider;
 
 public interface PluginManager {
 
@@ -39,9 +39,7 @@ public interface PluginManager {
 
     Player getPlayer(String name);
 
-    @Deprecated
     void activatePunishment(@NotNull Punishment punishment);
 
-    @Deprecated
     void deactivatePunishment(@NotNull Punishment punishment);
 }

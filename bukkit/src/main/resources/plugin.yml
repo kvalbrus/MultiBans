@@ -8,4 +8,7 @@ description: Plugin for minecraft
 commands:
   ban:
     aliases: []
-    description: Ban command
+  banip:
+    aliases: []
+  mute:
+    aliases: []

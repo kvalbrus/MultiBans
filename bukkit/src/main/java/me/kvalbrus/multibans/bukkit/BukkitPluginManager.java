@@ -26,34 +26,16 @@ public class BukkitPluginManager extends MultiBansPluginManager {
 
     private final BukkitPlugin plugin;
 
-    private MultiBans multiBansProvider;
-
     public BukkitPluginManager(@NotNull BukkitPlugin plugin) {
         super();
         this.plugin = plugin;
     }
 
-//    @Override
-//    public void onLoad() {
-//        this.loadConfiguration();
-//
-//        try {
-//            this.dataProvider.initialization();
-//            this.dataProvider.createPunishmentsTable();
-//        } catch (Exception exception) {
-//            exception.printStackTrace();
-//            // TODO: logger
-//        }
-//
-//
-//
-//    }
-
     @Override
     public void onEnable() {
-        this.multiBansProvider = new MultiBansBukkit(this);
+        MultiBans multiBansProvider = new MultiBansBukkit(this);
         this.plugin.getServer().getServicesManager()
-            .register(MultiBans.class, this.multiBansProvider, this.plugin, ServicePriority.Normal);
+            .register(MultiBans.class, multiBansProvider, this.plugin, ServicePriority.Normal);
         this.registerCommands();
         this.registerListeners();
     }
@@ -142,27 +124,4 @@ public class BukkitPluginManager extends MultiBansPluginManager {
     private void registerListeners() {
         this.plugin.getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this.plugin);
     }
-
-//    private void loadConfiguration() {
-////        File file = new File(this.plugin.getDataFolder(), "settings.yml");
-////        if (!file.exists()) {
-////            this.plugin.saveResource("settings.yml", false);
-////        }
-////
-////        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-////
-////        if (config.contains("database")) {
-////            String address = config.getString("database.address", "");
-////            int port = config.getInt("database.port");
-////            String databaseName = config.getString("database.database_name", "");
-////            String username = config.getString("database.username", "");
-////            String password = config.getString("database.password", "");
-////            String properties = config.getString("database.properties", "");
-////
-////            this.getDataProvider() = new MySqlProvider(
-////                this, new DataProviderSettings(databaseName, address, port, username, password, properties));
-////        }
-//
-//
-//    }
 }

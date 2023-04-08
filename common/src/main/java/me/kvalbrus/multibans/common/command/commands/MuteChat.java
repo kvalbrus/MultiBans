@@ -2,7 +2,6 @@ package me.kvalbrus.multibans.common.command.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import me.kvalbrus.multibans.api.CommandSender;
 import me.kvalbrus.multibans.api.Player;
@@ -20,7 +19,6 @@ import me.kvalbrus.multibans.common.utils.Message;
 import me.kvalbrus.multibans.common.utils.ReplacedString;
 import me.kvalbrus.multibans.common.utils.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class MuteChat extends Command {
 

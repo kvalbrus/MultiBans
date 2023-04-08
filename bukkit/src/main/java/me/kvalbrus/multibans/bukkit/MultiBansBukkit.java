@@ -3,7 +3,7 @@ package me.kvalbrus.multibans.bukkit;
 import me.kvalbrus.multibans.api.MultiBans;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import org.jetbrains.annotations.NotNull;
-import me.kvalbrus.multibans.api.punishment.PunishmentManager;
+import me.kvalbrus.multibans.api.managers.PunishmentManager;
 
 public class MultiBansBukkit implements MultiBans {
 

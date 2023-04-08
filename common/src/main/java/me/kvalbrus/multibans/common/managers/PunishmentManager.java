@@ -8,14 +8,14 @@ import lombok.Getter;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.Player;
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment;
+import me.kvalbrus.multibans.api.utils.TimeType;
 import me.kvalbrus.multibans.common.punishment.MultiPunishment;
-import me.kvalbrus.multibans.common.utils.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import me.kvalbrus.multibans.api.punishment.PunishmentStatus;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 
-public class PunishmentManager implements me.kvalbrus.multibans.api.punishment.PunishmentManager {
+public class PunishmentManager implements me.kvalbrus.multibans.api.managers.PunishmentManager {
 
     @Getter
     @NotNull
@@ -166,9 +166,15 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.punishment.P
                                                       @NotNull String reason,
                                                       @Nullable String comment,
                                                       @NotNull List<String> servers) {
-        String id = generateId();
+        String id = this.generateId();
+        long start = System.currentTimeMillis();
         while (this.pluginManager.getDataProvider().hasPunishment(id)) {
-            id = generateId();
+            if (System.currentTimeMillis() - start > 5 * TimeType.SECOND.getDuration()) {
+                id = id + new Random().nextInt(422);
+                break;
+            }
+
+            id = this.generateId();
         }
 
         long realTime = System.currentTimeMillis();
@@ -239,7 +245,7 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.punishment.P
         StringBuilder builder = new StringBuilder();
         Random random = new Random();
 
-        for (int i = 0; i < 7; ++i) {
+        for (int i = 0; i < ((MultiBansPluginManager) this.pluginManager).getSettings().getIdSize(); ++i) {
             builder.append(random.nextInt(10));
         }
 

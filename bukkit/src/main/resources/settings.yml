@@ -1,7 +1,0 @@
-database:
-  address: ""
-  port: 3306
-  database_name: ""
-  username: ""
-  password: ""
-  properties: ""

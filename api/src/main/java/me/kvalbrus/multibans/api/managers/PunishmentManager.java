@@ -1,8 +1,10 @@
-package me.kvalbrus.multibans.api.punishment;
+package me.kvalbrus.multibans.api.managers;
 
 import java.util.List;
 import java.util.UUID;
 import me.kvalbrus.multibans.api.Player;
+import me.kvalbrus.multibans.api.punishment.Punishment;
+import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

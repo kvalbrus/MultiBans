@@ -5,7 +5,6 @@ import java.util.UUID;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment;
-import me.kvalbrus.multibans.api.punishment.PunishmentManager;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiPermanentlyBan;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiPermanentlyBanIp;

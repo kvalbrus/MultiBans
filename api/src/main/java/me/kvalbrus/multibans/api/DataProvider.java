@@ -1,4 +1,4 @@
-package me.kvalbrus.multibans.common.storage;
+package me.kvalbrus.multibans.api;
 
 import java.sql.SQLException;
 import java.util.List;

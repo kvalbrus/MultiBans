@@ -4,6 +4,5 @@ import org.jetbrains.annotations.NotNull;
 
 public interface OfflinePlayer {
 
-    @NotNull
     String getName();
 }

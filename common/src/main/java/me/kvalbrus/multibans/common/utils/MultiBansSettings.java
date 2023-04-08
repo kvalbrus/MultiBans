@@ -43,14 +43,16 @@ public class MultiBansSettings {
 
         Map<String, Object> map = new HashMap<>();
 
-        if (toml.contains("idSize")) {
-            this.idSize = toml.getLong("idSize");
+        long idSize = toml.getLong("idSize");
+        if (idSize > 0 && idSize < 100) {
+            this.idSize = idSize;
         }
-        map.put("isSize", this.idSize);
 
         if (toml.contains("maskIp")) {
             this.maskIp = toml.getBoolean("maskIp");
         }
+
+        map.put("isSize", this.idSize);
         map.put("maskIp", this.maskIp);
 
         try {

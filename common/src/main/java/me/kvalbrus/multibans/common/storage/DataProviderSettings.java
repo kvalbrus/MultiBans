@@ -2,7 +2,6 @@ package me.kvalbrus.multibans.common.storage;
 
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
-import com.mysql.cj.jdbc.NonRegisteringDriver;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,28 +24,6 @@ public class DataProviderSettings {
 
     @Getter
     private Properties properties;
-//
-//    @Getter
-//    @NotNull
-//    private final String databaseName;
-//
-//    @Getter
-//    @NotNull
-//    private final String address;
-//
-//    @Getter
-//    private final int port;
-//
-//    @Getter
-//    @NotNull
-//    private final String username;
-//
-//    @Getter
-//    @NotNull
-//    private final String password;
-//
-//    @Getter
-//    private final String properties;
 
     public DataProviderSettings(@NotNull PluginManager pluginManager) {
         this.pluginManager = pluginManager;
@@ -102,19 +79,4 @@ public class DataProviderSettings {
 
         return this;
     }
-
-//    @Deprecated
-//    public DataProviderSettings(@NotNull final String databaseName,
-//                                @NotNull final String address,
-//                                final int port,
-//                                @NotNull final String username,
-//                                @NotNull final String password,
-//                                final String properties) {
-//        this.databaseName = databaseName;
-//        this.address = address;
-//        this.port = port;
-//        this.username = username;
-//        this.password = password;
-//        this.properties = properties;
-//    }
 }

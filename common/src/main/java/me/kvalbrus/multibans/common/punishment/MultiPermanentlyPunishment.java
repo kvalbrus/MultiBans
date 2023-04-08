@@ -6,7 +6,7 @@ import me.kvalbrus.multibans.api.punishment.PermanentlyPunishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentStatus;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.common.managers.PluginManager;
-import me.kvalbrus.multibans.common.storage.DataProvider;
+import me.kvalbrus.multibans.api.DataProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

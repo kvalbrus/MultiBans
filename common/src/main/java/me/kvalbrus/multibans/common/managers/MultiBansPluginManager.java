@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.Properties;
-import me.kvalbrus.multibans.common.storage.DataProvider;
+import me.kvalbrus.multibans.api.DataProvider;
 import me.kvalbrus.multibans.common.storage.DataProviderSettings;
 import me.kvalbrus.multibans.common.storage.DataProviderType;
 import me.kvalbrus.multibans.common.storage.mysql.MySqlProvider;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class MultiBansPluginManager implements PluginManager {
 
-    private final me.kvalbrus.multibans.api.punishment.PunishmentManager punishmentManager;
+    private final me.kvalbrus.multibans.api.managers.PunishmentManager punishmentManager;
 
     private DataProvider dataProvider;
 
@@ -107,7 +107,7 @@ public abstract class MultiBansPluginManager implements PluginManager {
     }
 
     @NotNull
-    public final me.kvalbrus.multibans.api.punishment.PunishmentManager getPunishmentManager() {
+    public final me.kvalbrus.multibans.api.managers.PunishmentManager getPunishmentManager() {
         return this.punishmentManager;
     }
 }

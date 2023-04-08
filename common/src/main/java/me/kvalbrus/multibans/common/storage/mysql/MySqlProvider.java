@@ -1,6 +1,5 @@
 package me.kvalbrus.multibans.common.storage.mysql;
 
-import com.mysql.cj.jdbc.MysqlDataSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
@@ -14,7 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
-import javax.sql.DataSource;
 import me.kvalbrus.multibans.api.punishment.Cancelable;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
@@ -22,7 +20,7 @@ import me.kvalbrus.multibans.api.punishment.TemporaryPunishment;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.punishment.MultiPunishment;
 import me.kvalbrus.multibans.common.punishment.MultiTemporaryPunishment;
-import me.kvalbrus.multibans.common.storage.DataProvider;
+import me.kvalbrus.multibans.api.DataProvider;
 import me.kvalbrus.multibans.common.storage.DataProviderSettings;
 import me.kvalbrus.multibans.common.storage.DataProviderType;
 import org.jetbrains.annotations.NotNull;
@@ -72,15 +70,6 @@ public class MySqlProvider implements DataProvider {
         } catch (SQLSyntaxErrorException exception) {
             exception.printStackTrace();//
         }
-
-        //        this.source.setPoolName("MultiBans-Pool");
-//        this.source.setJdbcUrl("jdbc:mysql://"
-//            + this.dataProviderSettings.getAddress() + ":"
-//            + this.dataProviderSettings.getPort() + "/"
-//            + this.dataProviderSettings.getDatabaseName() + "?"
-//            + this.dataProviderSettings.getProperties());
-//        this.source.setUsername(this.dataProviderSettings.getUsername());
-//        this.source.setPassword(this.dataProviderSettings.getPassword());
     }
 
     @Override
@@ -89,26 +78,6 @@ public class MySqlProvider implements DataProvider {
             this.source.close();
         }
     }
-
-//    @Override
-//    public synchronized boolean createPunishmentsTable() {
-//        try (Connection connection = this.source.getConnection();
-//            PreparedStatement statement = connection.prepareStatement(
-//                SQLQuery.CREATE_TABLE_PUNISHMENTS.toString())) {
-//            statement.execute();
-//            return true;
-//        } catch (SQLException exception) {
-//            exception.printStackTrace(); // delete
-//            // TODO: logger
-//        }
-//
-//        return false;
-//    }
-
-//    @Override
-//    public boolean deletePunishmentTable() {
-//        return false;
-//    }
 
     @Override
     public void wipe() {
