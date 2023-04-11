@@ -6,7 +6,8 @@ import java.util.Random;
 import java.util.UUID;
 import lombok.Getter;
 import me.kvalbrus.multibans.api.punishment.Punishment;
-import me.kvalbrus.multibans.api.Player;
+import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
+import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment;
 import me.kvalbrus.multibans.api.utils.TimeType;
 import me.kvalbrus.multibans.common.punishment.MultiPunishment;
@@ -150,18 +151,18 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
     @NotNull
     @Override
     public synchronized Punishment generatePunishment(@NotNull final PunishmentType type,
-                                                      @NotNull final Player target,
-                                                      @NotNull final String creatorName,
+                                                      @NotNull final PunishmentTarget target,
+                                                      @NotNull final PunishmentCreator creator,
                                                       long duration,
                                                       @NotNull String reason) {
-        return this.generatePunishment(type, target, creatorName, duration, reason, null, new ArrayList<>());
+        return this.generatePunishment(type, target, creator, duration, reason, null, new ArrayList<>());
     }
 
     @NotNull
     @Override
     public synchronized Punishment generatePunishment(@NotNull final PunishmentType type,
-                                                      @NotNull final Player target,
-                                                      @NotNull final String creatorName,
+                                                      @NotNull final PunishmentTarget target,
+                                                      @NotNull final PunishmentCreator creator,
                                                       long duration,
                                                       @NotNull String reason,
                                                       @Nullable String comment,
@@ -179,9 +180,8 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
 
         long realTime = System.currentTimeMillis();
 
-        return MultiPunishment.constructPunishment(this.pluginManager, type, id,
-            target.getHostAddress(), target.getName(), target.getUniqueId(), creatorName, realTime,
-            realTime, duration, reason, comment, null, -1, null, servers, false);
+        return MultiPunishment.constructPunishment(this.pluginManager, type, id, target, creator,
+            realTime, realTime, duration, reason, comment, null, -1, null, servers, false);
     }
 
     @NotNull

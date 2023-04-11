@@ -3,13 +3,16 @@ package me.kvalbrus.multibans.bukkit;
 import java.io.File;
 import java.util.Collection;
 import java.util.UUID;
+import me.kvalbrus.multibans.api.Console;
 import me.kvalbrus.multibans.api.MultiBans;
+import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.bukkit.commands.BanBukkit;
 import me.kvalbrus.multibans.bukkit.commands.BanIpBukkit;
 import me.kvalbrus.multibans.bukkit.commands.MuteChatBukkit;
-import me.kvalbrus.multibans.bukkit.implementations.BukkitOfflinePlayer;
+import me.kvalbrus.multibans.bukkit.implementations.BukkitConsole;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitPlayer;
+import me.kvalbrus.multibans.bukkit.implementations.BukkitOnlinePlayer;
 import me.kvalbrus.multibans.bukkit.listeners.PlayerJoinListener;
 import me.kvalbrus.multibans.common.managers.MultiBansPluginManager;
 import me.kvalbrus.multibans.common.managers.PunishmentManager;
@@ -21,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import me.kvalbrus.multibans.bukkit.events.ActivatePunishmentEvent;
 import me.kvalbrus.multibans.bukkit.events.DeactivatePunishmentEvent;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
+import org.jetbrains.annotations.Nullable;
 
 public class BukkitPluginManager extends MultiBansPluginManager {
 
@@ -60,11 +64,11 @@ public class BukkitPluginManager extends MultiBansPluginManager {
 
     @NotNull
     @Override
-    public me.kvalbrus.multibans.api.OfflinePlayer[] getOfflinePlayers() {
+    public me.kvalbrus.multibans.api.Player[] getOfflinePlayers() {
         OfflinePlayer[] players = this.plugin.getServer().getOfflinePlayers();
-        me.kvalbrus.multibans.api.OfflinePlayer[] offlinePlayers = new me.kvalbrus.multibans.api.OfflinePlayer[players.length];
+        me.kvalbrus.multibans.api.Player[] offlinePlayers = new me.kvalbrus.multibans.api.Player[players.length];
         for (int i = 0; i < players.length; ++i) {
-            offlinePlayers[i] = new BukkitOfflinePlayer(players[i]);
+            offlinePlayers[i] = new BukkitPlayer(players[i]);
         }
 
         return offlinePlayers;
@@ -72,25 +76,66 @@ public class BukkitPluginManager extends MultiBansPluginManager {
 
     @NotNull
     @Override
-    public me.kvalbrus.multibans.api.Player[] getOnlinePlayers() {
+    public OnlinePlayer[] getOnlinePlayers() {
         Collection<? extends Player> players = this.plugin.getServer().getOnlinePlayers();
-        me.kvalbrus.multibans.api.Player[] onlinePlayers = new me.kvalbrus.multibans.api.Player[players.size()];
+        OnlinePlayer[] onlineOnlinePlayers = new OnlinePlayer[players.size()];
         int i = 0;
         for (Player player : players) {
-            onlinePlayers[i++] = new BukkitPlayer(player);
+            onlineOnlinePlayers[i++] = new BukkitOnlinePlayer(player);
         }
 
-        return onlinePlayers;
+        return onlineOnlinePlayers;
+    }
+
+    @Nullable
+    @Override
+    public OnlinePlayer getPlayer(UUID uuid) {
+        Player player = this.plugin.getServer().getPlayer(uuid);
+        if (player == null) {
+            return null;
+        }
+
+        return new BukkitOnlinePlayer(player);
+    }
+
+    @Nullable
+    @Override
+    public OnlinePlayer getPlayer(String name) {
+        Player player = this.plugin.getServer().getPlayer(name);
+        if (player == null) {
+            return null;
+        }
+
+        return new BukkitOnlinePlayer(player);
+    }
+
+    @NotNull
+    @Override
+    public me.kvalbrus.multibans.api.Player getOfflinePlayer(String name) {
+        OnlinePlayer onlinePlayer = this.getPlayer(name);
+        if (onlinePlayer != null) {
+            return onlinePlayer;
+        } else {
+            OfflinePlayer bukkitOfflinePlayer = this.plugin.getServer().getOfflinePlayer(name);
+            return new BukkitPlayer(bukkitOfflinePlayer);
+        }
     }
 
     @Override
-    public me.kvalbrus.multibans.api.Player getPlayer(UUID uuid) {
-        return new BukkitPlayer(this.plugin.getServer().getPlayer(uuid));
+    public Console getConsole() {
+        return new BukkitConsole(this.plugin.getServer().getConsoleSender());
     }
 
+    @NotNull
     @Override
-    public me.kvalbrus.multibans.api.Player getPlayer(String name) {
-        return new BukkitPlayer(this.plugin.getServer().getPlayer(name));
+    public me.kvalbrus.multibans.api.Player getOfflinePlayer(UUID uuid) {
+        OnlinePlayer onlinePlayer = this.getPlayer(uuid);
+        if (onlinePlayer != null) {
+            return onlinePlayer;
+        } else {
+            OfflinePlayer bukkitOfflinePlayer = this.plugin.getServer().getOfflinePlayer(uuid);
+            return new BukkitPlayer(bukkitOfflinePlayer);
+        }
     }
 
     @Override

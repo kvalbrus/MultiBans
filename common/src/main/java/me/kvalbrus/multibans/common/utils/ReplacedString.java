@@ -1,6 +1,7 @@
 package me.kvalbrus.multibans.common.utils;
 
-import me.kvalbrus.multibans.api.OfflinePlayer;
+import me.kvalbrus.multibans.api.Player;
+import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
 
 public class ReplacedString {
 
@@ -10,12 +11,12 @@ public class ReplacedString {
         this.string = string;
     }
 
-    public ReplacedString replacePlayerName(OfflinePlayer player) {
+    public ReplacedString replacePlayerName(Player player) {
         return this.replace("%player_name%", player.getName());
     }
 
-    public ReplacedString replaceCreatorName(OfflinePlayer player) {
-        return this.replace("%creator_name%", player.getName());
+    public ReplacedString replaceCreatorName(PunishmentCreator creator) {
+        return this.replace("%creator_name%", creator.getName());
     }
 
     private ReplacedString replace(String key, String string) {

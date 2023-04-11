@@ -17,10 +17,15 @@ import me.kvalbrus.multibans.api.punishment.Cancelable;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment;
+import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
+import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.punishment.MultiPunishment;
 import me.kvalbrus.multibans.common.punishment.MultiTemporaryPunishment;
 import me.kvalbrus.multibans.api.DataProvider;
+import me.kvalbrus.multibans.common.punishment.creator.MultiConsolePunishmentCreator;
+import me.kvalbrus.multibans.common.punishment.creator.MultiPlayerPunishmentCreator;
+import me.kvalbrus.multibans.common.punishment.target.MultiPunishmentTarget;
 import me.kvalbrus.multibans.common.storage.DataProviderSettings;
 import me.kvalbrus.multibans.common.storage.DataProviderType;
 import org.jetbrains.annotations.NotNull;
@@ -250,12 +255,19 @@ public class MySqlProvider implements DataProvider {
 
                 boolean cancelled = resultSet.getBoolean("cancelled");
 
+                PunishmentTarget target = new MultiPunishmentTarget(this.pluginManager.getOfflinePlayer(targetUUID));
+
+                PunishmentCreator creator = null;
+                if (creatorName.equals(this.pluginManager.getConsole().getName())) {
+                    creator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
+                } else {
+                    creator = new MultiPlayerPunishmentCreator(this.pluginManager.getOfflinePlayer(creatorName));
+                }
+
                 Punishment punishment = MultiPunishment.constructPunishment(
-                    this.pluginManager, type, id, targetIp, targetName,
-                    targetUUID,
-                    creatorName, dateCreated, dateStart, duration, reason, comment,
-                    cancellationCreator,
-                    cancellationDate, cancellationReason, servers, cancelled);
+                    this.pluginManager, type, id, target, creator, dateCreated, dateStart, duration,
+                    reason, comment, cancellationCreator, cancellationDate, cancellationReason,
+                    servers, cancelled);
 
                 return punishment;
             }
@@ -302,9 +314,17 @@ public class MySqlProvider implements DataProvider {
 
                     boolean cancelled = resultSet.getBoolean("cancelled");
 
+                    PunishmentTarget target = new MultiPunishmentTarget(this.pluginManager.getOfflinePlayer(targetUUID));
+
+                    PunishmentCreator creator = null;
+                    if (creatorName.equals(this.pluginManager.getConsole().getName())) {
+                        creator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
+                    } else {
+                        creator = new MultiPlayerPunishmentCreator(this.pluginManager.getOfflinePlayer(creatorName));
+                    }
+
                     T punishment = MultiPunishment.constructPunishment(
-                        this.pluginManager, type, id, targetIp, targetName,
-                        targetUUID, creatorName, dateCreated, dateStart, duration, reason, comment,
+                        this.pluginManager, type, id, target, creator, dateCreated, dateStart, duration, reason, comment,
                         cancellationCreator, cancellationDate, cancellationReason, servers,
                         cancelled);
 
@@ -354,9 +374,17 @@ public class MySqlProvider implements DataProvider {
 
                     boolean cancelled = resultSet.getBoolean("cancelled");
 
+                    PunishmentTarget target = new MultiPunishmentTarget(this.pluginManager.getOfflinePlayer(targetUUID));
+
+                    PunishmentCreator creator = null;
+                    if (creatorName.equals(this.pluginManager.getConsole().getName())) {
+                        creator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
+                    } else {
+                        creator = new MultiPlayerPunishmentCreator(this.pluginManager.getOfflinePlayer(creatorName));
+                    }
+
                     T punishment = MultiPunishment.constructPunishment(
-                        this.pluginManager, type, id, targetIp, targetName,
-                        targetUUID, creatorName, dateCreated, dateStart, duration, reason, comment,
+                        this.pluginManager, type, id, target, creator, dateCreated, dateStart, duration, reason, comment,
                         cancellationCreator, cancellationDate, cancellationReason, servers,
                         cancelled);
 
@@ -374,15 +402,15 @@ public class MySqlProvider implements DataProvider {
 
     @NotNull
     @Override
-    public <T extends Punishment> List<T> getCreatorHistory(String creator) {
+    public <T extends Punishment> List<T> getCreatorHistory(String name) {
         List<T> history = new ArrayList<>();
 
-        if (creator != null) {
+        if (name != null) {
             try (Connection connection = this.source.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                     SQLQuery.HISTORY_PUNISHMENTS_CREATOR.toString())) {
 
-                statement.setString(1, creator);
+                statement.setString(1, name);
 
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
@@ -406,12 +434,19 @@ public class MySqlProvider implements DataProvider {
 
                     boolean cancelled = resultSet.getBoolean("cancelled");
 
+                    PunishmentTarget target = new MultiPunishmentTarget(this.pluginManager.getOfflinePlayer(targetUUID));
+
+                    PunishmentCreator creator = null;
+                    if (creatorName.equals(this.pluginManager.getConsole().getName())) {
+                        creator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
+                    } else {
+                        creator = new MultiPlayerPunishmentCreator(this.pluginManager.getOfflinePlayer(creatorName));
+                    }
+
                     T punishment = MultiPunishment.constructPunishment(
-                        this.pluginManager, type, id, targetIp, targetName,
-                        targetUUID,
-                        creatorName, dateCreated, dateStart, duration, reason, comment,
-                        cancellationCreator,
-                        cancellationDate, cancellationReason, servers, cancelled);
+                        this.pluginManager, type, id, target, creator, dateCreated, dateStart,
+                        duration, reason, comment, cancellationCreator, cancellationDate,
+                        cancellationReason, servers, cancelled);
 
                     history.add(punishment);
                 }

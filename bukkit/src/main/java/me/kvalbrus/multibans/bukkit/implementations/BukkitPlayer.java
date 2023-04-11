@@ -1,30 +1,13 @@
 package me.kvalbrus.multibans.bukkit.implementations;
 
-import java.util.Objects;
-import java.util.UUID;
-import me.kvalbrus.multibans.api.Player;
+import me.kvalbrus.multibans.common.implementations.MultiPlayer;
 
-public class BukkitPlayer extends BukkitCommandSender implements Player {
+public class BukkitPlayer extends MultiPlayer {
 
-    private final org.bukkit.entity.Player player;
+    private final org.bukkit.OfflinePlayer offlinePlayer;
 
-    public BukkitPlayer(org.bukkit.entity.Player player) {
-        super(player);
-        this.player = player;
-    }
-
-    @Override
-    public UUID getUniqueId() {
-        return this.player.getUniqueId();
-    }
-
-    @Override
-    public String getHostAddress() {
-        return Objects.requireNonNull(this.player.getAddress()).getHostString();
-    }
-
-    @Override
-    public int getPort() {
-        return Objects.requireNonNull(this.player.getAddress()).getPort();
+    public BukkitPlayer(org.bukkit.OfflinePlayer offlinePlayer) {
+        super(offlinePlayer.getName() != null ? offlinePlayer.getName() : "", offlinePlayer.getUniqueId());
+        this.offlinePlayer = offlinePlayer;
     }
 }

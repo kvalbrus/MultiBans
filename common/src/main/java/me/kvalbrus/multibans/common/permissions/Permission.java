@@ -1,4 +1,4 @@
-package me.kvalbrus.multibans.common;
+package me.kvalbrus.multibans.common.permissions;
 
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;

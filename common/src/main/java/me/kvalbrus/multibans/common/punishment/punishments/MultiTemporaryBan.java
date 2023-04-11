@@ -1,11 +1,17 @@
 package me.kvalbrus.multibans.common.punishment.punishments;
 
 import java.util.List;
-import java.util.UUID;
+import me.kvalbrus.multibans.api.OnlinePlayer;
+import me.kvalbrus.multibans.api.punishment.creator.OnlinePunishmentCreator;
+import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
+import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.punishments.TemporaryBan;
 import me.kvalbrus.multibans.common.managers.PluginManager;
+import me.kvalbrus.multibans.common.permissions.Permission;
 import me.kvalbrus.multibans.common.punishment.MultiTemporaryPunishment;
+import me.kvalbrus.multibans.common.utils.Message;
+import me.kvalbrus.multibans.common.utils.ReplacedString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,10 +19,8 @@ public class MultiTemporaryBan extends MultiTemporaryPunishment implements Tempo
 
     public MultiTemporaryBan(@NotNull PluginManager pluginManager,
                              @NotNull String id,
-                             @NotNull String targetIp,
-                             @NotNull String targetName,
-                             @NotNull UUID targetUUID,
-                             @NotNull String creatorName,
+                             @NotNull PunishmentTarget target,
+                             @NotNull PunishmentCreator creator,
                              long createdDate,
                              long startedDate,
                              long duration,
@@ -27,8 +31,31 @@ public class MultiTemporaryBan extends MultiTemporaryPunishment implements Tempo
                              @Nullable String cancellationReason,
                              @NotNull List<String> servers,
                              boolean cancelled) {
-        super(pluginManager, PunishmentType.TEMP_BAN, id, targetIp, targetName, targetUUID,
-            creatorName, createdDate, startedDate, duration, reason, comment, cancellationCreator,
-            cancellationDate, cancellationReason, servers, cancelled);
+        super(pluginManager, PunishmentType.TEMP_BAN, id, target, creator, createdDate, startedDate,
+            duration, reason, comment, cancellationCreator, cancellationDate, cancellationReason,
+            servers, cancelled);
+    }
+
+    @Override
+    public synchronized void activate() {
+        super.activate();
+
+        // Sends a message to all players with permission
+        ReplacedString listenMessage = new ReplacedString(Message.TEMPBAN_LISTEN.message)
+            .replacePlayerName(this.getTarget())
+            .replaceCreatorName(this.getCreator());
+
+        for (OnlinePlayer p : this.getPluginManager().getOnlinePlayers()) {
+            if (p.hasPermission(Permission.PUNISHMENT_TEMPBAN_LISTEN.getName())) {
+                p.sendMessage(listenMessage.string());
+            }
+        }
+
+        // Sends a message to the creator
+        if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
+            ReplacedString creatorMessage = new ReplacedString(Message.BANIP_CREATOR.message)
+                .replacePlayerName(this.getTarget());
+            creator.sendMessage(creatorMessage.string());
+        }
     }
 }

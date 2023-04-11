@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import me.kvalbrus.multibans.api.CommandSender;
+import me.kvalbrus.multibans.api.Console;
+import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.Player;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
-import me.kvalbrus.multibans.common.Permission;
+import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
+import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
+import me.kvalbrus.multibans.common.permissions.Permission;
 import me.kvalbrus.multibans.common.command.Command;
 import me.kvalbrus.multibans.common.exceptions.IllegalDateFormatException;
 import me.kvalbrus.multibans.common.exceptions.NotEnoughArgumentsException;
@@ -15,6 +19,9 @@ import me.kvalbrus.multibans.common.exceptions.NotMatchArgumentsException;
 import me.kvalbrus.multibans.common.exceptions.NotPermissionException;
 import me.kvalbrus.multibans.common.exceptions.PlayerNotFoundException;
 import me.kvalbrus.multibans.common.managers.PluginManager;
+import me.kvalbrus.multibans.common.punishment.creator.MultiConsolePunishmentCreator;
+import me.kvalbrus.multibans.common.punishment.creator.MultiPlayerPunishmentCreator;
+import me.kvalbrus.multibans.common.punishment.target.MultiPunishmentTarget;
 import me.kvalbrus.multibans.common.utils.Message;
 import me.kvalbrus.multibans.common.utils.ReplacedString;
 import me.kvalbrus.multibans.common.utils.StringUtil;
@@ -40,10 +47,12 @@ public class TempBan extends Command {
                 throw new NotPermissionException();
             }
 
-            Player player = super.getPluginManager().getPlayer(args[0]);
+            Player player = super.getPluginManager().getOfflinePlayer(args[0]);
             if(player == null) {
                 throw new PlayerNotFoundException(args[0]);
             }
+
+            PunishmentTarget target = new MultiPunishmentTarget(player);
 
             if (length == 2) {
                 try {
@@ -61,25 +70,18 @@ public class TempBan extends Command {
                         reason.append(args[i]);
                     }
 
+                    PunishmentCreator creator = null;
+                    if (sender instanceof OnlinePlayer onlinePlayer) {
+                        creator = new MultiPlayerPunishmentCreator(onlinePlayer);
+                    } else if(sender instanceof Console console) {
+                        creator = new MultiConsolePunishmentCreator(console);
+                    }
+
                     Punishment punishment = super.getPluginManager().getPunishmentManager()
-                        .generatePunishment(PunishmentType.TEMP_BAN, player, sender.getName(),
+                        .generatePunishment(PunishmentType.TEMP_BAN, target, creator,
                             date, reason.toString());
 
                     punishment.activate();
-
-                    ReplacedString listenMessage = new ReplacedString(Message.TEMPBAN_LISTEN.message)
-                        .replacePlayerName(player)
-                        .replaceCreatorName(sender::getName);
-
-                    for (Player p : this.getPluginManager().getOnlinePlayers()) {
-                        if (p.hasPermission(Permission.PUNISHMENT_TEMPBAN_LISTEN.getName())) {
-                            p.sendMessage(listenMessage.string());
-                        }
-                    }
-
-                    ReplacedString creatorMessage = new ReplacedString(Message.TEMPBAN_CREATOR.message)
-                        .replacePlayerName(player);
-                    sender.sendMessage(creatorMessage.string());
 
                     return true;
                 } catch (IllegalDateFormatException exception) {

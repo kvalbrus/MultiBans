@@ -24,5 +24,9 @@ public class PlayerJoinListener implements Listener {
         if (punManager.hasActiveBan(event.getUniqueId()) || punManager.hasActiveBanIp(event.getUniqueId())) {
             event.disallow(Result.KICK_BANNED, punManager.getPlayerTitle(event.getUniqueId()));
         }
+
+        if (punManager.hasActiveBan(event.getName()) || punManager.hasActiveBanIp(event.getName())) {
+            event.disallow(Result.KICK_BANNED, punManager.getPlayerTitle(event.getName()));
+        }
     }
 }

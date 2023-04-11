@@ -11,9 +11,15 @@ public class BukkitCommandSender implements CommandSender {
         this.commandSender = commandSender;
     }
 
+    @NotNull
     @Override
-    public @NotNull String getName() {
+    public String getName() {
         return this.commandSender.getName();
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        this.commandSender.sendMessage(message);
     }
 
     @Override

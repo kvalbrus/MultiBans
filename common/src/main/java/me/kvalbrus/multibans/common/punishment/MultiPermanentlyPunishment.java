@@ -1,17 +1,18 @@
 package me.kvalbrus.multibans.common.punishment;
 
 import java.util.List;
-import java.util.UUID;
 import me.kvalbrus.multibans.api.punishment.PermanentlyPunishment;
+import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
 import me.kvalbrus.multibans.api.punishment.PunishmentStatus;
+import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.api.DataProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class MultiPermanentlyPunishment
-    extends MultiPunishment implements PermanentlyPunishment {
+public abstract class MultiPermanentlyPunishment extends MultiPunishment
+    implements PermanentlyPunishment {
 
     private String cancellationCreator;
 
@@ -24,10 +25,8 @@ public abstract class MultiPermanentlyPunishment
     public MultiPermanentlyPunishment(@NotNull PluginManager pluginManager,
                                       @NotNull PunishmentType type,
                                       @NotNull String id,
-                                      @NotNull String targetIp,
-                                      @NotNull String targetName,
-                                      @NotNull UUID targetUUID,
-                                      @NotNull String creatorName,
+                                      @NotNull PunishmentTarget target,
+                                      @NotNull PunishmentCreator creator,
                                       long dateCreated,
                                       @Nullable String reason,
                                       @Nullable String comment,
@@ -36,8 +35,7 @@ public abstract class MultiPermanentlyPunishment
                                       @Nullable String cancellationReason,
                                       @NotNull List<String> servers,
                                       boolean cancelled) {
-        super(pluginManager, type, id, targetIp, targetName, targetUUID, creatorName,
-            dateCreated, reason, comment, servers);
+        super(pluginManager, type, id, target, creator, dateCreated, reason, comment, servers);
         this.cancellationCreator = cancellationCreator;
         this.cancellationDate = cancellationDate;
         this.cancellationReason = cancellationReason;

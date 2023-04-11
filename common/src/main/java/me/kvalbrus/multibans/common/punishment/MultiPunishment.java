@@ -2,7 +2,10 @@ package me.kvalbrus.multibans.common.punishment;
 
 import java.util.List;
 import java.util.UUID;
+import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.punishment.Punishment;
+import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
+import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment;
 import me.kvalbrus.multibans.common.managers.PluginManager;
@@ -23,13 +26,9 @@ public abstract class MultiPunishment implements Punishment {
 
     private final String id;
 
-    private final String targetIp;
+    private final PunishmentTarget target;
 
-    private final String targetName;
-
-    private final UUID targetUUID;
-
-    private final String creatorName;
+    private final PunishmentCreator creator;
 
     private final long createdDate;
 
@@ -42,10 +41,8 @@ public abstract class MultiPunishment implements Punishment {
     public MultiPunishment(@NotNull PluginManager pluginManager,
                            @NotNull final PunishmentType type,
                            @NotNull final String id,
-                           @NotNull final String targetIp,
-                           @NotNull final String targetName,
-                           @NotNull final UUID targetUUID,
-                           @NotNull final String creatorName,
+                           @NotNull final PunishmentTarget target,
+                           @NotNull final PunishmentCreator creator,
                            final long createdDate,
                            @Nullable String reason,
                            @Nullable String comment,
@@ -53,10 +50,13 @@ public abstract class MultiPunishment implements Punishment {
         this.pluginManager = pluginManager;
         this.type = type;
         this.id = id;
-        this.targetIp = targetIp;
-        this.targetName = targetName;
-        this.targetUUID = targetUUID;
-        this.creatorName = creatorName;
+
+        this.target = target;
+        this.target.setPunishment(this);
+
+        this.creator = creator;
+        this.creator.setPunishment(this);
+
         this.createdDate = createdDate;
         this.reason = reason;
         this.comment = comment;
@@ -68,10 +68,8 @@ public abstract class MultiPunishment implements Punishment {
         @NotNull PluginManager pluginManager,
         @NotNull PunishmentType type,
         @NotNull String id,
-        @NotNull String targetIp,
-        @NotNull String targetName,
-        @NotNull UUID targetUniqueId,
-        @NotNull String creatorName,
+        @NotNull PunishmentTarget target,
+        @NotNull PunishmentCreator creator,
         long createdDate,
         long startedDate,
         long duration,
@@ -85,43 +83,39 @@ public abstract class MultiPunishment implements Punishment {
         Punishment punishment;
         switch (type) {
             case BAN:
-                punishment = new MultiPermanentlyBan(pluginManager, id, targetIp, targetName,
-                    targetUniqueId, creatorName, createdDate, createdReason, comment,
-                    cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
+                punishment = new MultiPermanentlyBan(pluginManager, id, target, creator, createdDate,
+                    createdReason, comment, cancellationCreator, cancellationDate,
+                    cancellationReason, servers, cancelled);
                 break;
 
             case TEMP_BAN:
-                punishment = new MultiTemporaryBan(pluginManager, id, targetIp, targetName,
-                    targetUniqueId,
-                    creatorName, createdDate, startedDate, duration, createdReason, comment,
+                punishment = new MultiTemporaryBan(pluginManager, id, target, creator, createdDate,
+                    startedDate, duration, createdReason, comment,
                     cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
                 break;
 
             case BAN_IP:
-                punishment = new MultiPermanentlyBanIp(pluginManager, id, targetIp, targetName,
-                    targetUniqueId, creatorName, createdDate, createdReason, comment,
-                    cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
+                punishment = new MultiPermanentlyBanIp(pluginManager, id, target, creator,
+                    createdDate, createdReason, comment, cancellationCreator, cancellationDate,
+                    cancellationReason, servers, cancelled);
                 break;
 
             case TEMP_BAN_IP:
-                punishment = new MultiTemporaryBanIp(pluginManager, id, targetIp, targetName,
-                    targetUniqueId, creatorName, createdDate, startedDate, duration, createdReason,
-                    comment, cancellationCreator, cancellationDate, cancellationReason, servers,
-                    cancelled);
+                punishment = new MultiTemporaryBanIp(pluginManager, id, target, creator, createdDate,
+                    startedDate, duration, createdReason, comment, cancellationCreator,
+                    cancellationDate, cancellationReason, servers, cancelled);
                 break;
 
             case MUTE:
-                punishment = new MultiPermanentlyChatMute(pluginManager, id, targetIp,
-                    targetName,
-                    targetUniqueId, creatorName, createdDate, createdReason, comment,
-                    cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
+                punishment = new MultiPermanentlyChatMute(pluginManager, id, target, creator,
+                    createdDate, createdReason, comment, cancellationCreator, cancellationDate,
+                    cancellationReason, servers, cancelled);
                 break;
 
             case TEMP_MUTE:
-                punishment = new MultiTemporaryChatMute(pluginManager, id, targetIp, targetName,
-                    targetUniqueId, creatorName, createdDate, startedDate, duration, createdReason,
-                    comment, cancellationCreator, cancellationDate, cancellationReason, servers,
-                    cancelled);
+                punishment = new MultiTemporaryChatMute(pluginManager, id, target, creator,
+                    createdDate, startedDate, duration, createdReason, comment, cancellationCreator,
+                    cancellationDate, cancellationReason, servers, cancelled);
                 break;
 
             default:
@@ -162,26 +156,40 @@ public abstract class MultiPunishment implements Punishment {
 
     @NotNull
     @Override
+    @Deprecated
     public final String getTargetIp() {
-        return this.targetIp;
+        return this.target instanceof OnlinePlayer onlinePlayer ? onlinePlayer.getHostAddress() : "";
     }
 
     @NotNull
     @Override
+    @Deprecated
     public final String getTargetName() {
-        return this.targetName;
+        return this.target.getName();
     }
 
     @NotNull
     @Override
+    @Deprecated
     public final UUID getTargetUniqueId() {
-        return this.targetUUID;
+        return this.target.getUniqueId();
     }
 
     @NotNull
     @Override
+    @Deprecated
     public final String getCreatorName() {
-        return this.creatorName;
+        return this.creator.getName();
+    }
+
+    @Override
+    public final PunishmentTarget getTarget() {
+        return this.target;
+    }
+
+    @Override
+    public final PunishmentCreator getCreator() {
+        return this.creator;
     }
 
     @Override
