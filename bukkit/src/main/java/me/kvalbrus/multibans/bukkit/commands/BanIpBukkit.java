@@ -4,9 +4,7 @@ import java.util.List;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitCommandSender;
 import me.kvalbrus.multibans.common.command.commands.BanIp;
 import me.kvalbrus.multibans.common.command.commands.TempBanIp;
-import me.kvalbrus.multibans.common.exceptions.NotEnoughArgumentsException;
 import me.kvalbrus.multibans.common.exceptions.NotMatchArgumentsException;
-import me.kvalbrus.multibans.common.exceptions.NotPermissionException;
 import me.kvalbrus.multibans.common.exceptions.PlayerNotFoundException;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import org.bukkit.command.Command;
@@ -43,21 +41,18 @@ public class BanIpBukkit implements CommandExecutor, TabCompleter {
                              @NotNull String label,
                              @NotNull String[] args) {
 
-        BukkitCommandSender bukkitCommandSender = new BukkitCommandSender(sender);
+        me.kvalbrus.multibans.api.CommandSender commandSender = BukkitCommandSender.getSender(sender);
+        if (commandSender == null) {
+            return false;
+        }
 
         try {
             try {
-                return this.tempbanipCommand.execute(bukkitCommandSender, args);
+                return this.tempbanipCommand.execute(commandSender, args);
             } catch (NotMatchArgumentsException exception) {
-                return this.banipCommand.execute(bukkitCommandSender, args);
+                return this.banipCommand.execute(commandSender, args);
             }
-        } catch (NotEnoughArgumentsException exception) {
-            return false;
-        } catch (NotPermissionException exception) {
-            return false;
-        } catch (PlayerNotFoundException exception) {
-            return false;
-        } catch (NotMatchArgumentsException exception) {
+        } catch (PlayerNotFoundException | NotMatchArgumentsException exception) {
             return false;
         }
     }
@@ -68,7 +63,6 @@ public class BanIpBukkit implements CommandExecutor, TabCompleter {
                                       @NotNull Command command,
                                       @NotNull String label,
                                       @NotNull String[] args) {
-        BukkitCommandSender bukkitCommandSender = new BukkitCommandSender(sender);
-        return this.banipCommand.tab(bukkitCommandSender, args);
+        return this.banipCommand.tab(BukkitCommandSender.getSender(sender), args);
     }
 }

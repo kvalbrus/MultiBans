@@ -5,18 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 public enum Permission {
 
-//    public static final Permission PUNISHMENT_BAN = new Permission("multibans.punishment.ban");
-//
-//    public static final Permission PUNISHMENT_TEMPBAN = new Permission("multibans.punishment.tempban");
-//
-//    public static final Permission PUNISHMENT_BANIP = new Permission("multibans.punishment.banip");
-//
-//    public static final Permission PUNISHMENT_TEMPBANIP = new Permission("multibans.punishment.tempbanip");
-//
-//    public static final Permission PUNISHMENT_CHATMUTE = new Permission("multibans.punishment.chatmute");
-//
-//    public static final Permission PUNISHMENT_TEMPCHATMUTE = new Permission("multibans.punishment.tempchatmute");
-
     PUNISHMENT_BAN_EXECUTE("multibans.punishment.ban.execute"),
     PUNISHMENT_BAN_LISTEN("multibans.punishment.ban.listen"),
 
@@ -33,7 +21,13 @@ public enum Permission {
     PUNISHMENT_MUTECHAT_LISTEN("multibans.punishment.mutechat.listen"),
 
     PUNISHMENT_TEMPMUTECHAT_EXECUTE("multibans.punishment.tempmutechat.execute"),
-    PUNISHMENT_TEMPMUTECHAT_LISTEN("multibans.punishment.tempmutechat.listen");
+    PUNISHMENT_TEMPMUTECHAT_LISTEN("multibans.punishment.tempmutechat.listen"),
+
+    PUNISHMENT_UNBAN_EXECUTE("multibans.punishment.unban.execute"),
+    PUNISHMENT_UNBAN_LISTEN("multibans.punishment.unban.listen"),
+
+    PUNISHMENT_UNMUTECHAT_EXECUTE("multibans.punishment.unmutechat.execute"),
+    PUNISHMENT_UNMUTECHAT_LISTEN("multibans.punishment.unmutechat.listen");
 
     @Getter
     private final String name;

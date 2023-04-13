@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
+import me.kvalbrus.multibans.api.OnlinePlayer;
+import me.kvalbrus.multibans.api.Player;
 import me.kvalbrus.multibans.api.punishment.Cancelable;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
@@ -24,7 +26,9 @@ import me.kvalbrus.multibans.common.punishment.MultiPunishment;
 import me.kvalbrus.multibans.common.punishment.MultiTemporaryPunishment;
 import me.kvalbrus.multibans.api.DataProvider;
 import me.kvalbrus.multibans.common.punishment.creator.MultiConsolePunishmentCreator;
+import me.kvalbrus.multibans.common.punishment.creator.MultiOnlinePlayerPunishmentCreator;
 import me.kvalbrus.multibans.common.punishment.creator.MultiPlayerPunishmentCreator;
+import me.kvalbrus.multibans.common.punishment.target.MultiOnlinePunishmentTarget;
 import me.kvalbrus.multibans.common.punishment.target.MultiPunishmentTarget;
 import me.kvalbrus.multibans.common.storage.DataProviderSettings;
 import me.kvalbrus.multibans.common.storage.DataProviderType;
@@ -255,7 +259,14 @@ public class MySqlProvider implements DataProvider {
 
                 boolean cancelled = resultSet.getBoolean("cancelled");
 
-                PunishmentTarget target = new MultiPunishmentTarget(this.pluginManager.getOfflinePlayer(targetUUID));
+                PunishmentTarget target = null;
+                Player player = this.pluginManager.getOfflinePlayer(targetUUID);
+
+                if (player instanceof OnlinePlayer onlinePlayer) {
+                    target = new MultiOnlinePunishmentTarget(onlinePlayer);
+                } else {
+                    target = new MultiPunishmentTarget(player);
+                }
 
                 PunishmentCreator creator = null;
                 if (creatorName.equals(this.pluginManager.getConsole().getName())) {

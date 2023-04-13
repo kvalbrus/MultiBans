@@ -41,9 +41,9 @@ public class MultiTemporaryChatMute extends MultiTemporaryPunishment implements 
         super.activate();
 
         // Sends a message to all players with permission
-        ReplacedString listenMessage = new ReplacedString(Message.TEMPMUTECHAT_LISTEN.message)
+        ReplacedString listenMessage = new ReplacedString(Message.TEMPMUTECHAT_LISTEN.getMessage())
             .replacePlayerName(this.getTarget())
-            .replaceCreatorName(this.getCreator());
+            .replaceExecutorName(this.getCreator());
 
         for (OnlinePlayer p : this.getPluginManager().getOnlinePlayers()) {
             if (p.hasPermission(Permission.PUNISHMENT_TEMPMUTECHAT_LISTEN.getName())) {
@@ -53,15 +53,15 @@ public class MultiTemporaryChatMute extends MultiTemporaryPunishment implements 
 
         // Sends a message to target if target is online
         if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
-            ReplacedString targetMessage = new ReplacedString(Message.TEMPMUTECHAT_PLAYER.message)
+            ReplacedString targetMessage = new ReplacedString(Message.TEMPMUTECHAT_PLAYER.getMessage())
                 .replacePlayerName(onlineTarget)
-                .replaceCreatorName(this.getCreator());
+                .replaceExecutorName(this.getCreator());
             onlineTarget.sendMessage(targetMessage.string());
         }
 
         // Sends a message to the creator
         if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
-            ReplacedString creatorMessage = new ReplacedString(Message.BANIP_CREATOR.message)
+            ReplacedString creatorMessage = new ReplacedString(Message.TEMPMUTECHAT_EXECUTOR.getMessage())
                 .replacePlayerName(this.getTarget());
             creator.sendMessage(creatorMessage.string());
         }

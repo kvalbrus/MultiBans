@@ -1,8 +1,10 @@
 package me.kvalbrus.multibans.common.utils;
 
+import java.util.Date;
 import me.kvalbrus.multibans.api.utils.TimeType;
 import me.kvalbrus.multibans.common.exceptions.IllegalDateFormatException;
 import me.kvalbrus.multibans.common.exceptions.IllegalTypeDateFormatException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class StringUtil {
@@ -72,6 +74,133 @@ public class StringUtil {
         }
 
         return milliseconds;
+    }
+
+    /**
+     * The format will be changed according to the rules:
+     * yyyy - year, mm - month, dd - day, HH - hour, MM - minutes, SS - seconds
+     *
+     * @param milliseconds Milliseconds
+     * @param format       Template into which date values are inserted
+     * @return String by format
+     */
+    @NotNull
+    public static String getStringDate(long milliseconds, @NotNull String format) {
+        Date date = new Date(milliseconds);
+
+        format = format.replaceAll("yyyy", String.valueOf(date.getYear() + 1900));
+
+        int month = date.getMonth() + 1;
+        format = format.replaceAll("mm", String.valueOf(month >= 10 ? month : "0" + month));
+
+        int day = date.getDate();
+        format = format.replaceAll("dd", String.valueOf(day >= 10 ? day : "0" + day));
+
+        int hour = date.getHours();
+        format = format.replaceAll("HH", String.valueOf(hour >= 10 ? hour : "0" + hour));
+
+        int minute = date.getMinutes();
+        format = format.replaceAll("MM", String.valueOf(minute >= 10 ? minute : "0" + minute));
+
+        int second = date.getSeconds();
+        format = format.replaceAll("SS", String.valueOf(second >= 10 ? second : "0" + second));
+
+        return format;
+    }
+
+    /**
+     * @param milliseconds milliseconds
+     * @return duration
+     */
+    @NotNull
+    public static String getDuration(long milliseconds) {
+        if (milliseconds <= 0) {
+            return Message.PERMANENTLY.getMessage();
+        }
+
+        StringBuilder builder = new StringBuilder();
+        int days = (int) (milliseconds / TimeType.DAY.getDuration());
+        milliseconds %= TimeType.DAY.getDuration();
+
+        int hours = (int) (milliseconds / TimeType.HOUR.getDuration());
+        milliseconds %= TimeType.HOUR.getDuration();
+
+        int minutes = (int) (milliseconds / TimeType.MINUTE.getDuration());
+        milliseconds %= TimeType.MINUTE.getDuration();
+
+        int seconds = (int) (milliseconds / TimeType.SECOND.getDuration());
+
+        if (days > 0) {
+            builder.append(days).append(" ").append(getWordDay(days)).append(" ");
+        }
+
+        if (hours > 0) {
+            builder.append(hours).append(" ").append(getWordHour(hours)).append(" ");
+        }
+
+        if (minutes > 0) {
+            builder.append(minutes).append(" ").append(getWordMinute(minutes)).append(" ");
+        }
+
+        if (seconds > 0) {
+            builder.append(seconds).append(" ").append(getWordSecond(seconds)).append(" ");
+        }
+
+        builder.deleteCharAt(builder.length() - 1);
+
+        return builder.toString();
+    }
+
+    /**
+     * @param seconds seconds
+     * @return word seconds
+     */
+    @NotNull
+    public static String getWordSecond(int seconds) {
+        if (seconds <= 1) {
+            return "second";
+        } else {
+            return "seconds";
+        }
+    }
+
+    /**
+     * @param minutes minutes
+     * @return word minutes
+     */
+    @NotNull
+    public static String getWordMinute(int minutes) {
+        if (minutes <= 1) {
+            return "minute";
+        } else {
+            return "minutes";
+        }
+    }
+
+    /**
+     * @param hours hours
+     * @return word hours
+     */
+    @NotNull
+    public static String getWordHour(int hours) {
+        if (hours <= 1) {
+            return "hour";
+        } else {
+            return "hours";
+        }
+    }
+
+    /**
+     * @param days days
+     * @return word days
+     */
+    @NotNull
+    public static String getWordDay(int days) {
+        if (days <= 1) {
+            return "day";
+        } else {
+            return "days";
+        }
     }
 
     private static boolean isNumber(String string) {

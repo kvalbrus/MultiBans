@@ -16,6 +16,10 @@ repositories {
 }
 
 dependencies {
+    compileJava {
+        options.encoding = "UTF-8"
+    }
+
     implementation project(':api')
     implementation project(':common')
 

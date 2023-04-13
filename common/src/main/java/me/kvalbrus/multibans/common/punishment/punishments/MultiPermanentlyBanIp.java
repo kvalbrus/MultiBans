@@ -36,9 +36,9 @@ public class MultiPermanentlyBanIp extends MultiPermanentlyPunishment implements
         super.activate();
 
         // Sends a message to all players with permission
-        ReplacedString listenMessage = new ReplacedString(Message.BANIP_LISTEN.message)
+        ReplacedString listenMessage = new ReplacedString(Message.BANIP_LISTEN.getMessage())
             .replacePlayerName(this.getTarget())
-            .replaceCreatorName(this.getCreator());
+            .replaceExecutorName(this.getCreator());
 
         for (OnlinePlayer p : this.getPluginManager().getOnlinePlayers()) {
             if (p.hasPermission(Permission.PUNISHMENT_BANIP_EXECUTE.getName())) {
@@ -48,7 +48,7 @@ public class MultiPermanentlyBanIp extends MultiPermanentlyPunishment implements
 
         // Sends a message to the creator
         if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
-            ReplacedString creatorMessage = new ReplacedString(Message.BANIP_CREATOR.message)
+            ReplacedString creatorMessage = new ReplacedString(Message.BANIP_EXECUTOR.getMessage())
                 .replacePlayerName(this.getTarget());
             creator.sendMessage(creatorMessage.string());
         }

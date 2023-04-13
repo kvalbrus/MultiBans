@@ -14,16 +14,13 @@ import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.common.permissions.Permission;
 import me.kvalbrus.multibans.common.command.Command;
 import me.kvalbrus.multibans.common.exceptions.IllegalDateFormatException;
-import me.kvalbrus.multibans.common.exceptions.NotEnoughArgumentsException;
 import me.kvalbrus.multibans.common.exceptions.NotMatchArgumentsException;
-import me.kvalbrus.multibans.common.exceptions.NotPermissionException;
-import me.kvalbrus.multibans.common.exceptions.PlayerNotFoundException;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.punishment.creator.MultiConsolePunishmentCreator;
 import me.kvalbrus.multibans.common.punishment.creator.MultiPlayerPunishmentCreator;
+import me.kvalbrus.multibans.common.punishment.target.MultiOnlinePunishmentTarget;
 import me.kvalbrus.multibans.common.punishment.target.MultiPunishmentTarget;
 import me.kvalbrus.multibans.common.utils.Message;
-import me.kvalbrus.multibans.common.utils.ReplacedString;
 import me.kvalbrus.multibans.common.utils.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,30 +31,38 @@ public class TempMuteChat extends Command {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender sender, String[] args)
-        throws NotEnoughArgumentsException, NotPermissionException, PlayerNotFoundException,
-        NotMatchArgumentsException {
+    public boolean execute(@NotNull CommandSender sender, String[] args) {
+        if (!sender.hasPermission(this.getPermission())) {
+            sender.sendMessage(Message.NOT_PERMISSION_TEMPMUTECHAT_EXECUTE.getMessage());
+            return false;
+        }
+
         int length = args.length;
 
         if (length < 2) {
-            throw new NotEnoughArgumentsException(2);
-        } else {
-            if (!sender.hasPermission(super.getPermission())) {
-              //  sender.sendMessage(Message.NOT_PERMISSION_TEMPMUTECHAT_EXECUTE.message);
-                throw new NotPermissionException();
-            }
+            sender.sendMessage(Message.NOT_ENOUGH_ARGUMENTS.getMessage());
+            return false;
 
+        } else {
             Player player = super.getPluginManager().getOfflinePlayer(args[0]);
             if(player == null) {
-                throw new PlayerNotFoundException(args[0]);
+                sender.sendMessage(Message.NOT_FOUND_PLAYER.getMessage());
+                return false;
             }
 
-            PunishmentTarget target = new MultiPunishmentTarget(player);
+            PunishmentTarget target = null;
+
+            if (player instanceof OnlinePlayer onlinePlayer) {
+                target = new MultiOnlinePunishmentTarget(onlinePlayer);
+            } else {
+                target = new MultiPunishmentTarget(player);
+            }
 
             if (length == 2) {
                 try {
                     StringUtil.getTime(args[1]);
-                    throw new NotEnoughArgumentsException(3);
+                    sender.sendMessage(Message.NOT_ENOUGH_ARGUMENTS.getMessage());
+                    return false;
                 } catch (IllegalDateFormatException exception) {
                     throw new NotMatchArgumentsException();
                 }
@@ -75,10 +80,12 @@ public class TempMuteChat extends Command {
                         creator = new MultiPlayerPunishmentCreator(onlinePlayer);
                     } else if(sender instanceof Console console) {
                         creator = new MultiConsolePunishmentCreator(console);
+                    } else {
+                        return false;
                     }
 
                     Punishment punishment = super.getPluginManager().getPunishmentManager()
-                        .generatePunishment(PunishmentType.TEMP_BAN, target, creator,
+                        .generatePunishment(PunishmentType.TEMP_MUTE, target, creator,
                             date, reason.toString());
 
                     punishment.activate();

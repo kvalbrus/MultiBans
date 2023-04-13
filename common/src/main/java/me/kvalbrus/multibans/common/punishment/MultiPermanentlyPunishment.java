@@ -7,7 +7,6 @@ import me.kvalbrus.multibans.api.punishment.PunishmentStatus;
 import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.common.managers.PluginManager;
-import me.kvalbrus.multibans.api.DataProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,26 +72,6 @@ public abstract class MultiPermanentlyPunishment extends MultiPunishment
     public synchronized void delete() {
         this.deactivate();
         this.deleteData();
-    }
-
-    @Override
-    public synchronized void updateData() {
-        DataProvider dataProvider = this.getPluginManager().getDataProvider();
-        if (dataProvider != null) {
-            if (dataProvider.hasPunishment(this.getId())) {
-                dataProvider.updatePunishment(this);
-            } else {
-                dataProvider.createPunishment(this);
-            }
-        }
-    }
-
-    @Override
-    public synchronized void deleteData() {
-        DataProvider dataProvider = this.getPluginManager().getDataProvider();
-        if (dataProvider != null && dataProvider.hasPunishment(this.getId())) {
-            dataProvider.deletePunishment(this);
-        }
     }
 
     @NotNull

@@ -45,48 +45,35 @@ public abstract class MultiBansPluginManager implements PluginManager {
 
         this.settings = new MultiBansSettings(this).load();
 
-        File messages = new File(this.getDataFolder(), "messages_en.properties");
+        final File messages = new File(this.getDataFolder(), "messages_en.properties");
         if (!messages.exists()) {
             try {
-                if (messages.createNewFile()) {
-                    try (FileOutputStream output = new FileOutputStream(messages)) {
-                        StringBuilder write = new StringBuilder();
-                        for (Message message : Message.values()) {
-                            write.append("# ").append(message.getDescription()).append('\n');
-                            write.append(message.getKey())
-                                .append('=')
-                                .append(message.message)
-                                .append('\n');
-                        }
-
-                        output.write(write.toString().getBytes());
-                    }
+                if (!messages.createNewFile()) {
+                    return;
                 }
             } catch (IOException exception) {
                 // TODO: Logger
             }
-        } else {
-            Properties properties = new Properties();
-            try (OutputStream output = new FileOutputStream(messages);
-                InputStream input = new FileInputStream(messages)
-            ) {
-                properties.load(input);
+        }
 
-                for (Message message : Message.values()) {
-                    if (properties.contains(message.getKey())) {
-                        message.message = properties.getProperty(message.getKey());
-                    } else {
-                        String write = "# " + message.getDescription() + '\n' + message.getKey() +
-                            '=' + message.message + '\n';
-                        output.write(write.getBytes());
-                    }
+        try (InputStream input = new FileInputStream(messages)) {
+            final var properties = new Properties();
+            properties.load(input);
+
+            for (final Message message : Message.values()) {
+                if (properties.getProperty(message.getKey()) != null) {
+                    message.setMessage(properties.getProperty(message.getKey()));
+                } else {
+                    properties.put(message.getKey(), message.getMessage());
                 }
-
-                output.close();
-                input.close();
-            } catch (IOException exception) {
-                // TODO: Logger
             }
+
+            try (OutputStream output = new FileOutputStream(messages)){
+                properties.store(output, null);
+            }
+
+        } catch (IOException exception) {
+            // TODO: Logger
         }
     }
 

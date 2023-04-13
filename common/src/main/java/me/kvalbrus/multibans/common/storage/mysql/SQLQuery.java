@@ -21,8 +21,7 @@ public enum SQLQuery {
 
     DELETE_TABLE_PUNISHMENT("DROP TABLE punishments"),
 
-    CREATE_PUNISHMENT("INSERT INTO punishments "
-        +
+    CREATE_PUNISHMENT("INSERT INTO punishments " +
         "(id, type, target_ip, target_name, target_uuid, creator_name, date_created, date_start, duration, reason, comment, cancellation_creator, cancellation_date, cancellation_reason, servers, cancelled) "
         + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"),
 

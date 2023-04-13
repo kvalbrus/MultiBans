@@ -1,7 +1,6 @@
 package me.kvalbrus.multibans.common.punishment.target;
 
 import java.util.UUID;
-import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.Player;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
@@ -15,10 +14,6 @@ public class MultiPunishmentTarget implements PunishmentTarget {
     private Punishment punishment;
 
     public MultiPunishmentTarget(@NotNull final Player player) {
-        if (player instanceof OnlinePlayer onlinePlayer) {
-            new MultiOnlinePunishmentTarget(onlinePlayer);
-        }
-
         this.player = player;
     }
 

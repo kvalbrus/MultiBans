@@ -10,12 +10,15 @@ import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.bukkit.commands.BanBukkit;
 import me.kvalbrus.multibans.bukkit.commands.BanIpBukkit;
 import me.kvalbrus.multibans.bukkit.commands.MuteChatBukkit;
+import me.kvalbrus.multibans.bukkit.commands.UnbanBukkit;
+import me.kvalbrus.multibans.bukkit.commands.UnmuteChatBukkit;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitConsole;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitPlayer;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitOnlinePlayer;
 import me.kvalbrus.multibans.bukkit.listeners.PlayerJoinListener;
 import me.kvalbrus.multibans.common.managers.MultiBansPluginManager;
-import me.kvalbrus.multibans.common.managers.PunishmentManager;
+import me.kvalbrus.multibans.common.utils.Message;
+import me.kvalbrus.multibans.common.utils.ReplacedString;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -146,7 +149,10 @@ public class BukkitPluginManager extends MultiBansPluginManager {
             punishment.getType() == PunishmentType.TEMP_BAN_IP) {
             Player player = this.plugin.getServer().getPlayer(punishment.getTargetUniqueId());
             if (player != null) {
-                player.kickPlayer(((PunishmentManager) this.getPunishmentManager()).getPlayerTitle(player.getUniqueId()));
+                ReplacedString title = new ReplacedString(Message.TITLE_HEADER.getMessage() + Message.TITLE_TEMPBAN.getMessage() + Message.TITLE_FOOTER.getMessage())
+                    .replacePunishment(punishment);
+
+                player.kickPlayer(title.string());
             }
         }
 
@@ -164,6 +170,8 @@ public class BukkitPluginManager extends MultiBansPluginManager {
         new BanBukkit(this, this.plugin);
         new BanIpBukkit(this, this.plugin);
         new MuteChatBukkit(this, this.plugin);
+        new UnbanBukkit(this, this.plugin);
+        new UnmuteChatBukkit(this, this.plugin);
     }
 
     private void registerListeners() {

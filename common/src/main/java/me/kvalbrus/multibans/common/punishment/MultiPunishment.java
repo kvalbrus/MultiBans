@@ -2,6 +2,7 @@ package me.kvalbrus.multibans.common.punishment;
 
 import java.util.List;
 import java.util.UUID;
+import me.kvalbrus.multibans.api.DataProvider;
 import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
@@ -267,7 +268,21 @@ public abstract class MultiPunishment implements Punishment {
         return punishment1.getId().compareTo(punishment2.getId());
     }
 
-    public abstract void updateData();
+    public synchronized void updateData() {
+        DataProvider dataProvider = this.getPluginManager().getDataProvider();
+        if (dataProvider != null) {
+            if (dataProvider.hasPunishment(this.getId())) {
+                dataProvider.updatePunishment(this);
+            } else {
+                dataProvider.createPunishment(this);
+            }
+        }
+    }
 
-    public abstract void deleteData();
+    public synchronized void deleteData() {
+        DataProvider dataProvider = this.getPluginManager().getDataProvider();
+        if (dataProvider != null && dataProvider.hasPunishment(this.getId())) {
+            dataProvider.deletePunishment(this);
+        }
+    }
 }

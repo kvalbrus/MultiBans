@@ -41,9 +41,9 @@ public class MultiTemporaryBanIp extends MultiTemporaryPunishment implements Tem
         super.activate();
 
         // Sends a message to all players with permission
-        ReplacedString listenMessage = new ReplacedString(Message.TEMPBANIP_LISTEN.message)
+        ReplacedString listenMessage = new ReplacedString(Message.TEMPBANIP_LISTEN.getMessage())
             .replacePlayerName(this.getTarget())
-            .replaceCreatorName(this.getCreator());
+            .replaceExecutorName(this.getCreator());
 
         for (OnlinePlayer p : this.getPluginManager().getOnlinePlayers()) {
             if (p.hasPermission(Permission.PUNISHMENT_TEMPBANIP_EXECUTE.getName())) {
@@ -53,7 +53,7 @@ public class MultiTemporaryBanIp extends MultiTemporaryPunishment implements Tem
 
         // Sends a message to the creator
         if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
-            ReplacedString creatorMessage = new ReplacedString(Message.BANIP_CREATOR.message)
+            ReplacedString creatorMessage = new ReplacedString(Message.TEMPBANIP_EXECUTOR.getMessage())
                 .replacePlayerName(this.getTarget());
             creator.sendMessage(creatorMessage.string());
         }

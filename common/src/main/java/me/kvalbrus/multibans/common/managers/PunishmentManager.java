@@ -8,7 +8,6 @@ import lombok.Getter;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
 import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
-import me.kvalbrus.multibans.api.punishment.TemporaryPunishment;
 import me.kvalbrus.multibans.api.utils.TimeType;
 import me.kvalbrus.multibans.common.punishment.MultiPunishment;
 import org.jetbrains.annotations.NotNull;
@@ -182,62 +181,6 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
 
         return MultiPunishment.constructPunishment(this.pluginManager, type, id, target, creator,
             realTime, realTime, duration, reason, comment, null, -1, null, servers, false);
-    }
-
-    @NotNull
-    public String getPlayerTitle(@NotNull final UUID uuid) {
-        List<? extends Punishment> activePunishments = this.getActivePunishments(uuid);
-        activePunishments.removeIf(p -> p.getType() != PunishmentType.BAN &&
-            p.getType() != PunishmentType.TEMP_BAN && p.getType() != PunishmentType.BAN_IP &&
-            p.getType() != PunishmentType.TEMP_BAN_IP);
-
-        StringBuilder title = new StringBuilder();
-        title.append("You were banned!\n");
-        for (Punishment punishment : activePunishments) {
-            if (punishment instanceof TemporaryPunishment tPunishment) {
-                title.append(tPunishment.getId()).append(" ");
-                title.append(tPunishment.getType()).append(" ");
-                title.append(tPunishment.getDuration()).append(" ");
-                title.append(tPunishment.getCreatorName());
-                title.append("\n");
-            } else {
-                title.append(punishment.getId()).append(" ");
-                title.append(punishment.getType()).append(" ");
-                title.append("permanently").append(" ");
-                title.append(punishment.getCreatorName());
-                title.append("\n");
-            }
-        }
-
-        return title.toString();
-    }
-
-    @NotNull
-    public String getPlayerTitle(@NotNull final String name) {
-        List<? extends Punishment> activePunishments = this.getActivePunishments(name);
-        activePunishments.removeIf(p -> p.getType() != PunishmentType.BAN &&
-            p.getType() != PunishmentType.TEMP_BAN && p.getType() != PunishmentType.BAN_IP &&
-            p.getType() != PunishmentType.TEMP_BAN_IP);
-
-        StringBuilder title = new StringBuilder();
-        title.append("You were banned!\n");
-        for (Punishment punishment : activePunishments) {
-            if (punishment instanceof TemporaryPunishment tPunishment) {
-                title.append(tPunishment.getId()).append(" ");
-                title.append(tPunishment.getType()).append(" ");
-                title.append(tPunishment.getDuration()).append(" ");
-                title.append(tPunishment.getCreatorName());
-                title.append("\n");
-            } else {
-                title.append(punishment.getId()).append(" ");
-                title.append(punishment.getType()).append(" ");
-                title.append("permanently").append(" ");
-                title.append(punishment.getCreatorName());
-                title.append("\n");
-            }
-        }
-
-        return title.toString();
     }
 
     @NotNull
