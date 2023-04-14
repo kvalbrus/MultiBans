@@ -17,6 +17,7 @@ import me.kvalbrus.multibans.common.exceptions.IllegalDateFormatException;
 import me.kvalbrus.multibans.common.exceptions.NotMatchArgumentsException;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.punishment.creator.MultiConsolePunishmentCreator;
+import me.kvalbrus.multibans.common.punishment.creator.MultiOnlinePlayerPunishmentCreator;
 import me.kvalbrus.multibans.common.punishment.creator.MultiPlayerPunishmentCreator;
 import me.kvalbrus.multibans.common.punishment.target.MultiOnlinePunishmentTarget;
 import me.kvalbrus.multibans.common.punishment.target.MultiPunishmentTarget;
@@ -68,7 +69,7 @@ public class MuteChat extends Command {
 
                 PunishmentCreator creator = null;
                 if (sender instanceof OnlinePlayer onlinePlayer) {
-                    creator = new MultiPlayerPunishmentCreator(onlinePlayer);
+                    creator = new MultiOnlinePlayerPunishmentCreator(onlinePlayer);
                 } else if(sender instanceof Console console) {
                     creator = new MultiConsolePunishmentCreator(console);
                 }

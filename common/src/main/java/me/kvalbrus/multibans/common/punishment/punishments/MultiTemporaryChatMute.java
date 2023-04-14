@@ -54,7 +54,7 @@ public class MultiTemporaryChatMute extends MultiTemporaryPunishment implements 
         // Sends a message to target if target is online
         if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
             ReplacedString targetMessage = new ReplacedString(Message.TEMPMUTECHAT_PLAYER.getMessage())
-                .replacePlayerName(onlineTarget)
+                .replacePlayerName(this.getTarget())
                 .replaceExecutorName(this.getCreator());
             onlineTarget.sendMessage(targetMessage.string());
         }
