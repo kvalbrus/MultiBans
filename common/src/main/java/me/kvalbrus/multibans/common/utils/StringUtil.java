@@ -114,8 +114,10 @@ public class StringUtil {
      */
     @NotNull
     public static String getDuration(long milliseconds) {
-        if (milliseconds <= 0) {
+        if (milliseconds < 0) {
             return Message.PERMANENTLY.getMessage();
+        } else if (milliseconds < TimeType.SECOND.getDuration()) {
+            return "0 " + getWordSecond(0);
         }
 
         StringBuilder builder = new StringBuilder();
