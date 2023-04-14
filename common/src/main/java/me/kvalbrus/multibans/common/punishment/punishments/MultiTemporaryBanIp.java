@@ -26,7 +26,7 @@ public class MultiTemporaryBanIp extends MultiTemporaryPunishment implements Tem
                                long duration,
                                @Nullable String reason,
                                @Nullable String comment,
-                               @Nullable String cancellationCreator,
+                               @Nullable PunishmentCreator cancellationCreator,
                                long cancellationDate,
                                @Nullable String cancellationReason,
                                @NotNull List<String> servers,
@@ -41,7 +41,7 @@ public class MultiTemporaryBanIp extends MultiTemporaryPunishment implements Tem
         super.activate();
 
         // Sends a message to all players with permission
-        ReplacedString listenMessage = new ReplacedString(Message.TEMPBANIP_LISTEN.getMessage())
+        ReplacedString listenMessage = new ReplacedString(Message.TEMPBANIP_ACTIVATE_LISTEN.getMessage())
             .replacePlayerName(this.getTarget())
             .replaceExecutorName(this.getCreator());
 
@@ -53,7 +53,7 @@ public class MultiTemporaryBanIp extends MultiTemporaryPunishment implements Tem
 
         // Sends a message to the creator
         if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
-            ReplacedString creatorMessage = new ReplacedString(Message.TEMPBANIP_EXECUTOR.getMessage())
+            ReplacedString creatorMessage = new ReplacedString(Message.TEMPBANIP_ACTIVATE_EXECUTOR.getMessage())
                 .replacePlayerName(this.getTarget());
             creator.sendMessage(creatorMessage.string());
         }

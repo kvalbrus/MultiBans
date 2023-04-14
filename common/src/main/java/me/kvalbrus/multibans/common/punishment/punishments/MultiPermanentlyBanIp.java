@@ -24,9 +24,11 @@ public class MultiPermanentlyBanIp extends MultiPermanentlyPunishment implements
                                  long dateCreated,
                                  @Nullable String reason,
                                  @Nullable String comment,
-                                 @Nullable String cancellationCreator, long cancellationDate,
+                                 @Nullable PunishmentCreator cancellationCreator,
+                                 long cancellationDate,
                                  @Nullable String cancellationReason,
-                                 @NotNull List<String> servers, boolean cancelled) {
+                                 @NotNull List<String> servers,
+                                 boolean cancelled) {
         super(pluginManager, PunishmentType.BAN_IP, id, target, creator, dateCreated, reason,
             comment, cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
     }
@@ -36,7 +38,7 @@ public class MultiPermanentlyBanIp extends MultiPermanentlyPunishment implements
         super.activate();
 
         // Sends a message to all players with permission
-        ReplacedString listenMessage = new ReplacedString(Message.BANIP_LISTEN.getMessage())
+        ReplacedString listenMessage = new ReplacedString(Message.BANIP_ACTIVATE_LISTEN.getMessage())
             .replacePlayerName(this.getTarget())
             .replaceExecutorName(this.getCreator());
 
@@ -48,7 +50,7 @@ public class MultiPermanentlyBanIp extends MultiPermanentlyPunishment implements
 
         // Sends a message to the creator
         if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
-            ReplacedString creatorMessage = new ReplacedString(Message.BANIP_EXECUTOR.getMessage())
+            ReplacedString creatorMessage = new ReplacedString(Message.BANIP_ACTIVATE_EXECUTOR.getMessage())
                 .replacePlayerName(this.getTarget());
             creator.sendMessage(creatorMessage.string());
         }

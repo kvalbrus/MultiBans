@@ -27,7 +27,7 @@ public class MultiTemporaryChatMute extends MultiTemporaryPunishment implements 
                                   long duration,
                                   @Nullable String reason,
                                   @Nullable String comment,
-                                  @Nullable String cancellationCreator,
+                                  @Nullable PunishmentCreator cancellationCreator,
                                   long cancellationDate,
                                   @Nullable String cancellationReason,
                                   @NotNull List<String> servers, boolean cancelled) {
@@ -41,7 +41,7 @@ public class MultiTemporaryChatMute extends MultiTemporaryPunishment implements 
         super.activate();
 
         // Sends a message to all players with permission
-        ReplacedString listenMessage = new ReplacedString(Message.TEMPMUTECHAT_LISTEN.getMessage())
+        ReplacedString listenMessage = new ReplacedString(Message.TEMPMUTECHAT_ACTIVATE_LISTEN.getMessage())
             .replacePlayerName(this.getTarget())
             .replaceExecutorName(this.getCreator());
 
@@ -53,7 +53,7 @@ public class MultiTemporaryChatMute extends MultiTemporaryPunishment implements 
 
         // Sends a message to target if target is online
         if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
-            ReplacedString targetMessage = new ReplacedString(Message.TEMPMUTECHAT_PLAYER.getMessage())
+            ReplacedString targetMessage = new ReplacedString(Message.TEMPMUTECHAT_ACTIVATE_TARGET.getMessage())
                 .replacePlayerName(this.getTarget())
                 .replaceExecutorName(this.getCreator());
             onlineTarget.sendMessage(targetMessage.string());
@@ -61,7 +61,7 @@ public class MultiTemporaryChatMute extends MultiTemporaryPunishment implements 
 
         // Sends a message to the creator
         if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
-            ReplacedString creatorMessage = new ReplacedString(Message.TEMPMUTECHAT_EXECUTOR.getMessage())
+            ReplacedString creatorMessage = new ReplacedString(Message.TEMPMUTECHAT_ACTIVATE_EXECUTOR.getMessage())
                 .replacePlayerName(this.getTarget());
             creator.sendMessage(creatorMessage.string());
         }

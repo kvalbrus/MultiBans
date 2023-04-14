@@ -1,5 +1,6 @@
 package me.kvalbrus.multibans.api.punishment;
 
+import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -7,10 +8,12 @@ public interface Cancelable {
 
     void deactivate();
 
-    void deactivate(@Nullable String creator, long date, @Nullable String reason);
+    void deactivate(@Nullable PunishmentCreator cancellationCreator, long cancellationDate);
+
+    void deactivate(@Nullable PunishmentCreator cancellationCreator, long cancellationDate, @Nullable String cancellationReason);
 
     @Nullable
-    String getCancellationCreator();
+    PunishmentCreator getCancellationCreator();
 
     long getCancellationDate();
 
@@ -21,9 +24,9 @@ public interface Cancelable {
 
     void setCancelled(boolean cancelled);
 
-    void setCancellationCreator(@Nullable String creator);
+    void setCancellationCreator(@Nullable PunishmentCreator cancellationCreator);
 
-    void setCancellationDate(long date);
+    void setCancellationDate(long cancellationDate);
 
-    void setCancellationReason(@NotNull String reason);
+    void setCancellationReason(@NotNull String cancellationReason);
 }

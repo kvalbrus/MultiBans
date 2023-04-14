@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class MultiPermanentlyPunishment extends MultiPunishment
     implements PermanentlyPunishment {
 
-    private String cancellationCreator;
+    private PunishmentCreator cancellationCreator;
 
     private long cancellationDate;
 
@@ -29,7 +29,7 @@ public abstract class MultiPermanentlyPunishment extends MultiPunishment
                                       long dateCreated,
                                       @Nullable String reason,
                                       @Nullable String comment,
-                                      @Nullable String cancellationCreator,
+                                      @Nullable PunishmentCreator cancellationCreator,
                                       long cancellationDate,
                                       @Nullable String cancellationReason,
                                       @NotNull List<String> servers,
@@ -49,11 +49,16 @@ public abstract class MultiPermanentlyPunishment extends MultiPunishment
 
     @Override
     public synchronized void deactivate() {
-        this.deactivate(null, -1, null);
+        this.deactivate(null, System.currentTimeMillis(), null);
     }
 
     @Override
-    public synchronized void deactivate(@Nullable String cancellationCreator,
+    public synchronized void deactivate(@NotNull PunishmentCreator cancellationCreator, long cancellationDate) {
+        this.deactivate(cancellationCreator, cancellationDate, null);
+    }
+
+    @Override
+    public synchronized void deactivate(@Nullable PunishmentCreator cancellationCreator,
                                         long cancellationDate,
                                         @Nullable String cancellationReason) {
         if (this.cancelled) {
@@ -86,7 +91,7 @@ public abstract class MultiPermanentlyPunishment extends MultiPunishment
 
     @Nullable
     @Override
-    public String getCancellationCreator() {
+    public PunishmentCreator getCancellationCreator() {
         return this.cancellationCreator;
     }
 
@@ -107,7 +112,7 @@ public abstract class MultiPermanentlyPunishment extends MultiPunishment
     }
 
     @Override
-    public synchronized void setCancellationCreator(@Nullable String cancellationCreator) {
+    public synchronized void setCancellationCreator(@Nullable PunishmentCreator cancellationCreator) {
         this.cancellationCreator = cancellationCreator;
         this.updateData();
     }

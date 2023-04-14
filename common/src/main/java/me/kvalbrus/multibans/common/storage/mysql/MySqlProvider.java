@@ -114,8 +114,9 @@ public class MySqlProvider implements DataProvider {
                     -1L);
             statement.setString(i++, punishment.getCreatedReason());
             statement.setString(i++, punishment.getComment());
-            statement.setString(i++, punishment instanceof Cancelable ?
-                ((Cancelable) punishment).getCancellationCreator() : null);
+            statement.setString(i++, punishment instanceof Cancelable cancelable ?
+                (cancelable.getCancellationCreator() != null ?
+                    cancelable.getCancellationCreator().getName() : null) : null);
             statement.setLong(i++,
                 punishment instanceof Cancelable ? ((Cancelable) punishment).getCancellationDate() :
                     -1);
@@ -160,11 +161,12 @@ public class MySqlProvider implements DataProvider {
             statement.setString(i++, punishment.getCreatedReason());
             statement.setString(i++, punishment.getComment());
             statement.setString(i++, punishment instanceof Cancelable cancelable ?
-                cancelable.getCancellationCreator() : null);
+                (cancelable.getCancellationCreator() != null ?
+                    cancelable.getCancellationCreator().getName() : null) : null);
             statement.setLong(i++, punishment instanceof Cancelable cancelable ?
                 cancelable.getCancellationDate() : -1);
             statement.setString(i++, punishment instanceof Cancelable cancelable ?
-                cancelable.getCancellationCreator() : null);
+                cancelable.getCancellationReason() : null);
 
             StringBuilder serversStringBuilder = new StringBuilder();
             for (int j = 0; j < punishment.getServers().size(); ++j) {
@@ -250,7 +252,7 @@ public class MySqlProvider implements DataProvider {
                 long duration = resultSet.getLong("duration");
                 String reason = resultSet.getString("reason");
                 String comment = resultSet.getString("comment");
-                String cancellationCreator = resultSet.getString("cancellation_creator");
+                String cancellationCreatorName = resultSet.getString("cancellation_creator");
                 long cancellationDate = resultSet.getLong("cancellation_date");
                 String cancellationReason = resultSet.getString("cancellation_reason");
 
@@ -273,6 +275,16 @@ public class MySqlProvider implements DataProvider {
                     creator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
                 } else {
                     creator = new MultiPlayerPunishmentCreator(this.pluginManager.getOfflinePlayer(creatorName));
+                }
+
+                PunishmentCreator cancellationCreator = null;
+                if (cancellationCreatorName.equals(this.pluginManager.getConsole().getName())) {
+                    cancellationCreator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
+                } else {
+                    Player cancellationPlayer = this.pluginManager.getOfflinePlayer(cancellationCreatorName);
+                    if (cancellationPlayer != null) {
+                        cancellationCreator = new MultiPlayerPunishmentCreator(cancellationPlayer);
+                    }
                 }
 
                 Punishment punishment = MultiPunishment.constructPunishment(
@@ -316,7 +328,7 @@ public class MySqlProvider implements DataProvider {
                     long duration = resultSet.getLong("duration");
                     String reason = resultSet.getString("reason");
                     String comment = resultSet.getString("comment");
-                    String cancellationCreator = resultSet.getString("cancellation_creator");
+                    String cancellationCreatorName = resultSet.getString("cancellation_creator");
                     long cancellationDate = resultSet.getLong("cancellation_date");
                     String cancellationReason = resultSet.getString("cancellation_reason");
 
@@ -332,6 +344,16 @@ public class MySqlProvider implements DataProvider {
                         creator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
                     } else {
                         creator = new MultiPlayerPunishmentCreator(this.pluginManager.getOfflinePlayer(creatorName));
+                    }
+
+                    PunishmentCreator cancellationCreator = null;
+                    if (cancellationCreatorName.equals(this.pluginManager.getConsole().getName())) {
+                        cancellationCreator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
+                    } else {
+                        Player cancellationPlayer = this.pluginManager.getOfflinePlayer(cancellationCreatorName);
+                        if (cancellationPlayer != null) {
+                            cancellationCreator = new MultiPlayerPunishmentCreator(cancellationPlayer);
+                        }
                     }
 
                     T punishment = MultiPunishment.constructPunishment(
@@ -376,7 +398,7 @@ public class MySqlProvider implements DataProvider {
                     long duration = resultSet.getLong("duration");
                     String reason = resultSet.getString("reason");
                     String comment = resultSet.getString("comment");
-                    String cancellationCreator = resultSet.getString("cancellation_creator");
+                    String cancellationCreatorName = resultSet.getString("cancellation_creator");
                     long cancellationDate = resultSet.getLong("cancellation_date");
                     String cancellationReason = resultSet.getString("cancellation_reason");
 
@@ -392,6 +414,16 @@ public class MySqlProvider implements DataProvider {
                         creator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
                     } else {
                         creator = new MultiPlayerPunishmentCreator(this.pluginManager.getOfflinePlayer(creatorName));
+                    }
+
+                    PunishmentCreator cancellationCreator = null;
+                    if (cancellationCreatorName.equals(this.pluginManager.getConsole().getName())) {
+                        cancellationCreator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
+                    } else {
+                        Player cancellationPlayer = this.pluginManager.getOfflinePlayer(cancellationCreatorName);
+                        if (cancellationPlayer != null) {
+                            cancellationCreator = new MultiPlayerPunishmentCreator(cancellationPlayer);
+                        }
                     }
 
                     T punishment = MultiPunishment.constructPunishment(
@@ -436,7 +468,7 @@ public class MySqlProvider implements DataProvider {
                     long duration = resultSet.getLong("duration");
                     String reason = resultSet.getString("reason");
                     String comment = resultSet.getString("comment");
-                    String cancellationCreator = resultSet.getString("cancellation_creator");
+                    String cancellationCreatorName = resultSet.getString("cancellation_creator");
                     long cancellationDate = resultSet.getLong("cancellation_date");
                     String cancellationReason = resultSet.getString("cancellation_reason");
 
@@ -452,6 +484,16 @@ public class MySqlProvider implements DataProvider {
                         creator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
                     } else {
                         creator = new MultiPlayerPunishmentCreator(this.pluginManager.getOfflinePlayer(creatorName));
+                    }
+
+                    PunishmentCreator cancellationCreator = null;
+                    if (cancellationCreatorName.equals(this.pluginManager.getConsole().getName())) {
+                        cancellationCreator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
+                    } else {
+                        Player cancellationPlayer = this.pluginManager.getOfflinePlayer(cancellationCreatorName);
+                        if (cancellationPlayer != null) {
+                            cancellationCreator = new MultiPlayerPunishmentCreator(cancellationPlayer);
+                        }
                     }
 
                     T punishment = MultiPunishment.constructPunishment(

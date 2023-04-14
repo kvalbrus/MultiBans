@@ -15,7 +15,7 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment
 
     private long startedDate;
 
-    private String cancellationCreator;
+    private PunishmentCreator cancellationCreator;
 
     private long cancellationDate;
 
@@ -35,7 +35,7 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment
                                     long duration,
                                     @Nullable String reason,
                                     @Nullable String comment,
-                                    @Nullable String cancellationCreator,
+                                    @Nullable PunishmentCreator cancellationCreator,
                                     long cancellationDate,
                                     @Nullable String cancellationReason,
                                     @NotNull List<String> servers,
@@ -77,15 +77,20 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment
     }
 
     @Override
-    public synchronized void deactivate(@Nullable String cancellationCreator,
-                                        long cancellationDate,
-                                        @Nullable String cancellationReason) {
+    public void deactivate(@Nullable PunishmentCreator cancellationCreator, long cancellationDate) {
+        this.deactivate(cancellationCreator, cancellationDate, null);
+    }
+
+    @Override
+    public void deactivate(@Nullable PunishmentCreator cancellationCreator,
+                           long cancellationDate,
+                           @Nullable String cancellationReason) {
         if (this.cancelled) {
             return;
         }
 
         List<? extends MultiTemporaryPunishment> history = this.getPluginManager()
-            .getPunishmentManager().getPlayerHistory(this.getTargetUniqueId(), this.getClass());
+            .getPunishmentManager().getPlayerHistory(this.getTarget().getUniqueId(), this.getClass());
 
         if(history.stream().noneMatch(punishment -> punishment.getId().equals(this.getId()))) {
             return;
@@ -162,7 +167,7 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment
 
     @Nullable
     @Override
-    public final String getCancellationCreator() {
+    public final PunishmentCreator getCancellationCreator() {
         return this.cancellationCreator;
     }
 
@@ -193,12 +198,6 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment
     }
 
     @Override
-    public final synchronized void setCancellationCreator(@Nullable String cancellationCreator) {
-        this.cancellationCreator = cancellationCreator;
-        this.updateData();
-    }
-
-    @Override
     public final synchronized void setCancellationDate(long cancellationDate) {
         this.cancellationDate = cancellationDate;
         this.updateData();
@@ -213,6 +212,12 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment
     @Override
     public final synchronized void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
+        this.updateData();
+    }
+
+    @Override
+    public void setCancellationCreator(@Nullable PunishmentCreator cancellationCreator) {
+        this.cancellationCreator = cancellationCreator;
         this.updateData();
     }
 

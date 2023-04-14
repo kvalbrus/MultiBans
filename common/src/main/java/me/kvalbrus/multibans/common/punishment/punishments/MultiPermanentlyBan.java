@@ -24,9 +24,11 @@ public class MultiPermanentlyBan extends MultiPermanentlyPunishment implements P
                                long dateCreated,
                                @Nullable String reason,
                                @Nullable String comment,
-                               @Nullable String cancellationCreator, long cancellationDate,
+                               @Nullable PunishmentCreator cancellationCreator,
+                               long cancellationDate,
                                @Nullable String cancellationReason,
-                               @NotNull List<String> servers, boolean cancelled) {
+                               @NotNull List<String> servers,
+                               boolean cancelled) {
         super(pluginManager, PunishmentType.BAN, id, target, creator, dateCreated, reason, comment,
             cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
     }
@@ -36,7 +38,7 @@ public class MultiPermanentlyBan extends MultiPermanentlyPunishment implements P
         super.activate();
 
         // Sends a message to all players with permission
-        ReplacedString listenMessage = new ReplacedString(Message.BAN_LISTEN.getMessage())
+        ReplacedString listenMessage = new ReplacedString(Message.BAN_ACTIVATE_LISTEN.getMessage())
             .replacePlayerName(this.getTarget())
             .replaceExecutorName(this.getCreator());
 
@@ -48,7 +50,7 @@ public class MultiPermanentlyBan extends MultiPermanentlyPunishment implements P
 
         // Sends a message to the creator
         if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
-            ReplacedString creatorMessage = new ReplacedString(Message.BAN_EXECUTOR.getMessage())
+            ReplacedString creatorMessage = new ReplacedString(Message.BAN_ACTIVATE_EXECUTOR.getMessage())
                 .replacePlayerName(this.getTarget());
             creator.sendMessage(creatorMessage.string());
         }

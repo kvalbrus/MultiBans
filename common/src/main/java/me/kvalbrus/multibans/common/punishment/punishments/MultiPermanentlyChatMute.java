@@ -26,7 +26,7 @@ public class MultiPermanentlyChatMute extends MultiPermanentlyPunishment impleme
                                     long dateCreated,
                                     @Nullable String reason,
                                     @Nullable String comment,
-                                    @Nullable String cancellationCreator,
+                                    @Nullable PunishmentCreator cancellationCreator,
                                     long cancellationDate,
                                     @Nullable String cancellationReason,
                                     @NotNull List<String> servers,
@@ -40,7 +40,7 @@ public class MultiPermanentlyChatMute extends MultiPermanentlyPunishment impleme
         super.activate();
 
         // Sends a message to all players with permission
-        ReplacedString listenMessage = new ReplacedString(Message.MUTECHAT_LISTEN.getMessage())
+        ReplacedString listenMessage = new ReplacedString(Message.MUTECHAT_ACTIVATE_LISTEN.getMessage())
             .replacePlayerName(this.getTarget())
             .replaceExecutorName(this.getCreator());
 
@@ -52,7 +52,7 @@ public class MultiPermanentlyChatMute extends MultiPermanentlyPunishment impleme
 
         // Sends a message to target if target is online
         if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
-            ReplacedString targetMessage = new ReplacedString(Message.MUTECHAT_PLAYER.getMessage())
+            ReplacedString targetMessage = new ReplacedString(Message.MUTECHAT_ACTIVATE_TARGET.getMessage())
                 .replacePlayerName(onlineTarget)
                 .replaceExecutorName(this.getCreator());
             onlineTarget.sendMessage(targetMessage.string());
@@ -60,7 +60,7 @@ public class MultiPermanentlyChatMute extends MultiPermanentlyPunishment impleme
 
         // Sends a message to the creator
         if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
-            ReplacedString creatorMessage = new ReplacedString(Message.MUTECHAT_EXECUTOR.getMessage())
+            ReplacedString creatorMessage = new ReplacedString(Message.MUTECHAT_ACTIVATE_EXECUTOR.getMessage())
                 .replacePlayerName(this.getTarget());
             creator.sendMessage(creatorMessage.string());
         }

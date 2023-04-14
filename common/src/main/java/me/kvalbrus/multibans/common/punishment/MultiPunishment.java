@@ -76,7 +76,7 @@ public abstract class MultiPunishment implements Punishment {
         long duration,
         @Nullable String createdReason,
         @Nullable String comment,
-        @Nullable String cancellationCreator,
+        @Nullable PunishmentCreator cancellationCreator,
         long cancellationDate,
         @Nullable String cancellationReason,
         @NotNull List<String> servers,
