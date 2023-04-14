@@ -2,7 +2,6 @@ package me.kvalbrus.multibans.common.utils;
 
 import java.util.regex.Pattern;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
