@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.Properties;
 import me.kvalbrus.multibans.api.DataProvider;
@@ -58,7 +60,7 @@ public abstract class MultiBansPluginManager implements PluginManager {
 
         try (InputStream input = new FileInputStream(messages)) {
             final var properties = new Properties();
-            properties.load(input);
+            properties.load(new StringReader(new String(input.readAllBytes(), StandardCharsets.UTF_8)));
 
             for (final Message message : Message.values()) {
                 if (properties.getProperty(message.getKey()) != null) {
@@ -77,6 +79,7 @@ public abstract class MultiBansPluginManager implements PluginManager {
         }
     }
 
+    @Override
     public final void reload() {
         this.onDisable();
         this.onLoad();

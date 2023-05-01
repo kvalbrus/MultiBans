@@ -15,7 +15,7 @@ import me.kvalbrus.multibans.bukkit.commands.UnmuteChatBukkit;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitConsole;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitPlayer;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitOnlinePlayer;
-import me.kvalbrus.multibans.bukkit.listeners.PlayerJoinListener;
+import me.kvalbrus.multibans.bukkit.listeners.PlayerListener;
 import me.kvalbrus.multibans.common.managers.MultiBansPluginManager;
 import me.kvalbrus.multibans.common.utils.Message;
 import me.kvalbrus.multibans.common.utils.ReplacedString;
@@ -175,6 +175,6 @@ public class BukkitPluginManager extends MultiBansPluginManager {
     }
 
     private void registerListeners() {
-        this.plugin.getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this.plugin);
+        this.plugin.getServer().getPluginManager().registerEvents(new PlayerListener(this), this.plugin);
     }
 }

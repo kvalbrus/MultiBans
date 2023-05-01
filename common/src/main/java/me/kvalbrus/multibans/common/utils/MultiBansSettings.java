@@ -2,6 +2,8 @@ package me.kvalbrus.multibans.common.utils;
 
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,10 +19,13 @@ public class MultiBansSettings {
     private final PluginManager pluginManager;
 
     @Getter
-    private long idSize = 6;
+    private long idSize;
 
     @Getter
-    private boolean maskIp = true;
+    private boolean maskIp;
+
+    @Getter
+    private List<String> chatMuteCommands;
 
     public MultiBansSettings(@NotNull PluginManager pluginManager) {
         this.pluginManager = pluginManager;
@@ -43,16 +48,17 @@ public class MultiBansSettings {
 
         Map<String, Object> map = new HashMap<>();
 
-        long idSize = toml.getLong("idSize") != null ? toml.getLong("idSize") : this.idSize;
+        long idSize = toml.getLong("IdSize", 6L);
         if (idSize > 0 && idSize < 100) {
-            this.idSize = idSize;
+            this.idSize = 6L;
         }
 
-        this.maskIp = toml.getBoolean("maskIp") != null ? toml.getBoolean("maskIp") : this.maskIp;
+        this.maskIp = toml.getBoolean("MaskIp", true);
+        this.chatMuteCommands = toml.getList("ChatMuteCommands", new ArrayList<>());
 
-
-        map.put("isSize", this.idSize);
-        map.put("maskIp", this.maskIp);
+        map.put("IdSize", this.idSize);
+        map.put("MaskIp", this.maskIp);
+        map.put("ChatMuteCommands", this.chatMuteCommands);
 
         try {
             tomlWriter.write(map, file);

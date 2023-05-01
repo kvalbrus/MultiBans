@@ -4,23 +4,16 @@ import me.kvalbrus.multibans.api.Console;
 import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class BukkitConsole implements Console {
+public class BukkitConsole extends BukkitCommandSender implements Console {
 
     private final ConsoleCommandSender sender;
 
     public BukkitConsole(ConsoleCommandSender sender) {
+        super(sender);
         this.sender = sender;
     }
 
-    @Override
-    public void sendMessage(String message) {
-        this.sender.sendMessage(message);
-    }
 
-    @Override
-    public void sendMessage(String... messages) {
-        this.sender.sendMessage(messages);
-    }
 
     @NotNull
     @Override

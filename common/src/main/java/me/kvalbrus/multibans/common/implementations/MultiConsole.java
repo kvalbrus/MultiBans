@@ -12,5 +12,4 @@ public abstract class MultiConsole implements Console {
     public String getName() {
         return "console";
     }
-
 }

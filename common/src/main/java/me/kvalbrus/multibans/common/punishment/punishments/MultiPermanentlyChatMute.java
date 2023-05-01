@@ -41,8 +41,7 @@ public class MultiPermanentlyChatMute extends MultiPermanentlyPunishment impleme
 
         // Sends a message to all players with permission
         ReplacedString listenMessage = new ReplacedString(Message.MUTECHAT_ACTIVATE_LISTEN.getMessage())
-            .replacePlayerName(this.getTarget())
-            .replaceExecutorName(this.getCreator());
+            .replacePunishment(this);
 
         for (OnlinePlayer p : this.getPluginManager().getOnlinePlayers()) {
             if (p.hasPermission(Permission.PUNISHMENT_MUTECHAT_LISTEN.getName())) {
@@ -53,15 +52,14 @@ public class MultiPermanentlyChatMute extends MultiPermanentlyPunishment impleme
         // Sends a message to target if target is online
         if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
             ReplacedString targetMessage = new ReplacedString(Message.MUTECHAT_ACTIVATE_TARGET.getMessage())
-                .replacePlayerName(onlineTarget)
-                .replaceExecutorName(this.getCreator());
+                .replacePunishment(this);
             onlineTarget.sendMessage(targetMessage.string());
         }
 
         // Sends a message to the creator
         if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
             ReplacedString creatorMessage = new ReplacedString(Message.MUTECHAT_ACTIVATE_EXECUTOR.getMessage())
-                .replacePlayerName(this.getTarget());
+                .replacePunishment(this);
             creator.sendMessage(creatorMessage.string());
         }
     }

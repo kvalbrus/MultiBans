@@ -9,7 +9,7 @@ public enum Message {
 
     PREFIX(
         "prefix",
-        "&7[&eMulti&6Bans&7]",
+        "[MultiBans]",
         "Plugin prefix"
     ),
 
@@ -49,8 +49,6 @@ public enum Message {
         "Sends to all player with permission 'multibans.punishment.ban.try' when " +
             "a player tries to join to the server, but he was banned"
     ),
-
-    BAN_HAS_PASSED_LISTEN("ban.has-passed.listen", "", ""),
 
     TEMPBAN_ACTIVATE_LISTEN(
         "tempban.activate.listen",
@@ -100,8 +98,6 @@ public enum Message {
         "Player %player_name% tried joining, but he was banned",
         ""
     ),
-
-    BANIP_HAS_PASSED_LISTEN("banip.has-passed.listen", "", ""),
 
     TEMPBANIP_ACTIVATE_LISTEN(
         "tempbanip.activate.listen",
@@ -155,10 +151,7 @@ public enum Message {
     MUTECHAT_DELETE_TARGET("mutechat.delete.target", "", ""),
 
     MUTECHAT_TRY_LISTEN("mutechat.try.listen", "", ""),
-    MUTECHAT_TRY_TARGET("mutechat.try.listen", "", ""),
-
-    MUTECHAT_HAS_PASSED_LISTEN("mutechat.has-passed.listen", "", ""),
-    MUTECHAT_HAS_PASSED_TARGET("mutechat.has-passed.target", "", ""),
+    MUTECHAT_TRY_TARGET("mutechat.try.target", "", ""),
 
     TEMPMUTECHAT_ACTIVATE_LISTEN(
         "tempmutechat.activate.listen",

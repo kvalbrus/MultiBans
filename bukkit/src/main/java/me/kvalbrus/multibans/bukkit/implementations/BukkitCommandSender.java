@@ -21,12 +21,16 @@ public abstract class BukkitCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        this.commandSender.sendMessage(message);
+        if (message != null && message.length() > 0) {
+            this.commandSender.sendMessage(message);
+        }
     }
 
     @Override
     public void sendMessage(String... messages) {
-        this.commandSender.sendMessage(messages);
+        for (String message : messages) {
+            this.sendMessage(message);
+        }
     }
 
     @Override

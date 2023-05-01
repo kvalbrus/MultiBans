@@ -19,16 +19,16 @@ public abstract class Command {
     @Getter
     private final String permission;
 
-    private final HashMap<String, Command> subcommands;
+    private final HashMap<String, Command> subCommands;
 
     public Command(@NotNull PluginManager pluginManager,
                    @NotNull String name,
                    @NotNull String permission,
-                   @Nullable HashMap<String, Command> subcommands) {
+                   @Nullable HashMap<String, Command> subCommands) {
         this.pluginManager = pluginManager;
         this.name = name;
         this.permission = permission;
-        this.subcommands = subcommands;
+        this.subCommands = subCommands;
     }
 
     public abstract boolean execute(@NotNull CommandSender sender, String[] args);
@@ -36,6 +36,12 @@ public abstract class Command {
     public abstract List<String> tab(@NotNull CommandSender sender, String[] args);
 
     public Command getSubCommand(@NotNull String arg) {
-        return this.subcommands != null ? this.subcommands.get(arg) : null;
+        return this.subCommands != null ? this.subCommands.get(arg) : null;
+    }
+
+    public void addSubCommand(@NotNull String key, @NotNull Command command) {
+        if (this.subCommands != null) {
+            this.subCommands.put(key, command);
+        }
     }
 }

@@ -14,12 +14,16 @@ public class BukkitOnlinePlayer extends MultiOnlinePlayer {
 
     @Override
     public void sendMessage(String message) {
-        this.player.sendMessage(message);
+        if (message != null && message.length() > 0) {
+            this.player.sendMessage(message);
+        }
     }
 
     @Override
     public void sendMessage(String... messages) {
-        this.player.sendMessage(messages);
+        for (String message : messages) {
+            this.sendMessage(message);
+        }
     }
 
     @Override

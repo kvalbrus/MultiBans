@@ -278,12 +278,18 @@ public class MySqlProvider implements DataProvider {
                 }
 
                 PunishmentCreator cancellationCreator = null;
-                if (cancellationCreatorName.equals(this.pluginManager.getConsole().getName())) {
-                    cancellationCreator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
-                } else {
-                    Player cancellationPlayer = this.pluginManager.getOfflinePlayer(cancellationCreatorName);
-                    if (cancellationPlayer != null) {
-                        cancellationCreator = new MultiPlayerPunishmentCreator(cancellationPlayer);
+                if (cancellationCreatorName != null) {
+                    if (cancellationCreatorName.equals(
+                        this.pluginManager.getConsole().getName())) {
+                        cancellationCreator = new MultiConsolePunishmentCreator(
+                            this.pluginManager.getConsole());
+                    } else {
+                        Player cancellationPlayer = this.pluginManager.getOfflinePlayer(
+                            cancellationCreatorName);
+                        if (cancellationPlayer != null) {
+                            cancellationCreator = new MultiPlayerPunishmentCreator(
+                                cancellationPlayer);
+                        }
                     }
                 }
 
@@ -347,12 +353,18 @@ public class MySqlProvider implements DataProvider {
                     }
 
                     PunishmentCreator cancellationCreator = null;
-                    if (cancellationCreatorName.equals(this.pluginManager.getConsole().getName())) {
-                        cancellationCreator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
-                    } else {
-                        Player cancellationPlayer = this.pluginManager.getOfflinePlayer(cancellationCreatorName);
-                        if (cancellationPlayer != null) {
-                            cancellationCreator = new MultiPlayerPunishmentCreator(cancellationPlayer);
+                    if (cancellationCreatorName != null) {
+                        if (cancellationCreatorName.equals(
+                            this.pluginManager.getConsole().getName())) {
+                            cancellationCreator = new MultiConsolePunishmentCreator(
+                                this.pluginManager.getConsole());
+                        } else {
+                            Player cancellationPlayer = this.pluginManager.getOfflinePlayer(
+                                cancellationCreatorName);
+                            if (cancellationPlayer != null) {
+                                cancellationCreator = new MultiPlayerPunishmentCreator(
+                                    cancellationPlayer);
+                            }
                         }
                     }
 
@@ -417,12 +429,18 @@ public class MySqlProvider implements DataProvider {
                     }
 
                     PunishmentCreator cancellationCreator = null;
-                    if (cancellationCreatorName.equals(this.pluginManager.getConsole().getName())) {
-                        cancellationCreator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
-                    } else {
-                        Player cancellationPlayer = this.pluginManager.getOfflinePlayer(cancellationCreatorName);
-                        if (cancellationPlayer != null) {
-                            cancellationCreator = new MultiPlayerPunishmentCreator(cancellationPlayer);
+                    if (cancellationCreatorName != null) {
+                        if (cancellationCreatorName.equals(
+                            this.pluginManager.getConsole().getName())) {
+                            cancellationCreator = new MultiConsolePunishmentCreator(
+                                this.pluginManager.getConsole());
+                        } else {
+                            Player cancellationPlayer = this.pluginManager.getOfflinePlayer(
+                                cancellationCreatorName);
+                            if (cancellationPlayer != null) {
+                                cancellationCreator = new MultiPlayerPunishmentCreator(
+                                    cancellationPlayer);
+                            }
                         }
                     }
 
@@ -487,12 +505,18 @@ public class MySqlProvider implements DataProvider {
                     }
 
                     PunishmentCreator cancellationCreator = null;
-                    if (cancellationCreatorName.equals(this.pluginManager.getConsole().getName())) {
-                        cancellationCreator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
-                    } else {
-                        Player cancellationPlayer = this.pluginManager.getOfflinePlayer(cancellationCreatorName);
-                        if (cancellationPlayer != null) {
-                            cancellationCreator = new MultiPlayerPunishmentCreator(cancellationPlayer);
+                    if (cancellationCreatorName != null) {
+                        if (cancellationCreatorName.equals(
+                            this.pluginManager.getConsole().getName())) {
+                            cancellationCreator = new MultiConsolePunishmentCreator(
+                                this.pluginManager.getConsole());
+                        } else {
+                            Player cancellationPlayer = this.pluginManager.getOfflinePlayer(
+                                cancellationCreatorName);
+                            if (cancellationPlayer != null) {
+                                cancellationCreator = new MultiPlayerPunishmentCreator(
+                                    cancellationPlayer);
+                            }
                         }
                     }
 

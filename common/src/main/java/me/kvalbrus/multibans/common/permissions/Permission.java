@@ -27,7 +27,9 @@ public enum Permission {
     PUNISHMENT_UNBAN_LISTEN("multibans.punishment.unban.listen"),
 
     PUNISHMENT_UNMUTECHAT_EXECUTE("multibans.punishment.unmutechat.execute"),
-    PUNISHMENT_UNMUTECHAT_LISTEN("multibans.punishment.unmutechat.listen");
+    PUNISHMENT_UNMUTECHAT_LISTEN("multibans.punishment.unmutechat.listen"),
+
+    PUNISHMENT("punishment");
 
     @Getter
     private final String name;
