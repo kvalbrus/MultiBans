@@ -19,6 +19,10 @@ import me.kvalbrus.multibans.bukkit.listeners.PlayerListener;
 import me.kvalbrus.multibans.common.managers.MultiBansPluginManager;
 import me.kvalbrus.multibans.common.utils.Message;
 import me.kvalbrus.multibans.common.utils.ReplacedString;
+import net.kyori.adventure.Adventure;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.platform.AudienceProvider;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -33,9 +37,21 @@ public class BukkitPluginManager extends MultiBansPluginManager {
 
     private final BukkitPlugin plugin;
 
+//    private BukkitAudiences audience;
+
     public BukkitPluginManager(@NotNull BukkitPlugin plugin) {
         super();
         this.plugin = plugin;
+    }
+
+    @Override
+    public void enable() {
+        this.plugin.getServer().getPluginManager().enablePlugin(this.plugin);
+    }
+
+    @Override
+    public void disable() {
+        this.plugin.getServer().getPluginManager().disablePlugin(this.plugin);
     }
 
     @Override
@@ -45,12 +61,22 @@ public class BukkitPluginManager extends MultiBansPluginManager {
             .register(MultiBans.class, multiBansProvider, this.plugin, ServicePriority.Normal);
         this.registerCommands();
         this.registerListeners();
+
+//        this.audience = BukkitAudiences.create(this.plugin);
+        audiences = BukkitAudiences.create(this.plugin);
+        super.onEnable();
     }
 
     @Override
     public void onDisable() {
         if (this.getDataProvider() != null) {
             this.getDataProvider().shutdown();
+            // TODO: this.dataProvider = null;
+        }
+
+        if (audiences != null) {
+            audiences.close();
+            audiences = null;
         }
     }
 
@@ -143,13 +169,40 @@ public class BukkitPluginManager extends MultiBansPluginManager {
 
     @Override
     public void activatePunishment(@NotNull Punishment punishment) {
-        if (punishment.getType() == PunishmentType.BAN ||
-            punishment.getType() == PunishmentType.TEMP_BAN ||
-            punishment.getType() == PunishmentType.BAN_IP ||
-            punishment.getType() == PunishmentType.TEMP_BAN_IP) {
+        if (punishment.getType() == PunishmentType.BAN) {
             Player player = this.plugin.getServer().getPlayer(punishment.getTargetUniqueId());
             if (player != null) {
-                ReplacedString title = new ReplacedString(Message.TITLE_HEADER.getMessage() + Message.TITLE_TEMPBAN.getMessage() + Message.TITLE_FOOTER.getMessage())
+                ReplacedString title = new ReplacedString(Message.TITLE_HEADER.getMessage() + Message.TITLE_BAN.getMessage() + Message.TITLE_FOOTER.getMessage())
+                    .replacePunishment(punishment);
+
+                player.kickPlayer(title.string());
+            }
+        } else if (punishment.getType() == PunishmentType.TEMP_BAN) {
+            Player player = this.plugin.getServer().getPlayer(punishment.getTargetUniqueId());
+            if (player != null) {
+                ReplacedString title = new ReplacedString(
+                    Message.TITLE_HEADER.getMessage() + Message.TITLE_TEMPBAN.getMessage() +
+                        Message.TITLE_FOOTER.getMessage())
+                    .replacePunishment(punishment);
+
+                player.kickPlayer(title.string());
+            }
+        } else if (punishment.getType() == PunishmentType.BAN_IP) {
+            Player player = this.plugin.getServer().getPlayer(punishment.getTargetUniqueId());
+            if (player != null) {
+                ReplacedString title = new ReplacedString(
+                    Message.TITLE_HEADER.getMessage() + Message.TITLE_BANIP.getMessage() +
+                        Message.TITLE_FOOTER.getMessage())
+                    .replacePunishment(punishment);
+
+                player.kickPlayer(title.string());
+            }
+        } else if (punishment.getType() == PunishmentType.TEMP_BAN_IP) {
+            Player player = this.plugin.getServer().getPlayer(punishment.getTargetUniqueId());
+            if (player != null) {
+                ReplacedString title = new ReplacedString(
+                    Message.TITLE_HEADER.getMessage() + Message.TITLE_TEMPBANIP.getMessage() +
+                        Message.TITLE_FOOTER.getMessage())
                     .replacePunishment(punishment);
 
                 player.kickPlayer(title.string());
@@ -166,6 +219,12 @@ public class BukkitPluginManager extends MultiBansPluginManager {
         this.plugin.getServer().getPluginManager().callEvent(event);
     }
 
+    @Override
+    public AudienceProvider getAudience() {
+        return null;
+//        return this.audience;
+    }
+
     private void registerCommands() {
         new BanBukkit(this, this.plugin);
         new BanIpBukkit(this, this.plugin);
@@ -176,5 +235,10 @@ public class BukkitPluginManager extends MultiBansPluginManager {
 
     private void registerListeners() {
         this.plugin.getServer().getPluginManager().registerEvents(new PlayerListener(this), this.plugin);
+    }
+
+    private static BukkitAudiences audiences;
+    public static BukkitAudiences getAudiences() {
+        return audiences;
     }
 }

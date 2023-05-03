@@ -1,6 +1,8 @@
 package me.kvalbrus.multibans.bukkit.implementations;
 
 import me.kvalbrus.multibans.api.CommandSender;
+import me.kvalbrus.multibans.bukkit.BukkitPluginManager;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +33,11 @@ public abstract class BukkitCommandSender implements CommandSender {
         for (String message : messages) {
             this.sendMessage(message);
         }
+    }
+
+    @Override
+    public void sendMessage(Component component) {
+        BukkitPluginManager.getAudiences().sender(this.commandSender).sendMessage(component);
     }
 
     @Override

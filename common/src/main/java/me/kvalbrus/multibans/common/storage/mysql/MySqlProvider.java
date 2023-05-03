@@ -76,8 +76,6 @@ public class MySqlProvider implements DataProvider {
             PreparedStatement statement = connection.prepareStatement(
                 SQLQuery.CREATE_TABLE_PUNISHMENTS.toString())) {
             statement.execute();
-        } catch (SQLSyntaxErrorException exception) {
-            exception.printStackTrace();//
         }
     }
 

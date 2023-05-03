@@ -13,6 +13,7 @@ import me.kvalbrus.multibans.common.permissions.Permission;
 import me.kvalbrus.multibans.common.punishment.MultiTemporaryPunishment;
 import me.kvalbrus.multibans.common.utils.Message;
 import me.kvalbrus.multibans.common.utils.ReplacedString;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +47,8 @@ public class MultiTemporaryChatMute extends MultiTemporaryPunishment implements 
 
         for (OnlinePlayer p : this.getPluginManager().getOnlinePlayers()) {
             if (p.hasPermission(Permission.PUNISHMENT_TEMPMUTECHAT_LISTEN.getName())) {
-                p.sendMessage(listenMessage.string());
+//                p.sendMessage(listenMessage.string());
+                p.sendMessage(Component.text(listenMessage.string()));
             }
         }
 
@@ -54,14 +56,16 @@ public class MultiTemporaryChatMute extends MultiTemporaryPunishment implements 
         if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
             ReplacedString targetMessage = new ReplacedString(Message.TEMPMUTECHAT_ACTIVATE_TARGET.getMessage())
                 .replacePunishment(this);
-            onlineTarget.sendMessage(targetMessage.string());
+//            onlineTarget.sendMessage(targetMessage.string());
+            onlineTarget.sendMessage(Component.text(targetMessage.string()));
         }
 
         // Sends a message to the creator
         if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
             ReplacedString creatorMessage = new ReplacedString(Message.TEMPMUTECHAT_ACTIVATE_EXECUTOR.getMessage())
                 .replacePunishment(this);
-            creator.sendMessage(creatorMessage.string());
+//            creator.sendMessage(creatorMessage.string());
+            creator.sendMessage(Component.text(creatorMessage.string()));
         }
     }
 }

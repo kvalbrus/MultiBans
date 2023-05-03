@@ -1,9 +1,6 @@
 package me.kvalbrus.multibans.common.utils;
 
-import java.util.regex.Pattern;
 import lombok.Getter;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public enum Message {
 
@@ -27,14 +24,14 @@ public enum Message {
 
     BAN_ACTIVATE_LISTEN(
         "ban.activate.listen",
-        "Player %player_name% was permanently banned by %executor_name%!",
+        "Player %punishment_target% was permanently banned by %punishment_creator%!",
         "Sends to all players with permission 'multibans.punishment.ban.listen' " +
             "when player is permanently banned"
     ),
 
     BAN_ACTIVATE_EXECUTOR(
         "ban.activate.executor",
-        "You permanently banned player %player_name%",
+        "You permanently banned player %punishment_target%",
         "Sends to the executor of the ban"
     ),
 
@@ -45,21 +42,21 @@ public enum Message {
 
     BAN_TRY_LISTEN(
         "ban.try.listen",
-        "Player %player_name% tried joining, but he was banned",
+        "Player %punishment_target% tried joining, but he was banned",
         "Sends to all player with permission 'multibans.punishment.ban.try' when " +
             "a player tries to join to the server, but he was banned"
     ),
 
     TEMPBAN_ACTIVATE_LISTEN(
         "tempban.activate.listen",
-        "Player %player_name% was banned for %dutarion% by %executor_name%!",
+        "Player %punishment_target% was banned for %punishment_duration% by %punishment_creator%!",
         "Sends to all players with permission 'multibans.punishment.tempban.listen' " +
             "when player is temporarily banned"
     ),
 
     TEMPBAN_ACTIVATE_EXECUTOR(
         "tempban.activate.executor",
-        "You temporarily banned player %player_name%",
+        "You temporarily banned player %punishment_target%",
         "Sends to the executor of the ban"
     ),
 
@@ -70,7 +67,7 @@ public enum Message {
 
     TEMPBAN_TRY_LISTEN(
         "tempban.try.listen",
-        "Player %player_name% tried joining, but he was banned",
+        "Player %punishment_target% tried joining, but he was banned",
         "Sends to all player with permission 'multibans.punishment.tempban.try' when " +
             "a player tries to join to the server, but he was banned"),
 
@@ -78,13 +75,13 @@ public enum Message {
 
     BANIP_ACTIVATE_LISTEN(
         "banip.activate.listen",
-        "Player %player_name% was permanently ip-banned by %executor_name%!",
+        "Player %punishment_target% was permanently ip-banned by %punishment_creator%!",
         ""
     ),
 
     BANIP_ACTIVATE_EXECUTOR(
         "banip.activate.executor",
-        "You permanently banned ip player %player_name%",
+        "You permanently banned ip player %punishment_target%",
         ""
     ),
 
@@ -95,19 +92,19 @@ public enum Message {
 
     BANIP_TRY_LISTEN(
         "banip.try.listen",
-        "Player %player_name% tried joining, but he was banned",
+        "Player %punishment_target% tried joining, but he was banned",
         ""
     ),
 
     TEMPBANIP_ACTIVATE_LISTEN(
         "tempbanip.activate.listen",
-        "Player %player_name% was ip-banned for %dutarion% by %executor_name%!",
+        "Player %punishment_target% was ip-banned for %punishment_duration% by %punishment_creator%!",
         ""
     ),
 
     TEMPBANIP_ACTIVATE_EXECUTOR(
         "tempbanip.activate.executor",
-        "You banned ip player %player_name%",
+        "You banned ip player %punishment_target%",
         ""
     ),
 
@@ -118,7 +115,7 @@ public enum Message {
 
     TEMPBANIP_TRY_LISTEN(
         "tempbanip.try.listen",
-        "You permanently banned ip player %player_name%",
+        "You permanently banned ip player %punishment_target%",
         ""
     ),
 
@@ -126,19 +123,19 @@ public enum Message {
 
     MUTECHAT_ACTIVATE_LISTEN(
         "mutechat.activate.listen",
-        "Player %player_name% was permanently muted by %executor_name%!",
+        "Player %punishment_target% was permanently muted by %punishment_creator%!",
         ""
     ),
 
     MUTECHAT_ACTIVATE_EXECUTOR(
         "mutechat.activate.executor",
-        "You permanently muted player %player_name%",
+        "You permanently muted player %punishment_target%",
         ""
     ),
 
     MUTECHAT_ACTIVATE_TARGET(
         "mutechat.activate.target",
-        "Player %player_name% was muted by %executor_name%!",
+        "Player %punishment_target% was muted by %punishment_creator%!",
         ""
     ),
 
@@ -155,63 +152,30 @@ public enum Message {
 
     TEMPMUTECHAT_ACTIVATE_LISTEN(
         "tempmutechat.activate.listen",
-        "Player %player_name% was muted by %executor_name%!",
+        "Player %punishment_target% was muted by %punishment_creator%!",
         ""
     ),
 
     TEMPMUTECHAT_ACTIVATE_EXECUTOR(
         "tempmutechat.activate.executor",
-        "You muted player %player_name%",
+        "You muted player %punishment_target%",
         ""
     ),
 
     TEMPMUTECHAT_ACTIVATE_TARGET(
         "tempmutechat.activate.player",
-        "You was muted by %executor_name% for %duration%!",
+        "You was muted by %punishment_creator% for %punishment_duration%!",
         ""
     ),
 
     TEMPMUTECHAT_TRY_LISTEN("tempmutechat.try.listen", "", ""),
     TEMPMUTECHAT_TRY_TARGET("tempmutechat.try.target", "", ""),
 
-    TEMPMUTECHAT_HAS_PASSED_LISTEN("tempmutechat.has-passed.listen", "", ""),
+    TEMPMUTECHAT_HAS_PASSED_LISTEN(
+        "tempmutechat.has-passed.listen",
+        "The tempmute of the %punishment_target% player has been passed",
+        ""),
     TEMPMUTECHAT_HAS_PASSED_TARGET("tempmutechat.has-passed.target", "", ""),
-//
-//    KICK_LISTEN(
-//        "kick.listen",
-//        "a",
-//        ""
-//    ),
-//
-//    KICK_EXECUTOR(
-//        "kick.executor",
-//        "a",
-//        ""
-//    ),
-//
-//    UNBAN_LISTEN(
-//        "unban.listen",
-//        "a",
-//        ""
-//    ),
-//
-//    UNBAN_EXECUTOR(
-//        "unban.executor",
-//        "a",
-//        ""
-//    ),
-//
-//    UNBANIP_LISTEN(
-//        "unbanip.listen",
-//        "a",
-//        ""
-//    ),
-//
-//    UNBANIP_EXECUTOR(
-//        "unbanip.executor",
-//        "a",
-//        ""
-//    ),
 
     NOT_PERMISSION_BAN_EXECUTE(
         "error.permission.ban.execute",
@@ -365,15 +329,8 @@ public enum Message {
         this.description = description;
     }
 
-    private static final Pattern LEGACY_FORMATS_PATTERN = Pattern.compile("§[\\da-fk-or]");
-    private static final Pattern LEGACY_HEX_COLOR_PATTERN = Pattern.compile("§x(§[\\da-fA-F]){6}");
-
     public String getMessage() {
-        String message = this.message;
-        message = LEGACY_FORMATS_PATTERN.matcher(LEGACY_HEX_COLOR_PATTERN.matcher(message)
-            .replaceAll("")).replaceAll("").replace("§", "");
-
-        return LegacyComponentSerializer.legacySection().serialize(MiniMessage.miniMessage().deserialize(message));
+        return this.message.replaceAll("&", "§");
     }
 
     public void setMessage(String message) {

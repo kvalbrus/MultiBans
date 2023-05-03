@@ -57,7 +57,7 @@ public class DataProviderSettings {
             toml.getString("databaseName") : "MultiPunishments");
         this.properties.setProperty("dataSource.serverName", toml.getString("address") != null ?
             toml.getString("address") : "localhost");
-        long port = toml.getLong("port") > 0 ? toml.getLong("port") : 3306;
+        long port = (toml.getLong("port") != null && toml.getLong("port") > 0) ? toml.getLong("port") : 3306L;
         this.properties.setProperty("dataSource.portNumber", String.valueOf(port ));
         this.properties.setProperty("dataSource.user", toml.getString("user") != null ?
             toml.getString("user") : "");

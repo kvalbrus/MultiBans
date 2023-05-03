@@ -33,6 +33,45 @@ public abstract class MultiBansPluginManager implements PluginManager {
 
     @Override
     public final void onLoad() {
+        if (!this.getDataFolder().exists()) {
+            this.getDataFolder().mkdirs();
+        }
+
+        this.loadSettings();
+        this.loadMessages();
+    }
+
+    @Override
+    public void onEnable() {
+        if (!this.loadDataProvider()) {
+            this.disable();
+            return;
+        }
+    }
+
+    @Override
+    public final void reload() {
+        this.onDisable();
+        this.onLoad();
+        this.onEnable();
+    }
+
+    @Nullable
+    public final DataProvider getDataProvider() {
+        return this.dataProvider;
+    }
+
+    @NotNull
+    public final MultiBansSettings getSettings() {
+        return this.settings;
+    }
+
+    @NotNull
+    public final me.kvalbrus.multibans.api.managers.PunishmentManager getPunishmentManager() {
+        return this.punishmentManager;
+    }
+
+    private boolean loadDataProvider() {
         DataProviderSettings dataProviderSettings = new DataProviderSettings(this).load();
 
         if (dataProviderSettings.getType() == DataProviderType.MY_SQL) {
@@ -45,8 +84,14 @@ public abstract class MultiBansPluginManager implements PluginManager {
             }
         }
 
-        this.settings = new MultiBansSettings(this).load();
+        return this.dataProvider != null;
+    }
 
+    private void loadSettings() {
+        this.settings = new MultiBansSettings(this).load();
+    }
+
+    private void loadMessages() {
         final File messages = new File(this.getDataFolder(), "messages_en.properties");
         if (!messages.exists()) {
             try {
@@ -77,27 +122,5 @@ public abstract class MultiBansPluginManager implements PluginManager {
         } catch (IOException exception) {
             // TODO: Logger
         }
-    }
-
-    @Override
-    public final void reload() {
-        this.onDisable();
-        this.onLoad();
-        this.onEnable();
-    }
-
-    @Nullable
-    public final DataProvider getDataProvider() {
-        return this.dataProvider;
-    }
-
-    @NotNull
-    public final MultiBansSettings getSettings() {
-        return this.settings;
-    }
-
-    @NotNull
-    public final me.kvalbrus.multibans.api.managers.PunishmentManager getPunishmentManager() {
-        return this.punishmentManager;
     }
 }

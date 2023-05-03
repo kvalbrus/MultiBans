@@ -1,6 +1,8 @@
 package me.kvalbrus.multibans.bukkit.implementations;
 
 import me.kvalbrus.multibans.api.Console;
+import me.kvalbrus.multibans.bukkit.BukkitPluginManager;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,8 +14,6 @@ public class BukkitConsole extends BukkitCommandSender implements Console {
         super(sender);
         this.sender = sender;
     }
-
-
 
     @NotNull
     @Override

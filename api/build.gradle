@@ -1,2 +1,12 @@
+repositories {
+    maven {
+        name = "sonatype-oss-snapshots1"
+        url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+    }
+    mavenCentral()
+}
+
 dependencies {
+    implementation 'net.kyori:adventure-text-minimessage:4.13.1'
+    implementation 'net.kyori:adventure-text-serializer-legacy:4.13.1'
 }

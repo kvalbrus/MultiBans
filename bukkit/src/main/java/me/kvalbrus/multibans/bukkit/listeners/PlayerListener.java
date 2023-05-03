@@ -3,12 +3,14 @@ package me.kvalbrus.multibans.bukkit.listeners;
 import java.util.ArrayList;
 import java.util.List;
 import me.kvalbrus.multibans.api.punishment.Punishment;
+import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyBan;
 import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyBanIp;
 import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyChatMute;
 import me.kvalbrus.multibans.api.punishment.punishments.TemporaryBan;
 import me.kvalbrus.multibans.api.punishment.punishments.TemporaryBanIp;
 import me.kvalbrus.multibans.api.punishment.punishments.TemporaryChatMute;
+import me.kvalbrus.multibans.bukkit.BukkitPluginManager;
 import me.kvalbrus.multibans.common.managers.MultiBansPluginManager;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.managers.PunishmentManager;
@@ -52,7 +54,23 @@ public class PlayerListener implements Listener {
 
             StringBuilder punishmentsString = new StringBuilder();
             for (Punishment punishment : activeBans) {
-                punishmentsString.append(new ReplacedString(Message.TITLE_TEMPBAN.getMessage()).replacePunishment(punishment).string());
+                if (punishment.getType() == PunishmentType.BAN_IP) {
+                    punishmentsString.append(
+                        new ReplacedString(Message.TITLE_BANIP.getMessage()).replacePunishment(
+                            punishment).string());
+                } else if (punishment.getType() == PunishmentType.BAN) {
+                    punishmentsString.append(
+                        new ReplacedString(Message.TITLE_BAN.getMessage()).replacePunishment(
+                            punishment).string());
+                } else if (punishment.getType() == PunishmentType.TEMP_BAN_IP) {
+                    punishmentsString.append(
+                        new ReplacedString(Message.TITLE_TEMPBANIP.getMessage()).replacePunishment(
+                            punishment).string());
+                } else if (punishment.getType() == PunishmentType.TEMP_BAN) {
+                    punishmentsString.append(
+                        new ReplacedString(Message.TITLE_TEMPBAN.getMessage()).replacePunishment(
+                            punishment).string());
+                }
             }
 
             ReplacedString title = new ReplacedString(Message.TITLE_HEADER.getMessage() +
