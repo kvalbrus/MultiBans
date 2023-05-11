@@ -1,14 +1,9 @@
-package me.kvalbrus.multibans.common.managers;
+package me.kvalbrus.multibans.api;
 
 import java.io.File;
 import java.util.UUID;
-import me.kvalbrus.multibans.api.Console;
-import me.kvalbrus.multibans.api.DataProvider;
-import me.kvalbrus.multibans.api.Player;
-import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.managers.PunishmentManager;
-import net.kyori.adventure.platform.AudienceProvider;
 import org.jetbrains.annotations.NotNull;
 
 public interface PluginManager {
@@ -54,6 +49,4 @@ public interface PluginManager {
     void activatePunishment(@NotNull Punishment punishment);
 
     void deactivatePunishment(@NotNull Punishment punishment);
-
-    AudienceProvider getAudience();
 }
