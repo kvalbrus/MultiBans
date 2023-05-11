@@ -6,7 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -115,8 +117,9 @@ public abstract class MultiBansPluginManager implements PluginManager {
                 }
             }
 
-            try (OutputStream output = new FileOutputStream(messages)){
-                properties.store(output, null);
+            try (OutputStream output = new FileOutputStream(messages);
+                Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)){
+                properties.store(writer, null);
             }
 
         } catch (IOException exception) {

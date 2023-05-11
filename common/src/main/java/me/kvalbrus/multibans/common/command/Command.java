@@ -1,5 +1,6 @@
 package me.kvalbrus.multibans.common.command;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public abstract class Command {
 
     public Command(@NotNull PluginManager pluginManager,
                    @NotNull String name,
-                   @NotNull String permission,
+                   @Nullable String permission,
                    @Nullable HashMap<String, Command> subCommands) {
         this.pluginManager = pluginManager;
         this.name = name;
@@ -31,7 +32,26 @@ public abstract class Command {
         this.subCommands = subCommands;
     }
 
-    public abstract boolean execute(@NotNull CommandSender sender, String[] args);
+    public boolean execute(@NotNull CommandSender sender, String[] args) {
+        if (hasPermission(sender, args)) {
+            return this.cmd(sender, args);
+        } else {
+            sender.sendMessage(this.getNotPermissionMessage());
+            return false;
+        }
+    }
+
+    public boolean hasPermission(@NotNull CommandSender sender, String[] args) {
+        if (this.permission != null) {
+            return sender.hasPermission(this.getPermission());
+        } else {
+            return true;
+        }
+    }
+
+    public abstract boolean cmd(@NotNull CommandSender sender, String[] args);
+
+    public abstract String getNotPermissionMessage();
 
     public abstract List<String> tab(@NotNull CommandSender sender, String[] args);
 
@@ -43,5 +63,21 @@ public abstract class Command {
         if (this.subCommands != null) {
             this.subCommands.put(key, command);
         }
+    }
+
+    public static List<String> getSearchList(List<String> list, String arg) {
+        if (list == null) {
+            return null;
+        }
+
+        List<String> resultList = new ArrayList<>();
+
+        for (var string : list) {
+            if (string.startsWith(arg)) {
+                resultList.add(string);
+            }
+        }
+
+        return resultList;
     }
 }

@@ -133,19 +133,19 @@ public class StringUtil {
         int seconds = (int) (milliseconds / TimeType.SECOND.getDuration());
 
         if (days > 0) {
-            builder.append(days).append(" ").append(getWordDay(days)).append(" ");
+            builder.append(days).append("").append(getWordDay(days)).append(" ");
         }
 
         if (hours > 0) {
-            builder.append(hours).append(" ").append(getWordHour(hours)).append(" ");
+            builder.append(hours).append("").append(getWordHour(hours)).append(" ");
         }
 
         if (minutes > 0) {
-            builder.append(minutes).append(" ").append(getWordMinute(minutes)).append(" ");
+            builder.append(minutes).append("").append(getWordMinute(minutes)).append(" ");
         }
 
         if (seconds > 0) {
-            builder.append(seconds).append(" ").append(getWordSecond(seconds)).append(" ");
+            builder.append(seconds).append("").append(getWordSecond(seconds)).append(" ");
         }
 
         builder.deleteCharAt(builder.length() - 1);
@@ -160,9 +160,9 @@ public class StringUtil {
     @NotNull
     public static String getWordSecond(int seconds) {
         if (seconds <= 1) {
-            return "second";
+            return Message.SECOND.getMessage();
         } else {
-            return "seconds";
+            return Message.SECONDS.getMessage();
         }
     }
 
@@ -173,9 +173,9 @@ public class StringUtil {
     @NotNull
     public static String getWordMinute(int minutes) {
         if (minutes <= 1) {
-            return "minute";
+            return Message.MINUTE.getMessage();
         } else {
-            return "minutes";
+            return Message.MINUTES.getMessage();
         }
     }
 
@@ -186,9 +186,9 @@ public class StringUtil {
     @NotNull
     public static String getWordHour(int hours) {
         if (hours <= 1) {
-            return "hour";
+            return Message.HOUR.getMessage();
         } else {
-            return "hours";
+            return Message.HOURS.getMessage();
         }
     }
 
@@ -199,9 +199,9 @@ public class StringUtil {
     @NotNull
     public static String getWordDay(int days) {
         if (days <= 1) {
-            return "day";
+            return Message.DAY.getMessage();
         } else {
-            return "days";
+            return Message.DAYS.getMessage();
         }
     }
 

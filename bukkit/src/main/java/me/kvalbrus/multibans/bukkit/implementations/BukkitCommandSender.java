@@ -3,6 +3,9 @@ package me.kvalbrus.multibans.bukkit.implementations;
 import me.kvalbrus.multibans.api.CommandSender;
 import me.kvalbrus.multibans.bukkit.BukkitPluginManager;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +27,8 @@ public abstract class BukkitCommandSender implements CommandSender {
     @Override
     public void sendMessage(String message) {
         if (message != null && message.length() > 0) {
-            this.commandSender.sendMessage(message);
+            BukkitPluginManager.getAudiences().sender(this.commandSender).sendMessage(MiniMessage.miniMessage()
+                .deserialize(message));
         }
     }
 
@@ -33,11 +37,6 @@ public abstract class BukkitCommandSender implements CommandSender {
         for (String message : messages) {
             this.sendMessage(message);
         }
-    }
-
-    @Override
-    public void sendMessage(Component component) {
-        BukkitPluginManager.getAudiences().sender(this.commandSender).sendMessage(component);
     }
 
     @Override

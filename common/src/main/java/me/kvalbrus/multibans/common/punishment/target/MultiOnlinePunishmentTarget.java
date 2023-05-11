@@ -25,10 +25,10 @@ public class MultiOnlinePunishmentTarget extends MultiPunishmentTarget
         this.onlinePlayer.sendMessage(messages);
     }
 
-    @Override
-    public void sendMessage(Component component) {
-        this.onlinePlayer.sendMessage(component);
-    }
+//    @Override
+//    public void sendMessage(Component component) {
+//        this.onlinePlayer.sendMessage(component);
+//    }
 
     @Override
     public boolean hasPermission(String permission) {

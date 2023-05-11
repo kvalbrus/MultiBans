@@ -18,7 +18,6 @@ import me.kvalbrus.multibans.common.exceptions.NotMatchArgumentsException;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.punishment.creator.MultiConsolePunishmentCreator;
 import me.kvalbrus.multibans.common.punishment.creator.MultiOnlinePlayerPunishmentCreator;
-import me.kvalbrus.multibans.common.punishment.creator.MultiPlayerPunishmentCreator;
 import me.kvalbrus.multibans.common.punishment.target.MultiOnlinePunishmentTarget;
 import me.kvalbrus.multibans.common.punishment.target.MultiPunishmentTarget;
 import me.kvalbrus.multibans.common.utils.Message;
@@ -32,12 +31,7 @@ public class TempBan extends Command {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender sender, String[] args) {
-        if (!sender.hasPermission(this.getPermission())) {
-            sender.sendMessage(Message.NOT_PERMISSION_TEMPBAN_EXECUTE.getMessage());
-            return false;
-        }
-
+    public boolean cmd(@NotNull CommandSender sender, String[] args) {
         int length = args.length;
 
         if (length < 2) {
@@ -96,13 +90,19 @@ public class TempBan extends Command {
         }
     }
 
+    @Override
+    public String getNotPermissionMessage() {
+        return Message.NOT_PERMISSION_TEMPBAN_EXECUTE.getMessage();
+    }
+
     @NotNull
     @Override
     public List<String> tab(@NotNull CommandSender sender, String[] args) {
         if(args.length == 1) {
-            List<String> list = new ArrayList<>();
-            Arrays.stream(this.getPluginManager().getOfflinePlayers()).forEach(p -> list.add(p.getName()));
-            return list;
+            List<String> players = new ArrayList<>();
+            Arrays.stream(this.getPluginManager().getOfflinePlayers()).forEach(p -> players.add(p.getName()));
+
+            return Command.getSearchList(players, args[0]);
         } else {
             return new ArrayList<>();
         }

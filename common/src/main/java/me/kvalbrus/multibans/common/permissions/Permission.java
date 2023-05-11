@@ -29,7 +29,7 @@ public enum Permission {
     PUNISHMENT_UNMUTECHAT_EXECUTE("multibans.punishment.unmutechat.execute"),
     PUNISHMENT_UNMUTECHAT_LISTEN("multibans.punishment.unmutechat.listen"),
 
-    PUNISHMENT("punishment");
+    COMMAND_RELOAD("multibans.command.reload");
 
     @Getter
     private final String name;

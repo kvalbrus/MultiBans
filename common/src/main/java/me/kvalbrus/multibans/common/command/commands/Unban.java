@@ -25,12 +25,7 @@ public class Unban extends Command {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender sender, String[] args){
-        if (!sender.hasPermission(this.getPermission())) {
-            sender.sendMessage(Message.NOT_PERMISSION_UNBAN_EXECUTE.getMessage());
-            return false;
-        }
-
+    public boolean cmd(@NotNull CommandSender sender, String[] args) {
         if (args.length < 2) {
             sender.sendMessage(Message.NOT_ENOUGH_ARGUMENTS.getMessage());
             return false;
@@ -47,15 +42,15 @@ public class Unban extends Command {
             reason.append(args[i]);
         }
 
-        List<MultiPermanentlyBan> activeBans = this.getPluginManager().getPunishmentManager()
-            .getActivePunishments(player.getUniqueId(), MultiPermanentlyBan.class);
-
         PunishmentCreator cancellationCreator = null;
         if (sender instanceof OnlinePlayer onlinePlayer) {
             cancellationCreator = new MultiOnlinePlayerPunishmentCreator(onlinePlayer);
         } else if(sender instanceof Console console) {
             cancellationCreator = new MultiConsolePunishmentCreator(console);
         }
+
+        List<MultiPermanentlyBan> activeBans = this.getPluginManager().getPunishmentManager()
+            .getActivePunishments(player.getUniqueId(), MultiPermanentlyBan.class);
 
         for (MultiPermanentlyBan punishment : activeBans) {
             punishment.deactivate(cancellationCreator, System.currentTimeMillis(), reason.toString());
@@ -72,11 +67,17 @@ public class Unban extends Command {
     }
 
     @Override
+    public String getNotPermissionMessage() {
+        return Message.NOT_PERMISSION_UNBAN_EXECUTE.getMessage();
+    }
+
+    @Override
     public List<String> tab(@NotNull CommandSender sender, String[] args) {
         if(args.length == 1) {
-            List<String> list = new ArrayList<>();
-            Arrays.stream(this.getPluginManager().getOfflinePlayers()).forEach(p -> list.add(p.getName()));
-            return list;
+            List<String> players = new ArrayList<>();
+            Arrays.stream(this.getPluginManager().getOfflinePlayers()).forEach(p -> players.add(p.getName()));
+
+            return Command.getSearchList(players, args[0]);
         } else {
             return new ArrayList<>();
         }

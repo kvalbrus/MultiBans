@@ -9,7 +9,6 @@ public class BukkitPlayer implements Player {
     private final org.bukkit.OfflinePlayer offlinePlayer;
 
     public BukkitPlayer(org.bukkit.OfflinePlayer offlinePlayer) {
-//        super(offlinePlayer.getName() != null ? offlinePlayer.getName() : "", offlinePlayer.getUniqueId());
         this.offlinePlayer = offlinePlayer;
     }
 

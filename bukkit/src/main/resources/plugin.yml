@@ -7,7 +7,70 @@ description: Plugin for minecraft
 
 commands:
   ban:
+    permission: multibans.punishment.ban.execute;multibans.punishment.tempban.execute
   banip:
+    permission: multibans.punishment.banip.execute;multibans.punishment.tempbanip.execute
   mute:
+    permission: multibans.punishment.mutechat.execute;multibans.punishment.tempmutechat.execute
   unban:
+    permission: multibans.punishment.unban.execute
   unmute:
+    permission: multibans.punishment.unmutechat.execute
+  punish:
+  multibans:
+    permission: multibans.command.reload
+    aliases: [ mb ]
+
+permissions:
+  multibans.punishment.ban.*:
+    children:
+      multibans.punishment.ban.execute:
+        default: op
+      multibans.punishment.ban.listen:
+        default: op
+  multibans.punishment.tempban.*:
+    children:
+      multibans.punishment.tempban.execute:
+        default: op
+      multibans.punishment.tempban.listen:
+        default: op
+  multibans.punishment.banip.*:
+    children:
+      multibans.punishment.banip.execute:
+        default: op
+      multibans.punishment.banip.listen:
+        default: op
+  multibans.punishment.tempbanip.*:
+    children:
+      multibans.punishment.tempbanip.execute:
+        default: op
+      multibans.punishment.tempbanip.listen:
+        default: op
+  multibans.punishment.mutechat.*:
+    children:
+      multibans.punishment.mutechat.execute:
+        default: op
+      multibans.punishment.mutechat.listen:
+        default: op
+  multibans.punishment.tempmutechat.*:
+    children:
+      multibans.punishment.tempmutechat.execute:
+        default: op
+      multibans.punishment.tempmutechat.listen:
+        default: op
+  multibans.punishment.command.reload:
+    default: op
+  multibans.punishment.unban.*:
+    children:
+      multibans.punishment.unban.execute:
+        default: op
+      multibans.punishment.unban.listen:
+        default: op
+  multibans.punishment.unmutechat.*:
+    children:
+      multibans.punishment.unmutechat.execute:
+        default: op
+      multibans.punishment.unmutechat.listen:
+        default: op
+  multibans.command.comment:
+    default: op

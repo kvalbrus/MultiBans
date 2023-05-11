@@ -8,5 +8,5 @@ public interface MessageRecipient {
 
     void sendMessage(String... messages);
 
-    void sendMessage(Component component);
+   // void sendMessage(Component component);
 }

@@ -72,16 +72,6 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment
     }
 
     @Override
-    public synchronized void deactivate() {
-        this.deactivate(null, System.currentTimeMillis(), null);
-    }
-
-    @Override
-    public void deactivate(@Nullable PunishmentCreator cancellationCreator, long cancellationDate) {
-        this.deactivate(cancellationCreator, cancellationDate, null);
-    }
-
-    @Override
     public void deactivate(@Nullable PunishmentCreator cancellationCreator,
                            long cancellationDate,
                            @Nullable String cancellationReason) {
@@ -149,8 +139,59 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment
 
     @Override
     public synchronized void delete() {
-        this.deactivate();
-        this.deleteData();
+        if (!this.cancelled) {
+            List<? extends MultiTemporaryPunishment> history = this.getPluginManager()
+                .getPunishmentManager()
+                .getPlayerHistory(this.getTarget().getUniqueId(), this.getClass());
+
+            if (history.stream().noneMatch(punishment -> punishment.getId().equals(this.getId()))) {
+                return;
+            }
+
+            history.removeIf(MultiTemporaryPunishment::isCancelled);
+            history.sort(null);
+
+            int size = history.size();
+            if (size > 0) {
+                MultiTemporaryPunishment prev = null, curr = null;
+                int index = -1;
+                for (MultiTemporaryPunishment punishment : history) {
+                    if (punishment.getId().equals(this.getId())) {
+                        index = history.indexOf(punishment);
+                        break;
+                    }
+                }
+
+                if (index == 0) {
+                    while (index < size - 1) {
+                        curr = history.get(index + 1);
+                        if (prev == null) {
+                            curr.startedDate = history.get(0).getStartedDate();
+                        } else {
+                            curr.startedDate = prev.startedDate + prev.duration;
+                        }
+
+                        prev = curr;
+                        index++;
+
+                        curr.updateData();
+                    }
+                } else if (index != size - 1) {
+                    prev = history.get(index - 1);
+                    while (index < size - 1) {
+                        curr = history.get(index + 1);
+                        curr.startedDate = prev.startedDate + prev.duration;
+
+                        prev = curr;
+                        index++;
+
+                        curr.updateData();
+                    }
+                }
+            }
+        }
+
+        super.delete();
     }
 
     @NotNull

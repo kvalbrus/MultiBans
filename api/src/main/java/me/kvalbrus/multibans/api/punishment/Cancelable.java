@@ -6,10 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface Cancelable {
 
-    void deactivate();
-
-    void deactivate(@Nullable PunishmentCreator cancellationCreator, long cancellationDate);
-
     void deactivate(@Nullable PunishmentCreator cancellationCreator, long cancellationDate, @Nullable String cancellationReason);
 
     @Nullable

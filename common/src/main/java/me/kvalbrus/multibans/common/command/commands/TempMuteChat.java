@@ -31,12 +31,7 @@ public class TempMuteChat extends Command {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender sender, String[] args) {
-        if (!sender.hasPermission(this.getPermission())) {
-            sender.sendMessage(Message.NOT_PERMISSION_TEMPMUTECHAT_EXECUTE.getMessage());
-            return false;
-        }
-
+    public boolean cmd(@NotNull CommandSender sender, String[] args) {
         int length = args.length;
 
         if (length < 2) {
@@ -98,13 +93,19 @@ public class TempMuteChat extends Command {
         }
     }
 
+    @Override
+    public String getNotPermissionMessage() {
+        return Message.NOT_PERMISSION_TEMPMUTECHAT_EXECUTE.getMessage();
+    }
+
     @NotNull
     @Override
     public List<String> tab(@NotNull CommandSender sender, String[] args) {
         if(args.length == 1) {
-            List<String> list = new ArrayList<>();
-            Arrays.stream(this.getPluginManager().getOfflinePlayers()).forEach(p -> list.add(p.getName()));
-            return list;
+            List<String> players = new ArrayList<>();
+            Arrays.stream(this.getPluginManager().getOfflinePlayers()).forEach(p -> players.add(p.getName()));
+
+            return Command.getSearchList(players, args[0]);
         } else {
             return new ArrayList<>();
         }

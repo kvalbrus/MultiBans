@@ -3,34 +3,33 @@ package me.kvalbrus.multibans.common.command.commands;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import me.kvalbrus.multibans.api.CommandSender;
 import me.kvalbrus.multibans.common.command.Command;
-import me.kvalbrus.multibans.common.command.commands.punish.Comment;
+import me.kvalbrus.multibans.common.command.commands.multibans.Reload;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import org.jetbrains.annotations.NotNull;
 
-public class Punish extends Command {
+public class MultiBans extends Command {
 
     private final HashMap<String, Command> subCommands = new HashMap<>();
 
-    public Punish(@NotNull PluginManager pluginManager) {
-        super(pluginManager, "punish", null, null);
-        this.subCommands.put("comment", new Comment(pluginManager));
+    public MultiBans(@NotNull PluginManager pluginManager) {
+        super(pluginManager, "multibans", null, null);
+        this.subCommands.put("reload", new Reload(pluginManager));
     }
 
     @Override
     public boolean cmd(@NotNull CommandSender sender, String[] args) {
-        if (args.length < 2) {
+        if (args.length == 0) {
             return false;
         }
 
-        Command subCommand = this.getSubCommand(args[1]);
-        if (subCommand != null) {
-            return subCommand.execute(sender, args);
-        } else {
-            return false;
+        Command command = this.getSubCommand(args[0]);
+        if (command != null) {
+            return command.execute(sender, args);
         }
+
+        return false;
     }
 
     @Override
@@ -40,20 +39,11 @@ public class Punish extends Command {
 
     @Override
     public List<String> tab(@NotNull CommandSender sender, String[] args) {
-        if (args.length > 2) {
-            Command subCommand = this.getSubCommand(args[1]);
-            if (subCommand != null) {
-                return subCommand.tab(sender, args);
-            }
-        } else if (args.length == 2) {
+        if (args.length == 1) {
             List<String> tab = new ArrayList<>();
-            if (this.subCommands != null) {
-                for (Map.Entry<String, Command> entry : this.subCommands.entrySet()) {
-                    tab.add(entry.getKey());
-                }
-            } else {
-                return null;
-            }
+            tab.add("reload");
+
+            return tab;
         }
 
         return null;

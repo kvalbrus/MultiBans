@@ -7,9 +7,12 @@ import me.kvalbrus.multibans.api.Console;
 import me.kvalbrus.multibans.api.MultiBans;
 import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.punishment.Punishment;
+import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
+import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.bukkit.commands.BanBukkit;
 import me.kvalbrus.multibans.bukkit.commands.BanIpBukkit;
 import me.kvalbrus.multibans.bukkit.commands.MuteChatBukkit;
+import me.kvalbrus.multibans.bukkit.commands.PunishBukkit;
 import me.kvalbrus.multibans.bukkit.commands.UnbanBukkit;
 import me.kvalbrus.multibans.bukkit.commands.UnmuteChatBukkit;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitConsole;
@@ -17,16 +20,16 @@ import me.kvalbrus.multibans.bukkit.implementations.BukkitPlayer;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitOnlinePlayer;
 import me.kvalbrus.multibans.bukkit.listeners.PlayerListener;
 import me.kvalbrus.multibans.common.managers.MultiBansPluginManager;
+import me.kvalbrus.multibans.common.punishment.creator.MultiConsolePunishmentCreator;
+import me.kvalbrus.multibans.common.punishment.creator.MultiPlayerPunishmentCreator;
 import me.kvalbrus.multibans.common.utils.Message;
 import me.kvalbrus.multibans.common.utils.ReplacedString;
-import net.kyori.adventure.Adventure;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.ServicePriority;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import me.kvalbrus.multibans.bukkit.events.ActivatePunishmentEvent;
 import me.kvalbrus.multibans.bukkit.events.DeactivatePunishmentEvent;
@@ -36,8 +39,6 @@ import org.jetbrains.annotations.Nullable;
 public class BukkitPluginManager extends MultiBansPluginManager {
 
     private final BukkitPlugin plugin;
-
-//    private BukkitAudiences audience;
 
     public BukkitPluginManager(@NotNull BukkitPlugin plugin) {
         super();
@@ -62,7 +63,6 @@ public class BukkitPluginManager extends MultiBansPluginManager {
         this.registerCommands();
         this.registerListeners();
 
-//        this.audience = BukkitAudiences.create(this.plugin);
         audiences = BukkitAudiences.create(this.plugin);
         super.onEnable();
     }
@@ -219,10 +219,9 @@ public class BukkitPluginManager extends MultiBansPluginManager {
         this.plugin.getServer().getPluginManager().callEvent(event);
     }
 
-    @Override
-    public AudienceProvider getAudience() {
-        return null;
-//        return this.audience;
+    @NotNull
+    public JavaPlugin getPlugin() {
+        return this.plugin;
     }
 
     private void registerCommands() {
@@ -231,6 +230,8 @@ public class BukkitPluginManager extends MultiBansPluginManager {
         new MuteChatBukkit(this, this.plugin);
         new UnbanBukkit(this, this.plugin);
         new UnmuteChatBukkit(this, this.plugin);
+        new PunishBukkit(this, this.plugin);
+        new me.kvalbrus.multibans.bukkit.commands.MultiBansBukkit(this, this.plugin);
     }
 
     private void registerListeners() {

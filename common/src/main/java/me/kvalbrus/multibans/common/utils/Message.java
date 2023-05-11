@@ -1,6 +1,7 @@
 package me.kvalbrus.multibans.common.utils;
 
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 
 public enum Message {
 
@@ -15,6 +16,20 @@ public enum Message {
         "HH:MM mm/dd/yyyy",
         "Date format"
     ),
+
+    SECOND("second", "second", ""),
+    SECONDS("seconds", "seconds", ""),
+
+    MINUTE("minute", "minute", ""),
+    MINUTES("minutes", "minutes", ""),
+
+    HOUR("hour", "hour", ""),
+    HOURS("hours", "hours", ""),
+
+    DAY("day", "day", ""),
+    DAYS("days", "days", ""),
+
+    RELOAD("plugin.reload", "Plugin has been reloaded!", ""),
 
     PERMANENTLY(
         "punishment.duration.permanently",
@@ -167,6 +182,14 @@ public enum Message {
         "You was muted by %punishment_creator% for %punishment_duration%!",
         ""
     ),
+
+    TEMPMUTECHAT_DEACTIVATE_LISTEN("tempmutechat.deactivate.listen", "", ""),
+    TEMPMUTECHAT_DEACTIVATE_EXECUTOR("tempmutechat.deactivate.executor", "", ""),
+    TEMPMUTECHAT_DEACTIVATE_TARGET("tempmutechat.deactivate.target", "", ""),
+
+    TEMPMUTECHAT_DELETE_LISTEN("temputechat.delete.listen", "", ""),
+    TEMPMUTECHAT_DELETE_EXECUTOR("tempmutechat.delete.executor", "", ""),
+    TEMPMUTECHAT_DELETE_TARGET("tempmutechat.delete.target", "", ""),
 
     TEMPMUTECHAT_TRY_LISTEN("tempmutechat.try.listen", "", ""),
     TEMPMUTECHAT_TRY_TARGET("tempmutechat.try.target", "", ""),

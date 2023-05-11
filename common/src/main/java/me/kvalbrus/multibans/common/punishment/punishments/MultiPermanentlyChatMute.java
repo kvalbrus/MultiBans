@@ -49,6 +49,9 @@ public class MultiPermanentlyChatMute extends MultiPermanentlyPunishment impleme
             }
         }
 
+        // Sends a message to console
+        this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+
         // Sends a message to target if target is online
         if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
             ReplacedString targetMessage = new ReplacedString(Message.MUTECHAT_ACTIVATE_TARGET.getMessage())
@@ -59,6 +62,72 @@ public class MultiPermanentlyChatMute extends MultiPermanentlyPunishment impleme
         // Sends a message to the creator
         if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
             ReplacedString creatorMessage = new ReplacedString(Message.MUTECHAT_ACTIVATE_EXECUTOR.getMessage())
+                .replacePunishment(this);
+            creator.sendMessage(creatorMessage.string());
+        }
+    }
+
+    @Override
+    public synchronized void deactivate(@Nullable PunishmentCreator cancellationCreator,
+                                        long cancellationDate,
+                                        @Nullable String cancellationReason) {
+        super.deactivate(cancellationCreator, cancellationDate, cancellationReason);
+
+        // Sends a message to all players with permission
+        ReplacedString listenMessage = new ReplacedString(Message.MUTECHAT_DEACTIVATE_LISTEN.getMessage())
+            .replacePunishment(this);
+
+        for (OnlinePlayer p : this.getPluginManager().getOnlinePlayers()) {
+            if (p.hasPermission(Permission.PUNISHMENT_MUTECHAT_LISTEN.getName())) {
+                p.sendMessage(listenMessage.string());
+            }
+        }
+
+        // Sends a message to console
+        this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+
+        // Sends a message to target if target is online
+        if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
+            ReplacedString targetMessage = new ReplacedString(Message.MUTECHAT_DEACTIVATE_TARGET.getMessage())
+                .replacePunishment(this);
+            onlineTarget.sendMessage(targetMessage.string());
+        }
+
+        // Sends a message to the creator
+        if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
+            ReplacedString creatorMessage = new ReplacedString(Message.MUTECHAT_DEACTIVATE_EXECUTOR.getMessage())
+                .replacePunishment(this);
+            creator.sendMessage(creatorMessage.string());
+        }
+    }
+
+    @Override
+    public synchronized void delete() {
+        super.delete();
+
+        // Sends a message to all players with permission
+        ReplacedString listenMessage = new ReplacedString(Message.MUTECHAT_DELETE_LISTEN.getMessage())
+            .replacePunishment(this);
+
+        for (OnlinePlayer p : this.getPluginManager().getOnlinePlayers()) {
+            if (p.hasPermission(Permission.PUNISHMENT_MUTECHAT_LISTEN.getName())) {
+                p.sendMessage(listenMessage.string());
+            }
+        }
+
+        // Sends a message to console
+        this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+
+        // Sends a message to target if target is online
+        if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
+            ReplacedString targetMessage = new ReplacedString(Message.MUTECHAT_DELETE_TARGET.getMessage())
+                .replacePunishment(this);
+            onlineTarget.sendMessage(targetMessage.string());
+        }
+
+        // Sends a message to the creator
+        if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
+            ReplacedString creatorMessage = new ReplacedString(Message.MUTECHAT_DELETE_EXECUTOR.getMessage())
                 .replacePunishment(this);
             creator.sendMessage(creatorMessage.string());
         }

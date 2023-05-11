@@ -2,7 +2,7 @@ package me.kvalbrus.multibans.bukkit.implementations;
 
 import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.bukkit.BukkitPluginManager;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 
 public class BukkitOnlinePlayer extends BukkitPlayer implements OnlinePlayer {
@@ -11,15 +11,14 @@ public class BukkitOnlinePlayer extends BukkitPlayer implements OnlinePlayer {
 
     public BukkitOnlinePlayer(org.bukkit.entity.Player player) {
         super(player);
-        //        super(player.getName(), player.getUniqueId(),
-//            player.getAddress() != null ? player.getAddress().getHostString() : "");
         this.player = player;
     }
 
     @Override
     public void sendMessage(String message) {
         if (message != null && message.length() > 0) {
-            this.player.sendMessage(message);
+            BukkitPluginManager.getAudiences().sender(this.player).sendMessage(MiniMessage.miniMessage()
+                .deserialize(message));
         }
     }
 
@@ -28,11 +27,6 @@ public class BukkitOnlinePlayer extends BukkitPlayer implements OnlinePlayer {
         for (String message : messages) {
             this.sendMessage(message);
         }
-    }
-
-    @Override
-    public void sendMessage(Component component) {
-        BukkitPluginManager.getAudiences().player(this.player).sendMessage(component);
     }
 
     @Override

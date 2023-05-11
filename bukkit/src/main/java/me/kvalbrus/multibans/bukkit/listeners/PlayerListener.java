@@ -2,6 +2,7 @@ package me.kvalbrus.multibans.bukkit.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyBan;
@@ -11,12 +12,15 @@ import me.kvalbrus.multibans.api.punishment.punishments.TemporaryBan;
 import me.kvalbrus.multibans.api.punishment.punishments.TemporaryBanIp;
 import me.kvalbrus.multibans.api.punishment.punishments.TemporaryChatMute;
 import me.kvalbrus.multibans.bukkit.BukkitPluginManager;
+import me.kvalbrus.multibans.bukkit.implementations.BukkitOnlinePlayer;
 import me.kvalbrus.multibans.common.managers.MultiBansPluginManager;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.managers.PunishmentManager;
-import me.kvalbrus.multibans.common.punishment.punishments.MultiTemporaryChatMute;
 import me.kvalbrus.multibans.common.utils.Message;
 import me.kvalbrus.multibans.common.utils.ReplacedString;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -54,29 +58,47 @@ public class PlayerListener implements Listener {
 
             StringBuilder punishmentsString = new StringBuilder();
             for (Punishment punishment : activeBans) {
+                ReplacedString listenMessage = null;
+
                 if (punishment.getType() == PunishmentType.BAN_IP) {
                     punishmentsString.append(
                         new ReplacedString(Message.TITLE_BANIP.getMessage()).replacePunishment(
                             punishment).string());
+                    listenMessage = new ReplacedString(Message.BANIP_TRY_LISTEN.getMessage())
+                        .replacePunishment(punishment);
                 } else if (punishment.getType() == PunishmentType.BAN) {
                     punishmentsString.append(
                         new ReplacedString(Message.TITLE_BAN.getMessage()).replacePunishment(
                             punishment).string());
+                    listenMessage = new ReplacedString(Message.BAN_TRY_LISTEN.getMessage())
+                        .replacePunishment(punishment);
                 } else if (punishment.getType() == PunishmentType.TEMP_BAN_IP) {
                     punishmentsString.append(
                         new ReplacedString(Message.TITLE_TEMPBANIP.getMessage()).replacePunishment(
                             punishment).string());
+                    listenMessage = new ReplacedString(Message.TEMPBANIP_TRY_LISTEN.getMessage())
+                        .replacePunishment(punishment);
                 } else if (punishment.getType() == PunishmentType.TEMP_BAN) {
                     punishmentsString.append(
                         new ReplacedString(Message.TITLE_TEMPBAN.getMessage()).replacePunishment(
                             punishment).string());
+                    listenMessage = new ReplacedString(Message.TEMPBAN_TRY_LISTEN.getMessage())
+                        .replacePunishment(punishment);
+                }
+
+                if (listenMessage != null) {
+                    for (var listener : this.pluginManager.getOnlinePlayers()) {
+                        listener.sendMessage(listenMessage.string());
+                    }
+
+                    this.pluginManager.getConsole().sendMessage(listenMessage.string());
                 }
             }
 
             ReplacedString title = new ReplacedString(Message.TITLE_HEADER.getMessage() +
                 punishmentsString + Message.TITLE_FOOTER.getMessage());
 
-            event.disallow(Result.KICK_BANNED, title.string());
+            event.disallow(Result.KICK_BANNED, LegacyComponentSerializer.legacySection().serialize(Component.text(title.string())));
         }
     }
 
@@ -95,25 +117,28 @@ public class PlayerListener implements Listener {
                             .getActivePunishments(player.getUniqueId(), PermanentlyChatMute.class);
 
                         if (!permChatMutes.isEmpty()) {
-                            try {
-                                Punishment punishment = permChatMutes.get(0);
+                            for (Punishment mute : permChatMutes) {
+                                try {
+                                    ReplacedString playerMessage = new ReplacedString(
+                                        Message.MUTECHAT_TRY_TARGET.getMessage())
+                                        .replacePunishment(mute);
 
-                                ReplacedString playerMessage = new ReplacedString(
-                                    Message.MUTECHAT_TRY_TARGET.getMessage())
-                                    .replacePunishment(punishment);
+                                    new BukkitOnlinePlayer(player).sendMessage(
+                                        playerMessage.string());
 
-                                player.sendMessage(playerMessage.string());
+                                    ReplacedString listenMessage = new ReplacedString(
+                                        Message.MUTECHAT_TRY_LISTEN.getMessage())
+                                        .replacePunishment(mute);
 
-                                ReplacedString listenMessage = new ReplacedString(
-                                    Message.MUTECHAT_TRY_LISTEN.getMessage())
-                                    .replacePunishment(punishment);
+                                    for (var listener : this.pluginManager.getOnlinePlayers()) {
+                                        listener.sendMessage(listenMessage.string());
+                                    }
 
-                                for (var listener : this.pluginManager.getOnlinePlayers()) {
-                                    listener.sendMessage(listenMessage.string());
+                                    this.pluginManager.getConsole().sendMessage(listenMessage.string());
+                                } catch (ArrayIndexOutOfBoundsException exception) {
+                                    // This exception calls, if punishment was cancelled or deleted.
+                                    return;
                                 }
-                            } catch (ArrayIndexOutOfBoundsException exception) {
-                                // This exception calls, if punishment was cancelled or deleted.
-                                return;
                             }
 
                             return;
@@ -123,25 +148,28 @@ public class PlayerListener implements Listener {
                             .getActivePunishments(player.getUniqueId(), TemporaryChatMute.class);
 
                         if (!tempChatMutes.isEmpty()) {
-                            try {
-                                Punishment punishment = tempChatMutes.get(0);
+                            for (Punishment tempMute : tempChatMutes) {
+                                try {
+                                    ReplacedString playerMessage = new ReplacedString(
+                                        Message.TEMPMUTECHAT_TRY_TARGET.getMessage())
+                                        .replacePunishment(tempMute);
 
-                                ReplacedString playerMessage = new ReplacedString(
-                                    Message.TEMPMUTECHAT_TRY_TARGET.getMessage())
-                                    .replacePunishment(punishment);
+                                    new BukkitOnlinePlayer(player).sendMessage(
+                                        playerMessage.string());
 
-                                player.sendMessage(playerMessage.string());
+                                    ReplacedString listenMessage = new ReplacedString(
+                                        Message.TEMPMUTECHAT_TRY_LISTEN.getMessage())
+                                        .replacePunishment(tempMute);
 
-                                ReplacedString listenMessage = new ReplacedString(
-                                    Message.TEMPMUTECHAT_TRY_LISTEN.getMessage())
-                                    .replacePunishment(punishment);
+                                    for (var listener : this.pluginManager.getOnlinePlayers()) {
+                                        listener.sendMessage(listenMessage.string());
+                                    }
 
-                                for (var listener : this.pluginManager.getOnlinePlayers()) {
-                                    listener.sendMessage(listenMessage.string());
+                                    this.pluginManager.getConsole().sendMessage(listenMessage.string());
+                                } catch (ArrayIndexOutOfBoundsException exception) {
+                                    // This exception calls, if punishment was cancelled or deleted.
+                                    return;
                                 }
-                            } catch (ArrayIndexOutOfBoundsException exception) {
-                                // This exception calls, if punishment was cancelled or deleted.
-                                return;
                             }
                         }
                     }
@@ -161,25 +189,28 @@ public class PlayerListener implements Listener {
                     .getActivePunishments(player.getUniqueId(), PermanentlyChatMute.class);
 
                 if (!permChatMutes.isEmpty()) {
-                    try {
-                        Punishment punishment = permChatMutes.get(0);
+                    for (Punishment mute : permChatMutes) {
+                        try {
+                            ReplacedString playerMessage = new ReplacedString(
+                                Message.MUTECHAT_TRY_TARGET.getMessage())
+                                .replacePunishment(mute);
 
-                        ReplacedString playerMessage = new ReplacedString(
-                            Message.MUTECHAT_TRY_TARGET.getMessage())
-                            .replacePunishment(punishment);
+                            new BukkitOnlinePlayer(player).sendMessage(
+                                playerMessage.string());
 
-                        player.sendMessage(playerMessage.string());
+                            ReplacedString listenMessage = new ReplacedString(
+                                Message.MUTECHAT_TRY_LISTEN.getMessage())
+                                .replacePunishment(mute);
 
-                        ReplacedString listenMessage = new ReplacedString(
-                            Message.MUTECHAT_TRY_LISTEN.getMessage())
-                            .replacePunishment(punishment);
+                            for (var listener : this.pluginManager.getOnlinePlayers()) {
+                                listener.sendMessage(listenMessage.string());
+                            }
 
-                        for (var listener : this.pluginManager.getOnlinePlayers()) {
-                            listener.sendMessage(listenMessage.string());
+                            this.pluginManager.getConsole().sendMessage(listenMessage.string());
+                        } catch (ArrayIndexOutOfBoundsException exception) {
+                            // This exception calls, if punishment was cancelled or deleted.
+                            return;
                         }
-                    } catch (ArrayIndexOutOfBoundsException exception) {
-                        // This exception calls, if punishment was cancelled or deleted.
-                        return;
                     }
 
                     return;
@@ -189,25 +220,28 @@ public class PlayerListener implements Listener {
                     .getActivePunishments(player.getUniqueId(), TemporaryChatMute.class);
 
                 if (!tempChatMutes.isEmpty()) {
-                    try {
-                        Punishment punishment = tempChatMutes.get(0);
+                    for (Punishment tempMute : tempChatMutes) {
+                        try {
+                            ReplacedString playerMessage = new ReplacedString(
+                                Message.TEMPMUTECHAT_TRY_TARGET.getMessage())
+                                .replacePunishment(tempMute);
 
-                        ReplacedString playerMessage = new ReplacedString(
-                            Message.TEMPMUTECHAT_TRY_TARGET.getMessage())
-                            .replacePunishment(punishment);
+                            new BukkitOnlinePlayer(player).sendMessage(
+                                playerMessage.string());
 
-                        player.sendMessage(playerMessage.string());
+                            ReplacedString listenMessage = new ReplacedString(
+                                Message.TEMPMUTECHAT_TRY_LISTEN.getMessage())
+                                .replacePunishment(tempMute);
 
-                        ReplacedString listenMessage = new ReplacedString(
-                            Message.TEMPMUTECHAT_TRY_LISTEN.getMessage())
-                            .replacePunishment(punishment);
+                            for (var listener : this.pluginManager.getOnlinePlayers()) {
+                                listener.sendMessage(listenMessage.string());
+                            }
 
-                        for (var listener : this.pluginManager.getOnlinePlayers()) {
-                            listener.sendMessage(listenMessage.string());
+                            this.pluginManager.getConsole().sendMessage(listenMessage.string());
+                        } catch (ArrayIndexOutOfBoundsException exception) {
+                            // This exception calls, if punishment was cancelled or deleted.
+                            return;
                         }
-                    } catch (ArrayIndexOutOfBoundsException exception) {
-                        // This exception calls, if punishment was cancelled or deleted.
-                        return;
                     }
                 }
             }

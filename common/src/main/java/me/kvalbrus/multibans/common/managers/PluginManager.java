@@ -1,9 +1,15 @@
-package me.kvalbrus.multibans.api;
+package me.kvalbrus.multibans.common.managers;
 
 import java.io.File;
 import java.util.UUID;
+import me.kvalbrus.multibans.api.Console;
+import me.kvalbrus.multibans.api.DataProvider;
+import me.kvalbrus.multibans.api.OnlinePlayer;
+import me.kvalbrus.multibans.api.Player;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.managers.PunishmentManager;
+import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
+import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import org.jetbrains.annotations.NotNull;
 
 public interface PluginManager {
