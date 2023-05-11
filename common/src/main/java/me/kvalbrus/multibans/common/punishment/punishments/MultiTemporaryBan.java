@@ -7,6 +7,7 @@ import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
 import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.punishments.TemporaryBan;
+import me.kvalbrus.multibans.common.managers.MultiBansPluginManager;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.permissions.Permission;
 import me.kvalbrus.multibans.common.punishment.MultiTemporaryPunishment;
@@ -51,7 +52,11 @@ public class MultiTemporaryBan extends MultiTemporaryPunishment implements Tempo
         }
 
         // Sends a message to console
-        this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+        if (this.getPluginManager() instanceof MultiBansPluginManager multiBansPluginManager) {
+            if (multiBansPluginManager.getSettings().isConsoleLog()) {
+                this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+            }
+        }
 
         // Sends a message to the creator
         if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
@@ -78,7 +83,11 @@ public class MultiTemporaryBan extends MultiTemporaryPunishment implements Tempo
         }
 
         // Sends a message to console
-        this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+        if (this.getPluginManager() instanceof MultiBansPluginManager multiBansPluginManager) {
+            if (multiBansPluginManager.getSettings().isConsoleLog()) {
+                this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+            }
+        }
 
         // Sends a message to the creator
         if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
@@ -103,7 +112,11 @@ public class MultiTemporaryBan extends MultiTemporaryPunishment implements Tempo
         }
 
         // Sends a message to console
-        this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+        if (this.getPluginManager() instanceof MultiBansPluginManager multiBansPluginManager) {
+            if (multiBansPluginManager.getSettings().isConsoleLog()) {
+                this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+            }
+        }
 
         // Sends a message to the creator
         if (this.getCreator() instanceof OnlinePunishmentCreator creator) {

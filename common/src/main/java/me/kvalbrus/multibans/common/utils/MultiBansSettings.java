@@ -27,6 +27,9 @@ public class MultiBansSettings {
     @Getter
     private List<String> chatMuteCommands;
 
+    @Getter
+    private boolean consoleLog;
+
     public MultiBansSettings(@NotNull PluginManager pluginManager) {
         this.pluginManager = pluginManager;
     }
@@ -55,10 +58,12 @@ public class MultiBansSettings {
 
         this.maskIp = toml.getBoolean("MaskIp", true);
         this.chatMuteCommands = toml.getList("ChatMuteCommands", new ArrayList<>());
+        this.consoleLog = toml.getBoolean("ConsoleLog", true);
 
         map.put("IdSize", this.idSize);
         map.put("MaskIp", this.maskIp);
         map.put("ChatMuteCommands", this.chatMuteCommands);
+        map.put("ConsoleLog", this.consoleLog);
 
         try {
             tomlWriter.write(map, file);

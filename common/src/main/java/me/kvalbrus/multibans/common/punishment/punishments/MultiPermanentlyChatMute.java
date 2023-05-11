@@ -8,6 +8,7 @@ import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
 import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyChatMute;
+import me.kvalbrus.multibans.common.managers.MultiBansPluginManager;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.permissions.Permission;
 import me.kvalbrus.multibans.common.punishment.MultiPermanentlyPunishment;
@@ -50,7 +51,11 @@ public class MultiPermanentlyChatMute extends MultiPermanentlyPunishment impleme
         }
 
         // Sends a message to console
-        this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+        if (this.getPluginManager() instanceof MultiBansPluginManager multiBansPluginManager) {
+            if (multiBansPluginManager.getSettings().isConsoleLog()) {
+                this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+            }
+        }
 
         // Sends a message to target if target is online
         if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
@@ -84,7 +89,11 @@ public class MultiPermanentlyChatMute extends MultiPermanentlyPunishment impleme
         }
 
         // Sends a message to console
-        this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+        if (this.getPluginManager() instanceof MultiBansPluginManager multiBansPluginManager) {
+            if (multiBansPluginManager.getSettings().isConsoleLog()) {
+                this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+            }
+        }
 
         // Sends a message to target if target is online
         if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
@@ -116,7 +125,11 @@ public class MultiPermanentlyChatMute extends MultiPermanentlyPunishment impleme
         }
 
         // Sends a message to console
-        this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+        if (this.getPluginManager() instanceof MultiBansPluginManager multiBansPluginManager) {
+            if (multiBansPluginManager.getSettings().isConsoleLog()) {
+                this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+            }
+        }
 
         // Sends a message to target if target is online
         if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
