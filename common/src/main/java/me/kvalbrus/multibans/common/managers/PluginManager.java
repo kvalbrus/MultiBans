@@ -8,8 +8,6 @@ import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.Player;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.managers.PunishmentManager;
-import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
-import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import org.jetbrains.annotations.NotNull;
 
 public interface PluginManager {

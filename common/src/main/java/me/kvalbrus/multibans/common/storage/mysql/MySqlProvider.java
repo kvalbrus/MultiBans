@@ -86,7 +86,14 @@ public class MySqlProvider implements DataProvider {
 
     @Override
     public void wipe() {
-
+        try (Connection connection = this.source.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQLQuery.WIPE_TABLE_PUNISHMENTS.toString())) {
+            statement.executeUpdate();
+        } catch (SQLTimeoutException exception) {
+            // TODO: logger
+        } catch (SQLException exception) {
+            // TODO: logger
+        }
     }
 
     @Override

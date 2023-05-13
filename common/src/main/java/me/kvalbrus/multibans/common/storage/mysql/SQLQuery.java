@@ -37,7 +37,9 @@ public enum SQLQuery {
 
     HISTORY_PUNISHMENTS_TARGET_UUID("SELECT * FROM punishments WHERE target_uuid=?"),
 
-    HISTORY_PUNISHMENTS_CREATOR("SELECT * FROM punishments WHERE creator_name=?");
+    HISTORY_PUNISHMENTS_CREATOR("SELECT * FROM punishments WHERE creator_name=?"),
+
+    WIPE_TABLE_PUNISHMENTS("TRUNCATE TABLE punishments");
 
     private final String query;
 
