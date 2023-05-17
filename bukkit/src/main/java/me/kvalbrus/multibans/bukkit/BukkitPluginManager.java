@@ -151,7 +151,7 @@ public class BukkitPluginManager extends MultiBansPluginManager {
     }
 
     @Override
-    public Console getConsole() {
+    public @NotNull Console getConsole() {
         return new BukkitConsole(this.plugin.getServer().getConsoleSender());
     }
 
@@ -170,7 +170,7 @@ public class BukkitPluginManager extends MultiBansPluginManager {
     @Override
     public void activatePunishment(@NotNull Punishment punishment) {
         if (punishment.getType() == PunishmentType.BAN) {
-            Player player = this.plugin.getServer().getPlayer(punishment.getTargetUniqueId());
+            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
             if (player != null) {
                 ReplacedString title = new ReplacedString(Message.TITLE_HEADER.getMessage() + Message.TITLE_BAN.getMessage() + Message.TITLE_FOOTER.getMessage())
                     .replacePunishment(punishment);
@@ -178,7 +178,7 @@ public class BukkitPluginManager extends MultiBansPluginManager {
                 player.kickPlayer(title.string());
             }
         } else if (punishment.getType() == PunishmentType.TEMP_BAN) {
-            Player player = this.plugin.getServer().getPlayer(punishment.getTargetUniqueId());
+            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
             if (player != null) {
                 ReplacedString title = new ReplacedString(
                     Message.TITLE_HEADER.getMessage() + Message.TITLE_TEMPBAN.getMessage() +
@@ -188,7 +188,7 @@ public class BukkitPluginManager extends MultiBansPluginManager {
                 player.kickPlayer(title.string());
             }
         } else if (punishment.getType() == PunishmentType.BAN_IP) {
-            Player player = this.plugin.getServer().getPlayer(punishment.getTargetUniqueId());
+            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
             if (player != null) {
                 ReplacedString title = new ReplacedString(
                     Message.TITLE_HEADER.getMessage() + Message.TITLE_BANIP.getMessage() +
@@ -198,7 +198,7 @@ public class BukkitPluginManager extends MultiBansPluginManager {
                 player.kickPlayer(title.string());
             }
         } else if (punishment.getType() == PunishmentType.TEMP_BAN_IP) {
-            Player player = this.plugin.getServer().getPlayer(punishment.getTargetUniqueId());
+            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
             if (player != null) {
                 ReplacedString title = new ReplacedString(
                     Message.TITLE_HEADER.getMessage() + Message.TITLE_TEMPBANIP.getMessage() +

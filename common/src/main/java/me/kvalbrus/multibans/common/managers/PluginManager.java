@@ -48,6 +48,7 @@ public interface PluginManager {
 
     Player getOfflinePlayer(String name);
 
+    @NotNull
     Console getConsole();
 
     void activatePunishment(@NotNull Punishment punishment);

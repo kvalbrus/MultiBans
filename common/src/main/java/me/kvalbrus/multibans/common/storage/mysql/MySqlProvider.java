@@ -19,6 +19,7 @@ import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment;
 import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
+import me.kvalbrus.multibans.api.punishment.target.OnlinePunishmentTarget;
 import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.punishment.MultiPunishment;
@@ -102,12 +103,17 @@ public class MySqlProvider implements DataProvider {
             PreparedStatement statement = connection.prepareStatement(
                 SQLQuery.CREATE_PUNISHMENT.toString())) {
             int i = 1;
+
+            PunishmentTarget target = punishment.getTarget();
+            PunishmentCreator creator = punishment.getCreator();
+
             statement.setString(i++, punishment.getId());
             statement.setString(i++, punishment.getType().getPrefix());
-            statement.setString(i++, punishment.getTargetIp());
-            statement.setString(i++, punishment.getTargetName());
-            statement.setString(i++, punishment.getTargetUniqueId().toString());
-            statement.setString(i++, punishment.getCreatorName());
+            statement.setString(i++, target instanceof OnlinePunishmentTarget onlineTarget ?
+                onlineTarget.getHostAddress() : "");
+            statement.setString(i++, target.getName());
+            statement.setString(i++, target.getUniqueId().toString());
+            statement.setString(i++, creator.getName());
             statement.setLong(i++, punishment.getCreatedDate());
             statement.setLong(i++,
                 punishment instanceof TemporaryPunishment temporary ? temporary.getStartedDate() :

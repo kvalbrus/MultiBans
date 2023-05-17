@@ -22,22 +22,6 @@ public interface Punishment extends Comparable<Punishment> {
     @NotNull
     String getId();
 
-    @Deprecated
-    @Nullable
-    String getTargetIp();
-
-    @Deprecated
-    @NotNull
-    String getTargetName();
-
-    @Deprecated
-    @NotNull
-    UUID getTargetUniqueId();
-
-    @Deprecated
-    @NotNull
-    String getCreatorName();
-
     PunishmentTarget getTarget();
 
     PunishmentCreator getCreator();

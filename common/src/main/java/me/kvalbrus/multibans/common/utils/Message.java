@@ -54,6 +54,10 @@ public enum Message {
     BAN_DEACTIVATE_EXECUTOR("ban.deactivate.executor", "", ""),
     BAN_DELETE_LISTEN("ban.delete.listen", "", ""),
     BAN_DELETE_EXECUTOR("ban.delete.executor", "", ""),
+    BAN_COMMENT_CHANGE_LISTEN("ban.comment.change.listen", "", ""),
+    BAN_COMMENT_CHANGE_EXECUTOR("ban.comment.change.executor", "You changed the comment", ""),
+    BAN_REASON_CREATE_CHANGE_LISTEN("ban.reason-create.change.listen", "", ""),
+    BAN_REASON_CREATE_CHANGE_EXECUTOR("ban.reason-create.change.executor", "You change the reason", ""),
 
     BAN_TRY_LISTEN(
         "ban.try.listen",
@@ -79,6 +83,10 @@ public enum Message {
     TEMPBAN_DEACTIVATE_EXECUTOR("tempban.deactivate.executor", "", ""),
     TEMPBAN_DELETE_LISTEN("tempban.delete.listen", "", ""),
     TEMPBAN_DELETE_EXECUTOR("tempban.delete.executor", "", ""),
+    TEMPBAN_COMMENT_CHANGE_LISTEN("tempban.comment.change.listen", "", ""),
+    TEMPBAN_COMMENT_CHANGE_EXECUTOR("tempban.comment.change.executor", "You changed the comment", ""),
+    TEMPBAN_REASON_CREATE_CHANGE_LISTEN("tempban.reason-create.change.listen", "", ""),
+    TEMPBAN_REASON_CREATE_CHANGE_EXECUTOR("tenpban.reason-create.change.executor", "You change the reason", ""),
 
     TEMPBAN_TRY_LISTEN(
         "tempban.try.listen",
@@ -104,6 +112,10 @@ public enum Message {
     BANIP_DEACTIVATE_EXECUTOR("banip.deactivate.executor", "", ""),
     BANIP_DELETE_LISTEN("banip.delete.listen", "", ""),
     BANIP_DELETE_EXECUTOR("banip.delete.executor", "", ""),
+    BANIP_COMMENT_CHANGE_LISTEN("banip.comment.change.listen", "", ""),
+    BANIP_COMMENT_CHANGE_EXECUTOR("banip.comment.change.executor", "You changed the comment", ""),
+    BANIP_REASON_CREATE_CHANGE_LISTEN("banip.reason-create.change.listen", "", ""),
+    BANIP_REASON_CREATE_CHANGE_EXECUTOR("banip.reason-create.change.executor", "You change the reason", ""),
 
     BANIP_TRY_LISTEN(
         "banip.try.listen",
@@ -127,6 +139,10 @@ public enum Message {
     TEMPBANIP_DEACTIVATE_EXECUTOR("tempbanip.deactivate.executor", "", ""),
     TEMPBANIP_DELETE_LISTEN("tempbanip.delete.listen", "", ""),
     TEMPBANIP_DELETE_EXECUTOR("tempbanip.delete.executor", "", ""),
+    TEMPBANIP_COMMENT_CHANGE_LISTEN("tempbanip.comment.change.listen", "", ""),
+    TEMPBANIP_COMMENT_CHANGE_EXECUTOR("tempbanip.comment.change.executor", "You changed the comment", ""),
+    TEMPBANIP_REASON_CREATE_CHANGE_LISTEN("tempbanip.reason-create.change.listen", "", ""),
+    TEMPBANIP_REASON_CREATE_CHANGE_EXECUTOR("tempbanip.reason-create.change.executor", "You change the reason", ""),
 
     TEMPBANIP_TRY_LISTEN(
         "tempbanip.try.listen",
@@ -161,6 +177,10 @@ public enum Message {
     MUTECHAT_DELETE_LISTEN("mutechat.delete.listen", "", ""),
     MUTECHAT_DELETE_EXECUTOR("mutechat.delete.executor", "", ""),
     MUTECHAT_DELETE_TARGET("mutechat.delete.target", "", ""),
+    MUTECHAT_COMMENT_CHANGE_LISTEN("mutechat.comment.change.listen", "", ""),
+    MUTECHAT_COMMENT_CHANGE_EXECUTOR("mutechat.comment.change.executor", "You changed the comment", ""),
+    MUTECHAT_REASON_CREATE_CHANGE_LISTEN("mutechat.reason-create.change.listen", "", ""),
+    MUTECHAT_REASON_CREATE_CHANGE_EXECUTOR("mutechat.reason-create.change.executor", "You change the reason", ""),
 
     MUTECHAT_TRY_LISTEN("mutechat.try.listen", "", ""),
     MUTECHAT_TRY_TARGET("mutechat.try.target", "", ""),
@@ -190,6 +210,11 @@ public enum Message {
     TEMPMUTECHAT_DELETE_LISTEN("temputechat.delete.listen", "", ""),
     TEMPMUTECHAT_DELETE_EXECUTOR("tempmutechat.delete.executor", "", ""),
     TEMPMUTECHAT_DELETE_TARGET("tempmutechat.delete.target", "", ""),
+
+    TEMPMUTECHAT_COMMENT_CHANGE_LISTEN("tempmutechat.comment.change.listen", "", ""),
+    TEMPMUTECHAT_COMMENT_CHANGE_EXECUTOR("tempmutechat.comment.change.executor", "You changed the comment", ""),
+    TEMPMUTECHAT_REASON_CREATE_CHANGE_LISTEN("tempmutechat.reason-create.change.listen", "", ""),
+    TEMPMUTECHAT_REASON_CREATE_CHANGE_EXECUTOR("tempmutechat.reason-create.change.executor", "You change the reason", ""),
 
     TEMPMUTECHAT_TRY_LISTEN("tempmutechat.try.listen", "", ""),
     TEMPMUTECHAT_TRY_TARGET("tempmutechat.try.target", "", ""),

@@ -50,11 +50,11 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment
     }
 
     @Override
-    public synchronized void activate() {
+    public final synchronized void activate() {
         this.cancelled = false;
 
         List<? extends MultiTemporaryPunishment> activePunishments = this.getPluginManager()
-            .getPunishmentManager().getActivePunishments(this.getTargetUniqueId(), this.getClass());
+            .getPunishmentManager().getActivePunishments(this.getTarget().getUniqueId(), this.getClass());
 
         final int size = activePunishments.size();
         if (size > 0) {
@@ -72,7 +72,7 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment
     }
 
     @Override
-    public void deactivate(@Nullable PunishmentCreator cancellationCreator,
+    public final void deactivate(@Nullable PunishmentCreator cancellationCreator,
                            long cancellationDate,
                            @Nullable String cancellationReason) {
         if (this.cancelled) {
@@ -135,10 +135,11 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment
 
         this.getPluginManager().deactivatePunishment(this);
         this.updateData();
+        this.sendMessageAboutDeactivate();
     }
 
     @Override
-    public synchronized void delete() {
+    public final synchronized void delete() {
         if (!this.cancelled) {
             List<? extends MultiTemporaryPunishment> history = this.getPluginManager()
                 .getPunishmentManager()
@@ -272,5 +273,21 @@ public abstract class MultiTemporaryPunishment extends MultiPunishment
     public final synchronized void setStartedDate(long startedDate) {
         this.startedDate = startedDate;
         this.updateData();
+    }
+
+    @NotNull
+    public abstract String getDeactivateMessageForListener();
+
+    @NotNull
+    public abstract String getDeactivateMessageForExecutor();
+
+    @Nullable
+    public abstract String getDeactivateMessageForTarget();
+
+    private void sendMessageAboutDeactivate() {
+        this.sendMessageToListeners(this.getDeactivateMessageForListener());
+        this.sendMessageToCreator(this.getDeactivateMessageForExecutor());
+        this.sendMessageToTarget(this.getDeactivateMessageForTarget());
+
     }
 }

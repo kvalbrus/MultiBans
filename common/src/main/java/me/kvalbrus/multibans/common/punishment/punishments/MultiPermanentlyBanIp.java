@@ -1,18 +1,14 @@
 package me.kvalbrus.multibans.common.punishment.punishments;
 
 import java.util.List;
-import me.kvalbrus.multibans.api.OnlinePlayer;
-import me.kvalbrus.multibans.api.punishment.creator.OnlinePunishmentCreator;
 import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
 import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyBanIp;
-import me.kvalbrus.multibans.common.managers.MultiBansPluginManager;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.permissions.Permission;
 import me.kvalbrus.multibans.common.punishment.MultiPermanentlyPunishment;
 import me.kvalbrus.multibans.common.utils.Message;
-import me.kvalbrus.multibans.common.utils.ReplacedString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,92 +30,87 @@ public class MultiPermanentlyBanIp extends MultiPermanentlyPunishment implements
             comment, cancellationCreator, cancellationDate, cancellationReason, servers, cancelled);
     }
 
+    @NotNull
     @Override
-    public synchronized void activate() {
-        super.activate();
-
-        // Sends a message to all players with permission
-        ReplacedString listenMessage = new ReplacedString(Message.BANIP_ACTIVATE_LISTEN.getMessage())
-            .replacePunishment(this);
-
-        for (OnlinePlayer p : this.getPluginManager().getOnlinePlayers()) {
-            if (p.hasPermission(Permission.PUNISHMENT_BANIP_LISTEN.getName())) {
-                p.sendMessage(listenMessage.string());
-            }
-        }
-
-        // Sends a message to console
-        if (this.getPluginManager() instanceof MultiBansPluginManager multiBansPluginManager) {
-            if (multiBansPluginManager.getSettings().isConsoleLog()) {
-                this.getPluginManager().getConsole().sendMessage(listenMessage.string());
-            }
-        }
-
-        // Sends a message to the creator
-        if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
-            ReplacedString creatorMessage = new ReplacedString(Message.BANIP_ACTIVATE_EXECUTOR.getMessage())
-                .replacePunishment(this);
-            creator.sendMessage(creatorMessage.string());
-        }
+    public String getActivateMessageForListener() {
+        return Message.BANIP_ACTIVATE_LISTEN.getMessage();
     }
 
+    @NotNull
     @Override
-    public synchronized void deactivate(@Nullable PunishmentCreator cancellationCreator,
-                                        long cancellationDate,
-                                        @Nullable String cancellationReason) {
-        super.deactivate(cancellationCreator, cancellationDate, cancellationReason);
-
-        // Sends a message to all players with permission
-        ReplacedString listenMessage = new ReplacedString(Message.BANIP_DEACTIVATE_LISTEN.getMessage())
-            .replacePunishment(this);
-
-        for (OnlinePlayer p : this.getPluginManager().getOnlinePlayers()) {
-            if (p.hasPermission(Permission.PUNISHMENT_BANIP_LISTEN.getName())) {
-                p.sendMessage(listenMessage.string());
-            }
-        }
-
-        // Sends a message to console
-        if (this.getPluginManager() instanceof MultiBansPluginManager multiBansPluginManager) {
-            if (multiBansPluginManager.getSettings().isConsoleLog()) {
-                this.getPluginManager().getConsole().sendMessage(listenMessage.string());
-            }
-        }
-
-        // Sends a message to the creator
-        if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
-            ReplacedString creatorMessage = new ReplacedString(Message.BANIP_DEACTIVATE_EXECUTOR.getMessage())
-                .replacePunishment(this);
-            creator.sendMessage(creatorMessage.string());
-        }
+    public String getActivateMessageForExecutor() {
+        return Message.BANIP_ACTIVATE_EXECUTOR.getMessage();
     }
 
+    @Nullable
     @Override
-    public synchronized void delete() {
-        super.delete();
+    public String getActivateMessageForTarget() {
+        return null;
+    }
 
-        // Sends a message to all players with permission
-        ReplacedString listenMessage = new ReplacedString(Message.BANIP_DELETE_LISTEN.getMessage())
-            .replacePunishment(this);
+    @NotNull
+    @Override
+    public String getDeactivateMessageForListener() {
+        return Message.BANIP_DEACTIVATE_LISTEN.getMessage();
+    }
 
-        for (OnlinePlayer p : this.getPluginManager().getOnlinePlayers()) {
-            if (p.hasPermission(Permission.PUNISHMENT_BANIP_LISTEN.getName())) {
-                p.sendMessage(listenMessage.string());
-            }
-        }
+    @NotNull
+    @Override
+    public String getDeactivateMessageForExecutor() {
+        return Message.BANIP_DEACTIVATE_EXECUTOR.getMessage();
+    }
 
-        // Sends a message to console
-        if (this.getPluginManager() instanceof MultiBansPluginManager multiBansPluginManager) {
-            if (multiBansPluginManager.getSettings().isConsoleLog()) {
-                this.getPluginManager().getConsole().sendMessage(listenMessage.string());
-            }
-        }
+    @Nullable
+    @Override
+    public String getDeactivateMessageForTarget() {
+        return null;
+    }
 
-        // Sends a message to the creator
-        if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
-            ReplacedString creatorMessage = new ReplacedString(Message.BANIP_DELETE_EXECUTOR.getMessage())
-                .replacePunishment(this);
-            creator.sendMessage(creatorMessage.string());
-        }
+    @NotNull
+    @Override
+    public String getDeleteMessageForListener() {
+        return Message.BANIP_DELETE_LISTEN.getMessage();
+    }
+
+    @NotNull
+    @Override
+    public String getDeleteMessageForExecutor() {
+        return Message.BANIP_DELETE_EXECUTOR.getMessage();
+    }
+
+    @Nullable
+    @Override
+    public String getDeleteMessageForTarget() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public String getReasonChangeMessageForExecutor() {
+        return Message.BANIP_REASON_CREATE_CHANGE_EXECUTOR.getMessage();
+    }
+
+    @NotNull
+    @Override
+    public String getReasonChangeMessageForListener() {
+        return Message.BANIP_REASON_CREATE_CHANGE_LISTEN.getMessage();
+    }
+
+    @NotNull
+    @Override
+    public String getCommentChangeMessageForExecutor() {
+        return Message.BANIP_COMMENT_CHANGE_EXECUTOR.getMessage();
+    }
+
+    @NotNull
+    @Override
+    public String getCommentChangeMessageForListener() {
+        return Message.BANIP_COMMENT_CHANGE_LISTEN.getMessage();
+    }
+
+    @NotNull
+    @Override
+    public Permission getPermissionForListener() {
+        return Permission.PUNISHMENT_BANIP_LISTEN;
     }
 }

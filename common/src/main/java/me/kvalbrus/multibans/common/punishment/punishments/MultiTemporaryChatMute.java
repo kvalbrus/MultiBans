@@ -1,19 +1,14 @@
 package me.kvalbrus.multibans.common.punishment.punishments;
 
 import java.util.List;
-import me.kvalbrus.multibans.api.OnlinePlayer;
-import me.kvalbrus.multibans.api.punishment.creator.OnlinePunishmentCreator;
-import me.kvalbrus.multibans.api.punishment.target.OnlinePunishmentTarget;
 import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
 import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.punishments.TemporaryChatMute;
-import me.kvalbrus.multibans.common.managers.MultiBansPluginManager;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.permissions.Permission;
 import me.kvalbrus.multibans.common.punishment.MultiTemporaryPunishment;
 import me.kvalbrus.multibans.common.utils.Message;
-import me.kvalbrus.multibans.common.utils.ReplacedString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,113 +32,87 @@ public class MultiTemporaryChatMute extends MultiTemporaryPunishment implements 
             servers, cancelled);
     }
 
+    @NotNull
     @Override
-    public synchronized void activate() {
-        super.activate();
-
-        // Sends a message to all players with permission
-        ReplacedString listenMessage = new ReplacedString(Message.TEMPMUTECHAT_ACTIVATE_LISTEN.getMessage())
-            .replacePunishment(this);
-
-        for (OnlinePlayer p : this.getPluginManager().getOnlinePlayers()) {
-            if (p.hasPermission(Permission.PUNISHMENT_TEMPMUTECHAT_LISTEN.getName())) {
-                p.sendMessage(listenMessage.string());
-            }
-        }
-
-        // Sends a message to console
-        if (this.getPluginManager() instanceof MultiBansPluginManager multiBansPluginManager) {
-            if (multiBansPluginManager.getSettings().isConsoleLog()) {
-                this.getPluginManager().getConsole().sendMessage(listenMessage.string());
-            }
-        }
-
-        // Sends a message to target if target is online
-        if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
-            ReplacedString targetMessage = new ReplacedString(Message.TEMPMUTECHAT_ACTIVATE_TARGET.getMessage())
-                .replacePunishment(this);
-            onlineTarget.sendMessage(targetMessage.string());
-        }
-
-        // Sends a message to the creator
-        if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
-            ReplacedString creatorMessage = new ReplacedString(Message.TEMPMUTECHAT_ACTIVATE_EXECUTOR.getMessage())
-                .replacePunishment(this);
-            creator.sendMessage(creatorMessage.string());
-        }
+    public String getActivateMessageForListener() {
+        return Message.TEMPMUTECHAT_ACTIVATE_LISTEN.getMessage();
     }
 
+    @NotNull
     @Override
-    public synchronized void deactivate(@Nullable PunishmentCreator cancellationCreator,
-                                        long cancellationDate,
-                                        @Nullable String cancellationReason) {
-        super.deactivate(cancellationCreator, cancellationDate, cancellationReason);
-
-        // Sends a message to all players with permission
-        ReplacedString listenMessage = new ReplacedString(Message.TEMPMUTECHAT_DEACTIVATE_LISTEN.getMessage())
-            .replacePunishment(this);
-
-        for (OnlinePlayer p : this.getPluginManager().getOnlinePlayers()) {
-            if (p.hasPermission(Permission.PUNISHMENT_TEMPMUTECHAT_LISTEN.getName())) {
-                p.sendMessage(listenMessage.string());
-            }
-        }
-
-        // Sends a message to console
-        if (this.getPluginManager() instanceof MultiBansPluginManager multiBansPluginManager) {
-            if (multiBansPluginManager.getSettings().isConsoleLog()) {
-                this.getPluginManager().getConsole().sendMessage(listenMessage.string());
-            }
-        }
-
-        // Sends a message to target if target is online
-        if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
-            ReplacedString targetMessage = new ReplacedString(Message.TEMPMUTECHAT_DEACTIVATE_TARGET.getMessage())
-                .replacePunishment(this);
-            onlineTarget.sendMessage(targetMessage.string());
-        }
-
-        // Sends a message to the creator
-        if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
-            ReplacedString creatorMessage = new ReplacedString(Message.TEMPMUTECHAT_DEACTIVATE_EXECUTOR.getMessage())
-                .replacePunishment(this);
-            creator.sendMessage(creatorMessage.string());
-        }
+    public String getActivateMessageForExecutor() {
+        return Message.TEMPMUTECHAT_ACTIVATE_EXECUTOR.getMessage();
     }
 
+    @Nullable
     @Override
-    public synchronized void delete() {
-        super.delete();
+    public String getActivateMessageForTarget() {
+        return Message.TEMPMUTECHAT_ACTIVATE_TARGET.getMessage();
+    }
 
-        // Sends a message to all players with permission
-        ReplacedString listenMessage = new ReplacedString(Message.TEMPMUTECHAT_DELETE_LISTEN.getMessage())
-            .replacePunishment(this);
+    @NotNull
+    @Override
+    public String getDeactivateMessageForListener() {
+        return Message.TEMPMUTECHAT_DEACTIVATE_LISTEN.getMessage();
+    }
 
-        for (OnlinePlayer p : this.getPluginManager().getOnlinePlayers()) {
-            if (p.hasPermission(Permission.PUNISHMENT_TEMPMUTECHAT_LISTEN.getName())) {
-                p.sendMessage(listenMessage.string());
-            }
-        }
+    @NotNull
+    @Override
+    public String getDeactivateMessageForExecutor() {
+        return Message.TEMPMUTECHAT_DEACTIVATE_EXECUTOR.getMessage();
+    }
 
-        // Sends a message to console
-        if (this.getPluginManager() instanceof MultiBansPluginManager multiBansPluginManager) {
-            if (multiBansPluginManager.getSettings().isConsoleLog()) {
-                this.getPluginManager().getConsole().sendMessage(listenMessage.string());
-            }
-        }
+    @Nullable
+    @Override
+    public String getDeactivateMessageForTarget() {
+        return Message.TEMPMUTECHAT_DEACTIVATE_TARGET.getMessage();
+    }
 
-        // Sends a message to target if target is online
-        if (this.getTarget() instanceof OnlinePunishmentTarget onlineTarget) {
-            ReplacedString targetMessage = new ReplacedString(Message.TEMPMUTECHAT_DELETE_TARGET.getMessage())
-                .replacePunishment(this);
-            onlineTarget.sendMessage(targetMessage.string());
-        }
+    @NotNull
+    @Override
+    public String getDeleteMessageForListener() {
+        return Message.TEMPMUTECHAT_DELETE_LISTEN.getMessage();
+    }
 
-        // Sends a message to the creator
-        if (this.getCreator() instanceof OnlinePunishmentCreator creator) {
-            ReplacedString creatorMessage = new ReplacedString(Message.TEMPMUTECHAT_DELETE_EXECUTOR.getMessage())
-                .replacePunishment(this);
-            creator.sendMessage(creatorMessage.string());
-        }
+    @NotNull
+    @Override
+    public String getDeleteMessageForExecutor() {
+        return Message.TEMPMUTECHAT_DELETE_EXECUTOR.getMessage();
+    }
+
+    @Nullable
+    @Override
+    public String getDeleteMessageForTarget() {
+        return Message.TEMPMUTECHAT_DELETE_TARGET.getMessage();
+    }
+
+    @NotNull
+    @Override
+    public String getReasonChangeMessageForExecutor() {
+        return Message.TEMPMUTECHAT_REASON_CREATE_CHANGE_EXECUTOR.getMessage();
+    }
+
+    @NotNull
+    @Override
+    public String getReasonChangeMessageForListener() {
+        return Message.TEMPMUTECHAT_REASON_CREATE_CHANGE_LISTEN.getMessage();
+    }
+
+    @NotNull
+    @Override
+    public String getCommentChangeMessageForExecutor() {
+        return Message.TEMPMUTECHAT_COMMENT_CHANGE_EXECUTOR.getMessage();
+    }
+
+    @NotNull
+    @Override
+    public String getCommentChangeMessageForListener() {
+        return Message.TEMPMUTECHAT_COMMENT_CHANGE_LISTEN.getMessage();
+    }
+
+    @NotNull
+    @Override
+    public Permission getPermissionForListener() {
+        return Permission.PUNISHMENT_TEMPMUTECHAT_LISTEN;
     }
 }

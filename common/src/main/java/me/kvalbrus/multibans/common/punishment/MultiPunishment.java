@@ -1,21 +1,25 @@
 package me.kvalbrus.multibans.common.punishment;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import me.kvalbrus.multibans.api.DataProvider;
-import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.punishment.Punishment;
+import me.kvalbrus.multibans.api.punishment.creator.OnlinePunishmentCreator;
 import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
+import me.kvalbrus.multibans.api.punishment.target.OnlinePunishmentTarget;
 import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.api.punishment.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment;
+import me.kvalbrus.multibans.common.managers.MultiBansPluginManager;
 import me.kvalbrus.multibans.common.managers.PluginManager;
+import me.kvalbrus.multibans.common.permissions.Permission;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiPermanentlyBan;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiPermanentlyBanIp;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiPermanentlyChatMute;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiTemporaryBan;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiTemporaryBanIp;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiTemporaryChatMute;
+import me.kvalbrus.multibans.common.utils.ReplacedString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -130,12 +134,14 @@ public abstract class MultiPunishment implements Punishment {
     public synchronized void activate() {
         this.pluginManager.activatePunishment(this);
         this.updateData();
+        this.sendMessageAboutActivate();
     }
 
     @Override
     public synchronized void delete() {
         this.pluginManager.getDataProvider().deletePunishment(this);
         this.deleteData();
+        this.sendMessageAboutDelete();
     }
 
     @NotNull
@@ -153,34 +159,6 @@ public abstract class MultiPunishment implements Punishment {
     @Override
     public final String getId() {
         return this.id;
-    }
-
-    @NotNull
-    @Override
-    @Deprecated
-    public final String getTargetIp() {
-        return this.target instanceof OnlinePlayer onlinePlayer ? onlinePlayer.getHostAddress() : "";
-    }
-
-    @NotNull
-    @Override
-    @Deprecated
-    public final String getTargetName() {
-        return this.target.getName();
-    }
-
-    @NotNull
-    @Override
-    @Deprecated
-    public final UUID getTargetUniqueId() {
-        return this.target.getUniqueId();
-    }
-
-    @NotNull
-    @Override
-    @Deprecated
-    public final String getCreatorName() {
-        return this.creator.getName();
     }
 
     @Override
@@ -217,15 +195,17 @@ public abstract class MultiPunishment implements Punishment {
     }
 
     @Override
-    public synchronized void setCreatedReason(@Nullable String reason) {
+    public final synchronized void setCreatedReason(@Nullable String reason) {
         this.reason = reason;
         this.updateData();
+        this.sendMessageAboutReasonChange();
     }
 
     @Override
-    public synchronized void setComment(@Nullable String comment) {
+    public final synchronized void setComment(@Nullable String comment) {
         this.comment = comment;
         this.updateData();
+        this.sendMessageAboutCommentChange();
     }
 
     @Override
@@ -233,6 +213,39 @@ public abstract class MultiPunishment implements Punishment {
         this.servers = servers;
         this.updateData();
     }
+
+    @NotNull
+    public abstract String getActivateMessageForListener();
+
+    @NotNull
+    public abstract String getActivateMessageForExecutor();
+
+    @Nullable
+    public abstract String getActivateMessageForTarget();
+
+    @NotNull
+    public abstract String getDeleteMessageForListener();
+
+    @NotNull
+    public abstract String getDeleteMessageForExecutor();
+
+    @Nullable
+    public abstract String getDeleteMessageForTarget();
+
+    @NotNull
+    public abstract String getReasonChangeMessageForExecutor();
+
+    @NotNull
+    public abstract String getReasonChangeMessageForListener();
+
+    @NotNull
+    public abstract String getCommentChangeMessageForExecutor();
+
+    @NotNull
+    public abstract String getCommentChangeMessageForListener();
+
+    @NotNull
+    public abstract Permission getPermissionForListener();
 
     @Override
     public int compareTo(@NotNull Punishment punishment2) {
@@ -242,8 +255,8 @@ public abstract class MultiPunishment implements Punishment {
             return punishment1.getType().compareTo(punishment2.getType());
         }
 
-        if (!punishment1.getTargetUniqueId().equals(punishment2.getTargetUniqueId())) {
-            return punishment1.getTargetUniqueId().compareTo(punishment2.getTargetUniqueId());
+        if (!punishment1.getTarget().getUniqueId().equals(punishment2.getTarget().getUniqueId())) {
+            return punishment1.getTarget().getUniqueId().compareTo(punishment2.getTarget().getUniqueId());
         }
 
         if (punishment1 instanceof TemporaryPunishment t1 &&
@@ -257,8 +270,8 @@ public abstract class MultiPunishment implements Punishment {
             }
         }
 
-        if (!punishment1.getCreatorName().equals(punishment2.getCreatorName())) {
-            return punishment1.getCreatorName().compareTo(punishment2.getCreatorName());
+        if (!punishment1.getCreator().getName().equals(punishment2.getCreator().getName())) {
+            return punishment1.getCreator().getName().compareTo(punishment2.getCreator().getName());
         }
 
         if (punishment1.getCreatedDate() != punishment2.getCreatedDate()) {
@@ -283,6 +296,58 @@ public abstract class MultiPunishment implements Punishment {
         DataProvider dataProvider = this.getPluginManager().getDataProvider();
         if (dataProvider != null && dataProvider.hasPunishment(this.getId())) {
             dataProvider.deletePunishment(this);
+        }
+    }
+
+    private void sendMessageAboutActivate() {
+        this.sendMessageToListeners(this.getActivateMessageForListener());
+        this.sendMessageToCreator(this.getActivateMessageForExecutor());
+        this.sendMessageToTarget(this.getActivateMessageForTarget());
+    }
+
+    private void sendMessageAboutDelete() {
+        this.sendMessageToListeners(this.getDeleteMessageForListener());
+        this.sendMessageToCreator(this.getDeleteMessageForExecutor());
+        this.sendMessageToTarget(this.getDeleteMessageForTarget());
+    }
+
+    private void sendMessageAboutCommentChange() {
+        this.sendMessageToListeners(this.getCommentChangeMessageForListener());
+        this.sendMessageToCreator(this.getCommentChangeMessageForExecutor());
+    }
+
+    private void sendMessageAboutReasonChange() {
+        this.sendMessageToListeners(this.getReasonChangeMessageForListener());
+        this.sendMessageToCreator(this.getReasonChangeMessageForExecutor());
+    }
+
+    public final void sendMessageToListeners(String message) {
+        ReplacedString listenMessage = new ReplacedString(message).replacePunishment(this);
+
+        // Listener #1 - online players
+        Arrays.stream(this.getPluginManager().getOnlinePlayers())
+            .filter(player -> player.hasPermission(this.getPermissionForListener().getName()))
+            .forEach(player -> player.sendMessage(listenMessage.string()));
+
+        // Listener #2 - console
+        if (this.getPluginManager() instanceof MultiBansPluginManager multiBansPluginManager) {
+            if (multiBansPluginManager.getSettings().isConsoleLog()) {
+                this.getPluginManager().getConsole().sendMessage(listenMessage.string());
+            }
+        }
+    }
+
+    public final void sendMessageToCreator(String message) {
+        if (this.creator instanceof OnlinePunishmentCreator creator) {
+            ReplacedString creatorMessage = new ReplacedString(message).replacePunishment(this);
+            creator.sendMessage(creatorMessage.string());
+        }
+    }
+
+    public final void sendMessageToTarget(String message) {
+        if (this.target instanceof OnlinePunishmentTarget target) {
+            ReplacedString targetMessage = new ReplacedString(message).replacePunishment(this);
+            target.sendMessage(targetMessage.string());
         }
     }
 }

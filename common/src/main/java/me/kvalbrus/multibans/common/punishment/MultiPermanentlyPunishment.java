@@ -42,13 +42,13 @@ public abstract class MultiPermanentlyPunishment extends MultiPunishment
     }
 
     @Override
-    public synchronized void activate() {
+    public final synchronized void activate() {
         this.cancelled = false;
         super.activate();
     }
 
     @Override
-    public synchronized void deactivate(@Nullable PunishmentCreator cancellationCreator,
+    public final synchronized void deactivate(@Nullable PunishmentCreator cancellationCreator,
                                         long cancellationDate,
                                         @Nullable String cancellationReason) {
         if (this.cancelled) {
@@ -61,6 +61,12 @@ public abstract class MultiPermanentlyPunishment extends MultiPunishment
         this.cancellationReason = cancellationReason;
 
         this.updateData();
+        this.sendMessageAboutDeactivate();
+    }
+
+    @Override
+    public final synchronized void delete() {
+        super.delete();
     }
 
     @NotNull
@@ -117,5 +123,21 @@ public abstract class MultiPermanentlyPunishment extends MultiPunishment
     public synchronized void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
         this.updateData();
+    }
+
+    @NotNull
+    public abstract String getDeactivateMessageForListener();
+
+    @NotNull
+    public abstract String getDeactivateMessageForExecutor();
+
+    @Nullable
+    public abstract String getDeactivateMessageForTarget();
+
+    private void sendMessageAboutDeactivate() {
+        this.sendMessageToListeners(this.getDeactivateMessageForListener());
+        this.sendMessageToCreator(this.getDeactivateMessageForExecutor());
+        this.sendMessageToTarget(this.getDeactivateMessageForTarget());
+
     }
 }
