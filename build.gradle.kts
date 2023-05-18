@@ -31,6 +31,7 @@ val _group = "me.kvalbrus"
 //}
 
 configure<PublishingExtension> {
+    apply(plugin = "maven-publish")
     repositories {
         maven {
             url = uri("https://jitpack.io")
