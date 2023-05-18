@@ -165,7 +165,7 @@ abstract class MultiTemporaryPunishment : MultiPunishment, TemporaryPunishment {
         val size = history.size
         if (size > 0) {
             var prev: MultiTemporaryPunishment? = null
-            var curr: MultiTemporaryPunishment? = null
+            var curr: MultiTemporaryPunishment?
             var index = -1
             for (punishment in history) {
                 if (punishment.id == id) {

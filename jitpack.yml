@@ -1,0 +1,8 @@
+before_install:
+  - sdk install java 19.0.2-open
+  - sdk use java 19.0.2-open
+jdk:
+  - openjdk19
+modules:
+  - name: api
+  - name: common
