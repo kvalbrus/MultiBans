@@ -19,7 +19,7 @@ subprojects {
         publications {
             create<MavenPublication>("maven") {
                 this.groupId = "me.kvalbrus.multibans"
-                this.artifactId = this.name
+                this.artifactId = project.name
                 this.version = _version
 
                 from(components["java"])
