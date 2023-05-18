@@ -2,28 +2,56 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     java
+    `java-library`
+    `maven-publish`
     kotlin("jvm") version "1.8.21"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 val _version = "0.1.0"
 val _group = "me.kvalbrus"
+//
+//subprojects {
+//    apply(plugin = "java")
+//    apply(plugin = "maven-publish")
+//
+//    this.version = _version
+//
+//    configure<PublishingExtension> {
+//        publications {
+//            create<MavenPublication>("maven") {
+//                this.groupId = "me.kvalbrus.multibans"
+//                this.artifactId = project.name
+//                this.version = _version
+//
+//                from(components["java"])
+//            }
+//        }
+//    }
+//}
 
-subprojects {
-    apply(plugin = "java")
-    apply(plugin = "maven-publish")
+configure<PublishingExtension> {
+    repositories {
+        maven {
+            url = uri("https://jitpack.io")
+        }
+    }
 
-    this.version = _version
+    publications {
+        create<MavenPublication>("api") {
+            from(components["java"])
 
-    configure<PublishingExtension> {
-        publications {
-            create<MavenPublication>("maven") {
-                this.groupId = "me.kvalbrus.multibans"
-                this.artifactId = project.name
-                this.version = _version
+            groupId = "me.kvalbrus.multibans"
+            artifactId = "api"
+            version = _version
+        }
 
-                from(components["java"])
-            }
+        create<MavenPublication>("common") {
+            from(components["java"])
+
+            groupId = "me.kvalbrus.multibans"
+            artifactId = "common"
+            version = _version
         }
     }
 }
