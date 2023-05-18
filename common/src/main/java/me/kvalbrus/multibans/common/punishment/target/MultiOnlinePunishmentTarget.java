@@ -2,7 +2,6 @@ package me.kvalbrus.multibans.common.punishment.target;
 
 import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.punishment.target.OnlinePunishmentTarget;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 public class MultiOnlinePunishmentTarget extends MultiPunishmentTarget
@@ -24,11 +23,6 @@ public class MultiOnlinePunishmentTarget extends MultiPunishmentTarget
     public void sendMessage(String... messages) {
         this.onlinePlayer.sendMessage(messages);
     }
-
-//    @Override
-//    public void sendMessage(Component component) {
-//        this.onlinePlayer.sendMessage(component);
-//    }
 
     @Override
     public boolean hasPermission(String permission) {

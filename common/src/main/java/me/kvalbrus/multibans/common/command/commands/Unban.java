@@ -42,11 +42,13 @@ public class Unban extends Command {
             reason.append(args[i]);
         }
 
-        PunishmentCreator cancellationCreator = null;
+        PunishmentCreator cancellationCreator;
         if (sender instanceof OnlinePlayer onlinePlayer) {
             cancellationCreator = new MultiOnlinePlayerPunishmentCreator(onlinePlayer);
-        } else if(sender instanceof Console console) {
+        } else if (sender instanceof Console console) {
             cancellationCreator = new MultiConsolePunishmentCreator(console);
+        } else {
+            throw new IllegalArgumentException("Creator is illegal");
         }
 
         List<MultiPermanentlyBan> activeBans = this.getPluginManager().getPunishmentManager()

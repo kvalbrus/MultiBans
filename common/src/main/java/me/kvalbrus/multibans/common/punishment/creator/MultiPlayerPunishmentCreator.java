@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class MultiPlayerPunishmentCreator extends MultiPunishmentCreator
     implements PlayerPunishmentCreator {
 
-    private Player player;
+    private final Player player;
 
     public MultiPlayerPunishmentCreator(Player player) {
         super();

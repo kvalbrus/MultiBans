@@ -14,7 +14,6 @@ public class Reload extends Command {
         super(pluginManager, "reload", Permission.COMMAND_RELOAD.getName(), null);
     }
 
-
     @Override
     public boolean cmd(@NotNull CommandSender sender, String[] args) {
         this.getPluginManager().reload();

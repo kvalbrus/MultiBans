@@ -9,10 +9,10 @@ import me.kvalbrus.multibans.common.command.Command;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import org.jetbrains.annotations.NotNull;
 
-public class Comment extends Command {
+public class Reason extends Command {
 
-    public Comment(@NotNull final PluginManager pluginManager) {
-        super(pluginManager, "comment", "multibans.command.comment", new HashMap<>());
+    public Reason(@NotNull final PluginManager pluginManager) {
+        super(pluginManager, "reason", "multibans.command.reason", new HashMap<>());
     }
 
     @Override
@@ -33,7 +33,7 @@ public class Comment extends Command {
                     commentBuilder.append(args[i]).append((i == args.length - 1) ? "" : " ");
                 }
 
-                punishment.setComment(commentBuilder.toString());
+                punishment.setCreatedReason(commentBuilder.toString());
                 return true;
 
             default:

@@ -45,11 +45,13 @@ public class UnmuteChat extends Command {
         List<MultiPermanentlyChatMute> activeMutes = this.getPluginManager().getPunishmentManager()
             .getActivePunishments(player.getUniqueId(), MultiPermanentlyChatMute.class);
 
-        PunishmentCreator cancellationCreator = null;
+        PunishmentCreator cancellationCreator;
         if (sender instanceof OnlinePlayer onlinePlayer) {
             cancellationCreator = new MultiOnlinePlayerPunishmentCreator(onlinePlayer);
-        } else if(sender instanceof Console console) {
+        } else if (sender instanceof Console console) {
             cancellationCreator = new MultiConsolePunishmentCreator(console);
+        } else {
+            throw new IllegalArgumentException("Creator is illegal");
         }
 
         for (MultiPermanentlyChatMute punishment : activeMutes) {

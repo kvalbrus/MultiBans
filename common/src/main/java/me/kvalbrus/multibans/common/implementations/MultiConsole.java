@@ -5,8 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class MultiConsole implements Console {
 
-    public MultiConsole() {}
-
     @NotNull
     @Override
     public String getName() {

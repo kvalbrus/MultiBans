@@ -45,8 +45,7 @@ public class TempMuteChat extends Command {
                 return false;
             }
 
-            PunishmentTarget target = null;
-
+            PunishmentTarget target;
             if (player instanceof OnlinePlayer onlinePlayer) {
                 target = new MultiOnlinePunishmentTarget(onlinePlayer);
             } else {
@@ -70,13 +69,13 @@ public class TempMuteChat extends Command {
                         reason.append(args[i]);
                     }
 
-                    PunishmentCreator creator = null;
+                    PunishmentCreator creator;
                     if (sender instanceof OnlinePlayer onlinePlayer) {
                         creator = new MultiOnlinePlayerPunishmentCreator(onlinePlayer);
                     } else if(sender instanceof Console console) {
                         creator = new MultiConsolePunishmentCreator(console);
                     } else {
-                        return false;
+                        throw new IllegalArgumentException("Creator is illegal");
                     }
 
                     Punishment punishment = super.getPluginManager().getPunishmentManager()

@@ -40,20 +40,20 @@ public class Kick extends Command {
                 return false;
             }
 
-            PunishmentTarget target = null;
+            PunishmentTarget target;
             if (player instanceof OnlinePlayer onlinePlayer) {
                 target = new MultiOnlinePunishmentTarget(onlinePlayer);
             } else {
                 target = new MultiPunishmentTarget(player);
             }
 
-            PunishmentCreator creator = null;
+            PunishmentCreator creator;
             if (sender instanceof OnlinePlayer onlinePlayer) {
                 creator = new MultiOnlinePlayerPunishmentCreator(onlinePlayer);
             } else if(sender instanceof Console console) {
                 creator = new MultiConsolePunishmentCreator(console);
             } else {
-                throw new IllegalArgumentException("Sender is illegal");
+                throw new IllegalArgumentException("Creator is illegal");
             }
 
             StringBuilder reason = new StringBuilder();

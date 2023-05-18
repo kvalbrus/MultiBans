@@ -51,13 +51,11 @@ public class MultiBans extends Command {
 
     @Override
     public Command getSubCommand(@NotNull String arg) {
-        return this.subCommands != null ? this.subCommands.get(arg) : null;
+        return this.subCommands.get(arg);
     }
 
     @Override
     public void addSubCommand(@NotNull String key, @NotNull Command command) {
-        if (this.subCommands != null) {
-            this.subCommands.put(key, command);
-        }
+        this.subCommands.put(key, command);
     }
 }

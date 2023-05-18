@@ -22,11 +22,6 @@ public abstract class MultiOnlinePunishmentCreator extends MultiPunishmentCreato
     public void sendMessage(String... messages) {
         this.sender.sendMessage(messages);
     }
-//
-//    @Override
-//    public void sendMessage(Component component) {
-//        this.sender.sendMessage(component);
-//    }
 
     @NotNull
     @Override

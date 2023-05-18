@@ -1,7 +1,6 @@
 package me.kvalbrus.multibans.common.utils;
 
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
 
 public enum Message {
 

@@ -54,6 +54,7 @@ abstract class MultiTemporaryPunishment : MultiPunishment, TemporaryPunishment {
         get() = this._startedDate
         set(startedDate) {
             this._startedDate = startedDate
+            this.updateData()
         }
 
     private var _cancellationCreator: PunishmentCreator?
@@ -145,6 +146,7 @@ abstract class MultiTemporaryPunishment : MultiPunishment, TemporaryPunishment {
     abstract fun getDeactivateMessageForListener(): String
     abstract fun getDeactivateMessageForExecutor(): String
     abstract fun getDeactivateMessageForTarget(): String?
+
     private fun sendMessageAboutDeactivate() {
         sendMessageToListeners(getDeactivateMessageForListener())
         sendMessageToCreator(getDeactivateMessageForExecutor())

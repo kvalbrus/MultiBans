@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public class MultiOnlinePlayerPunishmentCreator extends MultiOnlinePunishmentCreator
     implements OnlinePlayerPunishmentCreator {
 
-    private OnlinePlayer player;
+    private final OnlinePlayer player;
 
     public MultiOnlinePlayerPunishmentCreator(OnlinePlayer player) {
         super(player);

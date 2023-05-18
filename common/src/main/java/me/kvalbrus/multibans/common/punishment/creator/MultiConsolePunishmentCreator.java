@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 public class MultiConsolePunishmentCreator extends MultiOnlinePunishmentCreator
     implements ConsolePunishmentCreator {
 
-    private Console console;
+    private final Console console;
 
     public MultiConsolePunishmentCreator(@NotNull Console console) {
         super(console);
