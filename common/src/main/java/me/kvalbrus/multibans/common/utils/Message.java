@@ -213,6 +213,7 @@ public enum Message {
 
     TEMPMUTECHAT_COMMENT_CHANGE_LISTEN("tempmutechat.comment.change.listen", "", ""),
     TEMPMUTECHAT_COMMENT_CHANGE_EXECUTOR("tempmutechat.comment.change.executor", "You changed the comment", ""),
+
     TEMPMUTECHAT_REASON_CREATE_CHANGE_LISTEN("tempmutechat.reason-create.change.listen", "", ""),
     TEMPMUTECHAT_REASON_CREATE_CHANGE_EXECUTOR("tempmutechat.reason-create.change.executor", "You change the reason", ""),
 
@@ -224,6 +225,20 @@ public enum Message {
         "The tempmute of the %punishment_target% player has been passed",
         ""),
     TEMPMUTECHAT_HAS_PASSED_TARGET("tempmutechat.has-passed.target", "", ""),
+
+    KICK_ACTIVATE_LISTEN("kick.activate.listen", "", ""),
+    KICK_ACTIVATE_EXECUTOR("kick.activate.executor", "", ""),
+    KICK_ACTIVATE_TARGET("kick.activate.target", "", ""),
+
+    KICK_DELETE_LISTEN("kick.delete.listen", "", ""),
+    KICK_DELETE_TARGET("kick.delete.target", "", ""),
+    KICK_DELETE_EXECUTOR("kick.delete.executor", "", ""),
+
+    KICK_COMMENT_CHANGE_LISTEN("kick.comment.change.listen", "", ""),
+    KICK_COMMENT_CHANGE_EXECUTOR("kick.comment.change.executor", "", ""),
+
+    KICK_REASON_CREATE_CHANGE_LISTEN("kick.reason-create.change.listen", "", ""),
+    KICK_REASON_CREATE_CHANGE_EXECUTOR("kick.reason-create.change.listen", "", ""),
 
     NOT_PERMISSION_BAN_EXECUTE(
         "error.permission.ban.execute",
@@ -257,6 +272,12 @@ public enum Message {
 
     NOT_PERMISSION_TEMPMUTECHAT_EXECUTE(
         "error.permission.tempmutechat.execute",
+        "You don't have permission",
+        ""
+    ),
+
+    NOT_PERMISSION_KICK_EXECUTE(
+        "error.permission.kick.execute",
         "You don't have permission",
         ""
     ),

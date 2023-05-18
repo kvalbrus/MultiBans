@@ -126,9 +126,8 @@ public class MySqlProvider implements DataProvider {
             statement.setString(i++, punishment instanceof Cancelable cancelable ?
                 (cancelable.getCancellationCreator() != null ?
                     cancelable.getCancellationCreator().getName() : null) : null);
-            statement.setLong(i++,
-                punishment instanceof Cancelable ? ((Cancelable) punishment).getCancellationDate() :
-                    -1);
+            statement.setLong(i++, punishment instanceof Cancelable cancelable ?
+                cancelable.getCancellationDate() : -1);
             statement.setString(i++, punishment instanceof Cancelable ?
                 ((Cancelable) punishment).getCancellationReason() : null);
 
@@ -143,7 +142,7 @@ public class MySqlProvider implements DataProvider {
 
             statement.setString(i++, serversStringBuilder.toString());
             statement.setBoolean(i++,
-                punishment instanceof Cancelable ? ((Cancelable) punishment).isCancelled() : false);
+                punishment instanceof Cancelable ? ((Cancelable) punishment).getCancelled() : false);
 
             return statement.executeUpdate() > 0;
         } catch (SQLTimeoutException exception) {
@@ -162,8 +161,7 @@ public class MySqlProvider implements DataProvider {
                 SQLQuery.UPDATE_PUNISHMENT.toString())) {
             int i = 1;
 
-            statement.setLong(i++,
-                punishment instanceof TemporaryPunishment temporary ?
+            statement.setLong(i++, punishment instanceof TemporaryPunishment temporary ?
                     temporary.getStartedDate() : punishment.getCreatedDate());
             statement.setLong(i++, punishment instanceof MultiTemporaryPunishment temporary ?
                 temporary.getDuration() : -1L);
@@ -188,7 +186,7 @@ public class MySqlProvider implements DataProvider {
 
             statement.setString(i++, serversStringBuilder.toString());
             statement.setBoolean(i++, punishment instanceof Cancelable cancelable ?
-                cancelable.isCancelled() : false);
+                cancelable.getCancelled() : false);
 
             statement.setString(i++, punishment.getId());
 
@@ -279,7 +277,7 @@ public class MySqlProvider implements DataProvider {
                     target = new MultiPunishmentTarget(player);
                 }
 
-                PunishmentCreator creator = null;
+                PunishmentCreator creator;
                 if (creatorName.equals(this.pluginManager.getConsole().getName())) {
                     creator = new MultiConsolePunishmentCreator(this.pluginManager.getConsole());
                 } else {
@@ -302,7 +300,7 @@ public class MySqlProvider implements DataProvider {
                     }
                 }
 
-                Punishment punishment = MultiPunishment.constructPunishment(
+                Punishment punishment = MultiPunishment.Companion.constructPunishment(
                     this.pluginManager, type, id, target, creator, dateCreated, dateStart, duration,
                     reason, comment, cancellationCreator, cancellationDate, cancellationReason,
                     servers, cancelled);
@@ -377,7 +375,7 @@ public class MySqlProvider implements DataProvider {
                         }
                     }
 
-                    T punishment = MultiPunishment.constructPunishment(
+                    T punishment = MultiPunishment.Companion.constructPunishment(
                         this.pluginManager, type, id, target, creator, dateCreated, dateStart, duration, reason, comment,
                         cancellationCreator, cancellationDate, cancellationReason, servers,
                         cancelled);
@@ -453,7 +451,7 @@ public class MySqlProvider implements DataProvider {
                         }
                     }
 
-                    T punishment = MultiPunishment.constructPunishment(
+                    T punishment = MultiPunishment.Companion.constructPunishment(
                         this.pluginManager, type, id, target, creator, dateCreated, dateStart, duration, reason, comment,
                         cancellationCreator, cancellationDate, cancellationReason, servers,
                         cancelled);
@@ -529,7 +527,7 @@ public class MySqlProvider implements DataProvider {
                         }
                     }
 
-                    T punishment = MultiPunishment.constructPunishment(
+                    T punishment = MultiPunishment.Companion.constructPunishment(
                         this.pluginManager, type, id, target, creator, dateCreated, dateStart,
                         duration, reason, comment, cancellationCreator, cancellationDate,
                         cancellationReason, servers, cancelled);

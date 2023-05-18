@@ -9,6 +9,7 @@ import me.kvalbrus.multibans.api.Player;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.managers.PunishmentManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface PluginManager {
 
@@ -24,6 +25,7 @@ public interface PluginManager {
 
     void reload();
 
+    @Nullable
     DataProvider getDataProvider();
 
     @NotNull

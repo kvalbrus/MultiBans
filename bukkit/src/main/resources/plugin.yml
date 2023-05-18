@@ -12,6 +12,8 @@ commands:
     permission: multibans.punishment.banip.execute;multibans.punishment.tempbanip.execute
   mute:
     permission: multibans.punishment.mutechat.execute;multibans.punishment.tempmutechat.execute
+  kick:
+    permission: multibans.punishment.kick.execute
   unban:
     permission: multibans.punishment.unban.execute
   unmute:
@@ -57,6 +59,12 @@ permissions:
       multibans.punishment.tempmutechat.execute:
         default: op
       multibans.punishment.tempmutechat.listen:
+        default: op
+  multibans.punishment.kick.*:
+    children:
+      multibans.punishment.kick.execute:
+        default: op
+      multibans.punishment.kick.listen:
         default: op
   multibans.punishment.command.reload:
     default: op

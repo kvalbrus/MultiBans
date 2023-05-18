@@ -1,6 +1,7 @@
 package me.kvalbrus.multibans.api.punishment;
 
 import lombok.Getter;
+import me.kvalbrus.multibans.api.punishment.punishments.Kick;
 import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyBan;
 import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyBanIp;
 import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyChatMute;
@@ -18,7 +19,9 @@ public enum PunishmentType {
     BAN("BAN", PermanentlyBan.class),
 
     TEMP_MUTE("TEMP_MUTE", TemporaryChatMute.class),
-    MUTE("MUTE", PermanentlyChatMute.class);
+    MUTE("MUTE", PermanentlyChatMute.class),
+
+    KICK("KICK", Kick.class);
 
     @Getter
     private final String prefix;

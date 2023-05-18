@@ -11,6 +11,7 @@ import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
 import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.bukkit.commands.BanBukkit;
 import me.kvalbrus.multibans.bukkit.commands.BanIpBukkit;
+import me.kvalbrus.multibans.bukkit.commands.KickBukkit;
 import me.kvalbrus.multibans.bukkit.commands.MuteChatBukkit;
 import me.kvalbrus.multibans.bukkit.commands.PunishBukkit;
 import me.kvalbrus.multibans.bukkit.commands.UnbanBukkit;
@@ -19,6 +20,7 @@ import me.kvalbrus.multibans.bukkit.implementations.BukkitConsole;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitPlayer;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitOnlinePlayer;
 import me.kvalbrus.multibans.bukkit.listeners.PlayerListener;
+import me.kvalbrus.multibans.common.command.commands.Kick;
 import me.kvalbrus.multibans.common.managers.MultiBansPluginManager;
 import me.kvalbrus.multibans.common.punishment.creator.MultiConsolePunishmentCreator;
 import me.kvalbrus.multibans.common.punishment.creator.MultiPlayerPunishmentCreator;
@@ -172,7 +174,8 @@ public class BukkitPluginManager extends MultiBansPluginManager {
         if (punishment.getType() == PunishmentType.BAN) {
             Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
             if (player != null) {
-                ReplacedString title = new ReplacedString(Message.TITLE_HEADER.getMessage() + Message.TITLE_BAN.getMessage() + Message.TITLE_FOOTER.getMessage())
+                ReplacedString title = new ReplacedString(Message.TITLE_HEADER.getMessage() +
+                    Message.TITLE_BAN.getMessage() + Message.TITLE_FOOTER.getMessage())
                     .replacePunishment(punishment);
 
                 player.kickPlayer(title.string());
@@ -207,6 +210,13 @@ public class BukkitPluginManager extends MultiBansPluginManager {
 
                 player.kickPlayer(title.string());
             }
+        } else if (punishment.getType() == PunishmentType.KICK) {
+            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
+            if (player != null) {
+                ReplacedString punishmentMessage = new ReplacedString(Message.KICK_ACTIVATE_TARGET.getMessage())
+                    .replacePunishment(punishment);
+                player.kickPlayer(punishmentMessage.string());
+            }
         }
 
         Event event = new ActivatePunishmentEvent(punishment);
@@ -228,6 +238,7 @@ public class BukkitPluginManager extends MultiBansPluginManager {
         new BanBukkit(this, this.plugin);
         new BanIpBukkit(this, this.plugin);
         new MuteChatBukkit(this, this.plugin);
+        new KickBukkit(this, this.plugin);
         new UnbanBukkit(this, this.plugin);
         new UnmuteChatBukkit(this, this.plugin);
         new PunishBukkit(this, this.plugin);

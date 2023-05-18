@@ -23,6 +23,9 @@ public enum Permission {
     PUNISHMENT_TEMPMUTECHAT_EXECUTE("multibans.punishment.tempmutechat.execute"),
     PUNISHMENT_TEMPMUTECHAT_LISTEN("multibans.punishment.tempmutechat.listen"),
 
+    PUNISHMENT_KICK_EXECUTOR("multibans.punishment.kick.executor"),
+    PUNISHMENT_KICK_LISTEN("multibans.punishment.kick.listen"),
+
     PUNISHMENT_UNBAN_EXECUTE("multibans.punishment.unban.execute"),
     PUNISHMENT_UNBAN_LISTEN("multibans.punishment.unban.listen"),
 

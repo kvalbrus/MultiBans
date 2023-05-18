@@ -34,7 +34,8 @@ public class ReplacedString {
             this.replacePunishmentStartedDate(temporary)
                 .replacePunishmentDuration(temporary)
                 .replacePunishmentEndDate(temporary);
-            this.replace("%punishment_duration_left%", StringUtil.getDuration(Math.min(temporary.getDuration(),
+            this.replace("%punishment_duration_left%", StringUtil.getDuration(Math.min(
+                temporary.getDuration(),
                 temporary.getStartedDate() + temporary.getDuration() - System.currentTimeMillis())));
         } else if (punishment instanceof PermanentlyPunishment) {
             this.replace("%punishment_duration%", Message.PERMANENTLY.getMessage());

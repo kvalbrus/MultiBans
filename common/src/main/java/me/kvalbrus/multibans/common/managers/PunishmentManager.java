@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import lombok.Getter;
-import me.kvalbrus.multibans.api.Console;
-import me.kvalbrus.multibans.api.OnlinePlayer;
-import me.kvalbrus.multibans.api.Player;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
 import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
@@ -182,8 +179,8 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
 
         long realTime = System.currentTimeMillis();
 
-        return MultiPunishment.constructPunishment(this.pluginManager, type, id, target, creator,
-            realTime, realTime, duration, reason, comment, null, -1, null, servers, false);
+        return MultiPunishment.Companion.constructPunishment(this.pluginManager, type, id, target, creator,
+            realTime, realTime, duration, reason, comment, null, -1L, null, servers, false);
     }
 
     @NotNull
