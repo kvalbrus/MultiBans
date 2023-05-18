@@ -264,6 +264,7 @@ abstract class MultiPunishment : Punishment {
 
                 else -> throw IllegalArgumentException("Punishment type hasn't its constructor")
             }
+
             return punishment as T
         }
     }
