@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: "> Open console <"
-        run: /usr/bin/docker exec -i mc rcon-cli
+        run: /usr/bin/docker exec -i server rcon-cli
       - name: "> Checkout repository <"
         uses: actions/checkout@v3
 #      - name: "> Run server <"
