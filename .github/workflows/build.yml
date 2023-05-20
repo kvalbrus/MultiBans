@@ -40,4 +40,4 @@ jobs:
       - name: "> Checkout repository <"
         uses: actions/checkout@v3
       - name: "> Run server <"
-        run: /usr/bin/docker run -e EULA=TRUE -d -it -p 25565:25565 itzg/minecraft-server
+        run: /usr/bin/docker run -e EULA=TRUE -d -it itzg/minecraft-server
