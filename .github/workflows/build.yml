@@ -24,17 +24,14 @@ jobs:
         with:
           arguments: build
 
-
   tests:
 #    needs: [ build ]
     name: tests
     runs-on: ubuntu-latest
     container:
-      image: nimmis/spigot:latest
-      ports:
-        - 25565
+      image: itzg/minecraft-server:latest
     steps:
       - name: "> Checkout repository <"
         uses: actions/checkout@v3
       - name: "> Run server <"
-        run: "nimmis/spigot -d -p 25565:25565 -e EULA=true"
+        run: "/usr/bin/docker run -d -it -p 25565:25565 -e EULA=TRUE itzg/minecraft-server"
