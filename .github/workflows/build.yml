@@ -36,9 +36,12 @@ jobs:
           - 25565:25565
         env:
           EULA: "TRUE"
+          TYPE: "PAPER"
 
     steps:
+      - name: "> Open console <"
+        run: /usr/bin/docker exec -i mc rcon-cli
       - name: "> Checkout repository <"
         uses: actions/checkout@v3
-      - name: "> Run server <"
-        run: /usr/bin/docker run -e TYPE=PAPER EULA=TRUE -d -it itzg/minecraft-server
+#      - name: "> Run server <"
+#        run: /usr/bin/docker run -d -it itzg/minecraft-server
