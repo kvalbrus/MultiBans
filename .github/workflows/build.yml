@@ -28,10 +28,14 @@ jobs:
 #    needs: [ build ]
     name: tests
     runs-on: ubuntu-latest
-    container:
-      image: itzg/minecraft-server:latest
+
+    services:
+      server:
+        image: itzg/minecraft-server:latest
+        ports:
+          - 25565:25565
     steps:
       - name: "> Checkout repository <"
         uses: actions/checkout@v3
       - name: "> Run server <"
-        run: "/usr/bin/docker run -d -it -p 25565:25565 -e EULA=TRUE itzg/minecraft-server"
+        run: /usr/bin/docker run -d -it -p 25565:25565 -e EULA=TRUE itzg/minecraft-server
