@@ -19,12 +19,18 @@ jobs:
       - name: Validate gradle wrapper
         uses: gradle/wrapper-validation-action@v1
 
-      - name: Gradle clean
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: clean
-
       - name: Gradle build
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build
+
+
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    container:
+      image: nimmis/spigot:latest
+      ports:
+        - 25565
+    steps:
+      - uses: actions/checkout@v3
