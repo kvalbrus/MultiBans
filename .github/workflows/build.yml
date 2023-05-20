@@ -1,0 +1,30 @@
+name: build
+
+on:
+  push:
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Validate gradle wrapper
+        uses: actions/wrapper-validation-action@v1
+
+      - name: Gradle clean
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: clean
+
+      - name: Gradle build
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
