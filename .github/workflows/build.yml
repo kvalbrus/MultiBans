@@ -26,7 +26,7 @@ jobs:
 
 
   tests:
-    needs: [ build ]
+#    needs: [ build ]
     name: tests
     runs-on: ubuntu-latest
     container:
@@ -37,4 +37,4 @@ jobs:
       - name: "> Checkout repository <"
         uses: actions/checkout@v3
       - name: "> Run server <"
-        run: "docker run -d -p 25565:25565 -e EULA=true nimmis/spigot"
+        run: "run -d -p 25565:25565 -e EULA=true nimmis/spigot"
