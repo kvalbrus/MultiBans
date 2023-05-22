@@ -26,6 +26,9 @@ jobs:
 
   tests:
 #    needs: [ build ]
+    strategy:
+      matrix:
+        minecraft-version: [1.16.5, 1.19.2, 1.19.4]
     name: tests
     runs-on: ubuntu-latest
 #    container:
@@ -45,8 +48,9 @@ jobs:
         env:
           EULA: "TRUE"
           TYPE: "PAPER"
+          VERSION: ${{minecraft_version}}
     steps:
-      - name: "> Open console <"
+      - name: "> Console commands <"
         run: /usr/bin/docker exec -i server rcon-cli
       - name: "> Checkout repository <"
         uses: actions/checkout@v3
