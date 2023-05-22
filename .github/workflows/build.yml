@@ -48,7 +48,7 @@ jobs:
         env:
           EULA: "TRUE"
           TYPE: "PAPER"
-          VERSION: ${{minecraft_version}}
+          VERSION: ${{ matrix.minecraft_version }}
     steps:
       - name: "> Console commands <"
         run: /usr/bin/docker exec -i server rcon-cli
