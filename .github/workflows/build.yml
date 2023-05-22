@@ -27,8 +27,8 @@ jobs:
   tests:
 #    needs: [ build ]
     strategy:
+      max-parallel: 2
       matrix:
-        max-parallel: 2
         minecraft-version: [1.16.5, 1.19.2, 1.19.4]
         include:
           - minecraft-version: 1.16.5
