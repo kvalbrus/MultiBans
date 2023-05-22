@@ -32,7 +32,7 @@ jobs:
         minecraft-version: [1.16.5, 1.19.2, 1.19.4]
         include:
           - minecraft-version: 1.16.5
-            java-version: 16
+            java-version: 11
           - minecraft-version: 1.19.2
             java-version: 19
           - minecraft-version: 1.19.4
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       server:
-        image: itzg/minecraft-server:${{ matrix.java-version }}
+        image: itzg/minecraft-server:java${{ matrix.java-version }}
         options: "--name server"
         ports:
           - 25565:25565
