@@ -24,6 +24,12 @@ jobs:
         with:
           arguments: build
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: build/MultiBans-0.1.0.jar
+          name: multibans
+
   tests:
 #    needs: [ build ]
     strategy:
@@ -42,7 +48,7 @@ jobs:
     services:
       server:
         image: itzg/minecraft-server:java${{ matrix.java-version }}
-        options: "--name server"
+        options: "-v /build:/data/plugins --name server"
         ports:
           - 25565:25565
         env:
@@ -50,6 +56,12 @@ jobs:
           TYPE: "PAPER"
           VERSION: "${{ matrix.minecraft-version }}"
     steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: multibans
+          path: build/MultiBans-0.1.0.jar
+
       - name: "> Console commands <"
         run: /usr/bin/docker exec -i server rcon-cli
       - name: "> Checkout repository <"
