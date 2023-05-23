@@ -23,12 +23,11 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build
-          build-root-directory: build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          path: build/MultiBans-0.1.0.jar
+          path: build/libs/MultiBans-0.1.0.jar
           name: multibans
 
   tests:
