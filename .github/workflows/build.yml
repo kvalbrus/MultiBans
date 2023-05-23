@@ -64,5 +64,7 @@ jobs:
 
       - name: "> Console commands <"
         run: /usr/bin/docker exec -i server rcon-cli
+      - name: "> Check plugin <"
+        run: /usr/bin/docker exec server mc-send-to-console pl
       - name: "> Checkout repository <"
         uses: actions/checkout@v3
