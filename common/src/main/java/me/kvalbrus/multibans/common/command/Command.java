@@ -66,14 +66,14 @@ public abstract class Command {
     }
 
     public static List<String> getSearchList(List<String> list, String arg) {
-        if (list == null) {
+        if (list == null || arg == null) {
             return null;
         }
 
         List<String> resultList = new ArrayList<>();
 
         for (var string : list) {
-            if (string.startsWith(arg)) {
+            if (string != null && string.startsWith(arg)) {
                 resultList.add(string);
             }
         }
