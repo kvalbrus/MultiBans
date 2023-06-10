@@ -1,2 +1,0 @@
-rootProject.name = 'MultiBans'
-include 'api', 'bukkit', 'common'

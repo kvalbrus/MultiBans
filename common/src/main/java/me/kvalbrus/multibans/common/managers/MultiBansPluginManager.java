@@ -81,7 +81,7 @@ public abstract class MultiBansPluginManager implements PluginManager {
 
             try {
                 this.dataProvider.initialization();
-            } catch (SQLException exception) {
+            } catch (Exception exception) {
                 this.dataProvider = null;
             }
         }

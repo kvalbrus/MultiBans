@@ -1,5 +1,5 @@
 name: MultiBans
-version: 0.1.0
+version: 0.1.1
 main: me.kvalbrus.multibans.bukkit.BukkitPlugin
 api-version: 1.19
 authors: [ kvalbrus ]
@@ -27,60 +27,51 @@ commands:
 permissions:
   multibans.punishment.ban.*:
     children:
-      multibans.punishment.ban.execute:
-        default: op
-      multibans.punishment.ban.listen:
-        default: op
+      multibans.punishment.ban.execute: true
+      multibans.punishment.ban.listen: true
+
   multibans.punishment.tempban.*:
     children:
-      multibans.punishment.tempban.execute:
-        default: op
-      multibans.punishment.tempban.listen:
-        default: op
+      multibans.punishment.tempban.execute: true
+      multibans.punishment.tempban.listen: true
+
   multibans.punishment.banip.*:
     children:
-      multibans.punishment.banip.execute:
-        default: op
-      multibans.punishment.banip.listen:
-        default: op
+      multibans.punishment.banip.execute: true
+      multibans.punishment.banip.listen: true
+
   multibans.punishment.tempbanip.*:
     children:
-      multibans.punishment.tempbanip.execute:
-        default: op
-      multibans.punishment.tempbanip.listen:
-        default: op
+      multibans.punishment.tempbanip.execute: true
+      multibans.punishment.tempbanip.listen: true
+
   multibans.punishment.mutechat.*:
     children:
-      multibans.punishment.mutechat.execute:
-        default: op
-      multibans.punishment.mutechat.listen:
-        default: op
+      multibans.punishment.mutechat.execute: true
+      multibans.punishment.mutechat.listen: true
+
   multibans.punishment.tempmutechat.*:
     children:
-      multibans.punishment.tempmutechat.execute:
-        default: op
-      multibans.punishment.tempmutechat.listen:
-        default: op
+      multibans.punishment.tempmutechat.execute: true
+      multibans.punishment.tempmutechat.listen: true
+
   multibans.punishment.kick.*:
     children:
-      multibans.punishment.kick.execute:
-        default: op
-      multibans.punishment.kick.listen:
-        default: op
+      multibans.punishment.kick.execute: true
+      multibans.punishment.kick.listen: true
+
   multibans.punishment.command.reload:
     default: op
   multibans.punishment.unban.*:
     children:
-      multibans.punishment.unban.execute:
-        default: op
-      multibans.punishment.unban.listen:
-        default: op
+      multibans.punishment.unban.execute: true
+      multibans.punishment.unban.listen: true
+
   multibans.punishment.unmutechat.*:
     children:
-      multibans.punishment.unmutechat.execute:
-        default: op
-      multibans.punishment.unmutechat.listen:
-        default: op
+      multibans.punishment.unmutechat.execute: true
+      multibans.punishment.unmutechat.listen: true
+
   multibans.command.comment:
     default: op
   multibans.command.reason:

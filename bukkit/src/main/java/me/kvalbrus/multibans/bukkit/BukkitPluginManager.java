@@ -7,8 +7,6 @@ import me.kvalbrus.multibans.api.Console;
 import me.kvalbrus.multibans.api.MultiBans;
 import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.punishment.Punishment;
-import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
-import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.bukkit.commands.BanBukkit;
 import me.kvalbrus.multibans.bukkit.commands.BanIpBukkit;
 import me.kvalbrus.multibans.bukkit.commands.KickBukkit;
@@ -20,10 +18,7 @@ import me.kvalbrus.multibans.bukkit.implementations.BukkitConsole;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitPlayer;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitOnlinePlayer;
 import me.kvalbrus.multibans.bukkit.listeners.PlayerListener;
-import me.kvalbrus.multibans.common.command.commands.Kick;
 import me.kvalbrus.multibans.common.managers.MultiBansPluginManager;
-import me.kvalbrus.multibans.common.punishment.creator.MultiConsolePunishmentCreator;
-import me.kvalbrus.multibans.common.punishment.creator.MultiPlayerPunishmentCreator;
 import me.kvalbrus.multibans.common.utils.Message;
 import me.kvalbrus.multibans.common.utils.ReplacedString;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -35,7 +30,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import me.kvalbrus.multibans.bukkit.events.ActivatePunishmentEvent;
 import me.kvalbrus.multibans.bukkit.events.DeactivatePunishmentEvent;
-import me.kvalbrus.multibans.api.punishment.PunishmentType;
+import me.kvalbrus.multibans.api.punishment.punishments.PunishmentType;
 import org.jetbrains.annotations.Nullable;
 
 public class BukkitPluginManager extends MultiBansPluginManager {

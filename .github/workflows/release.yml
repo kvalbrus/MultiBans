@@ -1,0 +1,11 @@
+name: release
+on:
+  pull_request:
+    branches:
+      - "main"
+    tags:
+      - "*.*.*"
+    types:
+      - [closed]
+
+jobs:

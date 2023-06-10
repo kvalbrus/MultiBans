@@ -16,7 +16,7 @@ public class Reason extends Command {
     }
 
     @Override
-    public boolean cmd(@NotNull CommandSender sender, String[] args) {
+    public boolean cmd(@NotNull CommandSender sender, String[] args) throws Exception {
         if (args.length < 4) {
             return false;
         }

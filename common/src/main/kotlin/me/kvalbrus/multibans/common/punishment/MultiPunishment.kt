@@ -2,87 +2,120 @@ package me.kvalbrus.multibans.common.punishment
 
 import me.kvalbrus.multibans.api.OnlinePlayer
 import me.kvalbrus.multibans.api.punishment.Punishment
-import me.kvalbrus.multibans.api.punishment.PunishmentType
+import me.kvalbrus.multibans.api.punishment.punishments.PunishmentType
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment
-import me.kvalbrus.multibans.api.punishment.creator.OnlinePunishmentCreator
-import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator
+import me.kvalbrus.multibans.api.punishment.action.ActivationAction
+import me.kvalbrus.multibans.api.punishment.action.CreationAction
+import me.kvalbrus.multibans.api.punishment.action.DeactivationAction
+import me.kvalbrus.multibans.api.punishment.executor.OnlinePunishmentExecutor
+import me.kvalbrus.multibans.api.punishment.executor.PunishmentExecutor
 import me.kvalbrus.multibans.api.punishment.target.OnlinePunishmentTarget
 import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget
 import me.kvalbrus.multibans.common.managers.MultiBansPluginManager
 import me.kvalbrus.multibans.common.managers.PluginManager
 import me.kvalbrus.multibans.common.permissions.Permission
+import me.kvalbrus.multibans.common.punishment.action.MultiCreationAction
 import me.kvalbrus.multibans.common.punishment.punishments.*
 import me.kvalbrus.multibans.common.utils.ReplacedString
 import java.util.*
 
-abstract class MultiPunishment : Punishment {
+abstract class MultiPunishment(
+    pluginManager: PluginManager,
+    type: PunishmentType,
+    id: String,
+    creationAction: CreationAction,
+    comment: String,
+    servers: List<String>) : Punishment {
+
+    private var _comment: String
+    private var _servers: List<String>
 
     protected val pluginManager: PluginManager
 
     final override val type: PunishmentType
     final override val id: String
-    final override val target: PunishmentTarget
-    final override val creator: PunishmentCreator
-    final override val createdDate: Long
-    
-    @set:Synchronized
-    final override var createdReason: String
-        get() = this._createdReason
-        set(createdReason) {
-            this._createdReason = createdReason
-            this.updateData()
-            this.sendMessageAboutReasonChange()
+    final override val creationAction: CreationAction
+
+    init {
+        this.pluginManager = pluginManager
+        this.type = type
+        this.id = id
+        this.creationAction = creationAction
+        this._comment = comment
+        this._servers = servers
+
+        this.target.punishment = this
+        this.creator.punishment = this
     }
 
-    @set:Synchronized
+    final override val target: PunishmentTarget
+        get() = this.creationAction.target
+
+    final override val creator: PunishmentExecutor
+        get() = this.creationAction.executor
+
+    final override val createdDate: Long
+        get() = this.creationAction.date
+
+    final override var createdReason: String
+        get() = this.creationAction.reason
+
+        @Synchronized
+        set(createdReason) {
+            this.creationAction.reason = createdReason
+            this.updateData()
+            this.sendMessageAboutReasonChange()
+        }
+
     final override var comment: String
         get() = this._comment
+
+        @Synchronized
         set(comment) {
             this._comment = comment
             this.updateData()
             this.sendMessageAboutCommentChange()
-    }
+        }
 
-    @set:Synchronized
     final override var servers: List<String>
         get() = this._servers
+
+        @Synchronized
         set(servers) {
             this._servers = servers
             this.updateData()
-    }
+        }
 
-    private var _createdReason: String
-    private var _comment: String
-    private var _servers: List<String>
+    abstract val createMessageForListener: String
+    abstract val createMessageForExecutor: String
+    abstract val createMessageForTarget: String
+    abstract val deleteMessageForListener: String
+    abstract val deleteMessageForExecutor: String
+    abstract val deleteMessageForTarget: String
+    abstract val reasonChangeMessageForExecutor: String
+    abstract val reasonChangeMessageForListener: String
+    abstract val commentChangeMessageForExecutor: String
+    abstract val commentChangeMessageForListener: String
+    abstract val permissionForListener: Permission
 
-    constructor(pluginManager: PluginManager,
-                type: PunishmentType,
-                id: String,
-                target: PunishmentTarget,
-                creator: PunishmentCreator,
-                createdDate: Long = System.currentTimeMillis(),
-                createdReason: String = "",
-                comment: String = "",
-                servers: List<String> = listOf()) {
-        this.pluginManager = pluginManager
-        this.type = type
-        this.id = id
-        this.target = target
-        this.creator = creator
-        this.createdDate = createdDate
-        this._createdReason = createdReason
-        this._comment = comment
-        this._servers = servers
-
-        this.target.setPunishment(this)
-        this.creator.punishment = this
-    }
+    constructor(
+        pluginManager: PluginManager,
+        type: PunishmentType,
+        id: String,
+        target: PunishmentTarget,
+        creator: PunishmentExecutor,
+        createdDate: Long,
+        createdReason: String,
+        comment: String,
+        servers: List<String>) :
+            this(pluginManager, type, id,
+                MultiCreationAction(id, 1, target, creator, createdDate, createdReason), comment, servers)
 
     @Synchronized
-    override fun activate() {
+    override fun create() {
         this.pluginManager.activatePunishment(this)
         this.updateData()
-        this.sendMessageAboutActivate()
+        this.sendMessageAboutCreation()
     }
 
     @Synchronized
@@ -105,11 +138,11 @@ abstract class MultiPunishment : Punishment {
 
             if (punishment1 is TemporaryPunishment && other is TemporaryPunishment) {
                 if (punishment1.startedDate != other.startedDate) {
-                    return java.lang.Long.compare(punishment1.startedDate, other.startedDate)
+                    return punishment1.startedDate.compareTo(other.startedDate)
                 }
 
                 if (punishment1.duration != other.duration) {
-                    return java.lang.Long.compare(punishment1.duration, other.duration)
+                    return punishment1.duration.compareTo(other.duration)
                 }
             }
 
@@ -128,7 +161,7 @@ abstract class MultiPunishment : Punishment {
     }
 
     @Synchronized
-    fun updateData() {
+    protected fun updateData() {
         val dataProvider = pluginManager.dataProvider
 
         if (dataProvider?.hasPunishment(id) == true) {
@@ -140,53 +173,20 @@ abstract class MultiPunishment : Punishment {
     }
 
     @Synchronized
-    fun deleteData() {
+    protected fun deleteData() {
         val dataProvider = pluginManager.dataProvider
         if (dataProvider != null && dataProvider.hasPunishment(id)) {
             dataProvider.deletePunishment(this)
         }
     }
 
-    abstract fun getActivateMessageForListener(): String
-    abstract fun getActivateMessageForExecutor(): String
-    abstract fun getActivateMessageForTarget(): String?
-    abstract fun getDeleteMessageForListener(): String
-    abstract fun getDeleteMessageForExecutor(): String
-    abstract fun getDeleteMessageForTarget(): String?
-    abstract fun getReasonChangeMessageForExecutor(): String
-    abstract fun getReasonChangeMessageForListener(): String
-    abstract fun getCommentChangeMessageForExecutor(): String
-    abstract fun getCommentChangeMessageForListener(): String
-    abstract fun getPermissionForListener(): Permission
-
-    private fun sendMessageAboutActivate() {
-        sendMessageToListeners(getActivateMessageForListener())
-        sendMessageToCreator(getActivateMessageForExecutor())
-        sendMessageToTarget(getActivateMessageForTarget())
-    }
-
-    private fun sendMessageAboutDelete() {
-        sendMessageToListeners(getDeleteMessageForListener())
-        sendMessageToCreator(getDeleteMessageForExecutor())
-        sendMessageToTarget(getDeleteMessageForTarget())
-    }
-
-    private fun sendMessageAboutCommentChange() {
-        sendMessageToListeners(getCommentChangeMessageForListener())
-        sendMessageToCreator(getCommentChangeMessageForExecutor())
-    }
-
-    private fun sendMessageAboutReasonChange() {
-        sendMessageToListeners(getReasonChangeMessageForListener())
-        sendMessageToCreator(getReasonChangeMessageForExecutor())
-    }
-
-    fun sendMessageToListeners(message: String?) {
+    protected fun sendMessageToListeners(message: String?) {
         val listenMessage = ReplacedString(message).replacePunishment(this)
 
         // Listener #1 - online players
         Arrays.stream(pluginManager.onlinePlayers)
-            .filter { player: OnlinePlayer -> player.hasPermission(getPermissionForListener().name) }
+            .filter { player: OnlinePlayer ->
+                player.hasPermission(this.permissionForListener.perm) }
             .forEach { player: OnlinePlayer -> player.sendMessage(listenMessage.string()) }
 
         // Listener #2 - console
@@ -197,70 +197,112 @@ abstract class MultiPunishment : Punishment {
         }
     }
 
-    fun sendMessageToCreator(message: String?) {
-        if (creator is OnlinePunishmentCreator) {
+    protected fun sendMessageToCreator(message: String?) {
+        if (creator is OnlinePunishmentExecutor) {
             val creatorMessage = ReplacedString(message).replacePunishment(this)
-            creator.sendMessage(creatorMessage.string())
+            (creator as OnlinePunishmentExecutor).sendMessage(creatorMessage.string())
         }
     }
 
-    fun sendMessageToTarget(message: String?) {
-        if (target is OnlinePunishmentTarget) {
+    protected fun sendMessageToTarget(message: String?) {
+        if (this.target is OnlinePunishmentTarget) {
             val targetMessage = ReplacedString(message).replacePunishment(this)
-            target.sendMessage(targetMessage.string())
+            (this.target as OnlinePunishmentTarget).sendMessage(targetMessage.string())
         }
+    }
+
+        private fun sendMessageAboutCreation() {
+        sendMessageToListeners(this.createMessageForListener)
+        sendMessageToCreator(this.createMessageForExecutor)
+        sendMessageToTarget(this.createMessageForTarget)
+    }
+
+    private fun sendMessageAboutDelete() {
+        sendMessageToListeners(this.deleteMessageForListener)
+        sendMessageToCreator(this.deleteMessageForExecutor)
+        sendMessageToTarget(this.deleteMessageForTarget)
+    }
+
+    private fun sendMessageAboutCommentChange() {
+        sendMessageToListeners(this.commentChangeMessageForListener)
+        sendMessageToCreator(this.commentChangeMessageForExecutor)
+    }
+
+    private fun sendMessageAboutReasonChange() {
+        sendMessageToListeners(this.reasonChangeMessageForListener)
+        sendMessageToCreator(this.reasonChangeMessageForExecutor)
     }
 
     companion object {
+//        fun <T : Punishment?> constructPunishment(
+//            pluginManager: PluginManager,
+//            type: PunishmentType,
+//            id: String,
+//            creationAction: CreationAction,
+//            startedDate: Long,
+//            duration: Long,
+//            comment: String,
+//            servers: List<String>,
+//            cancelled: Boolean): T {
+//            val punishment: Punishment = when (type) {
+//                PunishmentType.BAN -> MultiPermanentlyBan(
+//                    pluginManager, id, creationAction, comment = comment, servers =  servers, cancelled = cancelled)
+//
+//                PunishmentType.TEMP_BAN -> MultiTemporaryBan(pluginManager, id, creationAction,
+//                    startedDate = startedDate, duration = duration, comment = comment, servers = servers, cancelled = cancelled)
+//
+//                PunishmentType.BAN_IP -> MultiPermanentlyBanIp(
+//                    pluginManager, id, creationAction, comment = comment, servers =  servers, cancelled = cancelled)
+//
+//                PunishmentType.TEMP_BAN_IP -> MultiTemporaryBanIp(pluginManager, id, creationAction,
+//                    startedDate = startedDate, duration = duration, comment = comment, servers = servers, cancelled = cancelled)
+//
+//                PunishmentType.MUTE -> MultiPermanentlyChatMute(
+//                    pluginManager, id, creationAction,  comment = comment, servers =  servers, cancelled = cancelled)
+//
+//                PunishmentType.TEMP_MUTE -> MultiTemporaryChatMute(pluginManager, id, creationAction,
+//                    startedDate = startedDate, duration = duration, comment = comment, servers = servers, cancelled = cancelled)
+//
+//                PunishmentType.KICK -> Kick(pluginManager, id, creationAction, comment, servers)
+//
+//                else -> throw IllegalArgumentException("Punishment type hasn't its constructor")
+//            }
+//
+//            return punishment as T
+//        }
+
         fun <T : Punishment?> constructPunishment(
             pluginManager: PluginManager,
             type: PunishmentType,
             id: String,
-            target: PunishmentTarget,
-            creator: PunishmentCreator,
-            createdDate: Long,
+            creationAction: CreationAction,
+            activations: MutableList<ActivationAction> = mutableListOf(),
+            deactivations: MutableList<DeactivationAction> = mutableListOf(),
             startedDate: Long,
             duration: Long,
-            createdReason: String?,
-            comment: String?,
-            cancellationCreator: PunishmentCreator?,
-            cancellationDate: Long?,
-            cancellationReason: String?,
+            comment: String,
             servers: List<String>,
             cancelled: Boolean): T {
             val punishment: Punishment = when (type) {
                 PunishmentType.BAN -> MultiPermanentlyBan(
-                    pluginManager, id, target, creator, createdDate,
-                    createdReason ?: "", comment ?: "", cancellationCreator, cancellationDate,
-                    cancellationReason, servers, cancelled)
+                    pluginManager, id, creationAction, activations, deactivations, comment, servers, cancelled)
 
-                PunishmentType.TEMP_BAN -> MultiTemporaryBan(
-                    pluginManager, id, target, creator, createdDate,
-                    startedDate, duration, createdReason ?: "", comment ?: "",
-                    cancellationCreator, cancellationDate, cancellationReason, servers, cancelled)
+                PunishmentType.TEMP_BAN -> MultiTemporaryBan(pluginManager, id, creationAction,
+                    activations, deactivations, startedDate, duration, comment, servers, cancelled)
 
                 PunishmentType.BAN_IP -> MultiPermanentlyBanIp(
-                    pluginManager, id, target, creator,
-                    createdDate, createdReason ?: "", comment ?: "", cancellationCreator, cancellationDate,
-                    cancellationReason, servers, cancelled)
+                    pluginManager, id, creationAction, activations, deactivations, comment, servers, cancelled)
 
-                PunishmentType.TEMP_BAN_IP -> MultiTemporaryBanIp(
-                    pluginManager, id, target, creator, createdDate,
-                    startedDate, duration, createdReason ?: "", comment ?: "", cancellationCreator,
-                    cancellationDate, cancellationReason, servers, cancelled)
+                PunishmentType.TEMP_BAN_IP -> MultiTemporaryBanIp(pluginManager, id, creationAction,
+                    activations, deactivations, startedDate, duration, comment, servers, cancelled)
 
                 PunishmentType.MUTE -> MultiPermanentlyChatMute(
-                    pluginManager, id, target, creator,
-                    createdDate, createdReason ?: "", comment ?: "", cancellationCreator, cancellationDate,
-                    cancellationReason, servers, cancelled)
+                    pluginManager, id, creationAction, activations, deactivations, comment, servers, cancelled)
 
-                PunishmentType.TEMP_MUTE -> MultiTemporaryChatMute(
-                    pluginManager, id, target, creator,
-                    createdDate, startedDate, duration, createdReason ?: "", comment ?: "", cancellationCreator,
-                    cancellationDate, cancellationReason, servers, cancelled)
+                PunishmentType.TEMP_MUTE -> MultiTemporaryChatMute(pluginManager, id, creationAction,
+                    activations, deactivations, startedDate, duration, comment, servers, cancelled)
 
-                PunishmentType.KICK -> Kick(pluginManager, id, target, creator, createdDate,
-                    createdReason ?: "", comment ?: "", servers)
+                PunishmentType.KICK -> Kick(pluginManager, id, creationAction, comment, servers)
 
                 else -> throw IllegalArgumentException("Punishment type hasn't its constructor")
             }

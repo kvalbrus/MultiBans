@@ -6,14 +6,14 @@ import java.util.Random;
 import java.util.UUID;
 import lombok.Getter;
 import me.kvalbrus.multibans.api.punishment.Punishment;
-import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
+import me.kvalbrus.multibans.api.punishment.executor.PunishmentExecutor;
 import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.api.utils.TimeType;
 import me.kvalbrus.multibans.common.punishment.MultiPunishment;
+import me.kvalbrus.multibans.common.punishment.action.MultiCreationAction;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import me.kvalbrus.multibans.api.punishment.PunishmentStatus;
-import me.kvalbrus.multibans.api.punishment.PunishmentType;
+import me.kvalbrus.multibans.api.punishment.punishments.PunishmentStatus;
+import me.kvalbrus.multibans.api.punishment.punishments.PunishmentType;
 
 public class PunishmentManager implements me.kvalbrus.multibans.api.managers.PunishmentManager {
 
@@ -27,18 +27,18 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
 
     @NotNull
     @Override
-    public <T extends Punishment> List<T> getPlayerHistory(UUID uuid) {
+    public <T extends Punishment> List<T> getPlayerHistory(UUID uuid) throws Exception {
         return this.pluginManager.getDataProvider().getTargetHistory(uuid);
     }
 
     @NotNull
-    public <T extends Punishment> List<T> getPlayerHistory(String name) {
+    public <T extends Punishment> List<T> getPlayerHistory(String name) throws Exception {
         return this.pluginManager.getDataProvider().getTargetHistory(name);
     }
 
     @NotNull
     @Override
-    public <T extends Punishment> List<T> getPlayerHistory(UUID uuid, @NotNull Class<T> clazz) {
+    public <T extends Punishment> List<T> getPlayerHistory(UUID uuid, @NotNull Class<T> clazz) throws Exception {
         List<T> punishments = this.getPlayerHistory(uuid);
 
         punishments.removeIf(punishment -> !clazz.isInstance(punishment));
@@ -48,13 +48,13 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
 
     @NotNull
     @Override
-    public <T extends Punishment> List<T> getCreatorHistory(String creator) {
+    public <T extends Punishment> List<T> getCreatorHistory(String creator) throws Exception {
         return this.pluginManager.getDataProvider().getCreatorHistory(creator);
     }
 
     @NotNull
     @Override
-    public <T extends Punishment> List<T> getActivePunishments(UUID uuid) {
+    public <T extends Punishment> List<T> getActivePunishments(UUID uuid) throws Exception {
         List<T> punishments = this.getPlayerHistory(uuid);
 
         punishments.removeIf(punishment -> punishment.getStatus() != PunishmentStatus.ACTIVE);
@@ -63,7 +63,7 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
     }
 
     @NotNull
-    public <T extends Punishment> List<T> getActivePunishments(String name) {
+    public <T extends Punishment> List<T> getActivePunishments(String name) throws Exception {
         List<T> punishments = this.getPlayerHistory(name);
 
         punishments.removeIf(punishment -> punishment.getStatus() != PunishmentStatus.ACTIVE);
@@ -73,7 +73,7 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
 
     @NotNull
     @Override
-    public <T extends Punishment> List<T> getActivePunishments(UUID uuid, @NotNull Class<T> clazz) {
+    public <T extends Punishment> List<T> getActivePunishments(UUID uuid, @NotNull Class<T> clazz) throws Exception {
         List<T> punishments = this.getActivePunishments(uuid);
         punishments.removeIf(punishment -> !clazz.isInstance(punishment));
 
@@ -81,17 +81,17 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
     }
 
     @Override
-    public boolean hasPunishment(@NotNull String id) {
+    public boolean hasPunishment(@NotNull String id) throws Exception {
         return this.pluginManager.getDataProvider().hasPunishment(id);
     }
 
     @Override
-    public Punishment getPunishment(String id) {
+    public Punishment getPunishment(String id) throws Exception {
         return this.pluginManager.getDataProvider().getPunishment(id);
     }
 
     @Override
-    public boolean hasActiveBan(UUID uuid) {
+    public boolean hasActiveBan(UUID uuid) throws Exception {
         List<Punishment> punishments = this.getPlayerHistory(uuid);
         for (Punishment punishment : punishments) {
             if (punishment.getType() == PunishmentType.BAN || punishment.getType() == PunishmentType.TEMP_BAN) {
@@ -110,7 +110,7 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
     }
 
     @Override
-    public boolean hasActiveBanIp(UUID uuid) {
+    public boolean hasActiveBanIp(UUID uuid) throws Exception {
         List<Punishment> punishments = this.getPlayerHistory(uuid);
         for (Punishment punishment : punishments) {
             if (punishment.getType() == PunishmentType.BAN_IP || punishment.getType() == PunishmentType.TEMP_BAN_IP) {
@@ -129,7 +129,7 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
     }
 
     @Override
-    public boolean hasActiveChatMute(UUID uuid) {
+    public boolean hasActiveChatMute(UUID uuid) throws Exception {
         List<Punishment> punishments = this.getPlayerHistory(uuid);
         for (Punishment punishment : punishments) {
             if (punishment.getType() == PunishmentType.MUTE || punishment.getType() == PunishmentType.TEMP_MUTE) {
@@ -151,21 +151,21 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
     @Override
     public synchronized Punishment generatePunishment(@NotNull final PunishmentType type,
                                                       @NotNull final PunishmentTarget target,
-                                                      @NotNull final PunishmentCreator creator,
+                                                      @NotNull final PunishmentExecutor creator,
                                                       long duration,
-                                                      @NotNull String reason) {
-        return this.generatePunishment(type, target, creator, duration, reason, null, new ArrayList<>());
+                                                      @NotNull String reason) throws Exception {
+        return this.generatePunishment(type, target, creator, duration, reason, "", new ArrayList<>());
     }
 
     @NotNull
     @Override
     public synchronized Punishment generatePunishment(@NotNull final PunishmentType type,
                                                       @NotNull final PunishmentTarget target,
-                                                      @NotNull final PunishmentCreator creator,
+                                                      @NotNull final PunishmentExecutor creator,
                                                       long duration,
                                                       @NotNull String reason,
-                                                      @Nullable String comment,
-                                                      @NotNull List<String> servers) {
+                                                      @NotNull String comment,
+                                                      @NotNull List<String> servers) throws Exception {
         String id = this.generateId();
         long start = System.currentTimeMillis();
         while (this.pluginManager.getDataProvider().hasPunishment(id)) {
@@ -179,8 +179,10 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
 
         long realTime = System.currentTimeMillis();
 
-        return MultiPunishment.Companion.constructPunishment(this.pluginManager, type, id, target, creator,
-            realTime, realTime, duration, reason, comment, null, -1L, null, servers, false);
+        return MultiPunishment.Companion.constructPunishment(this.pluginManager, type, id,
+            new MultiCreationAction(id, 1, target, creator, realTime, reason), new ArrayList<>(),
+            new ArrayList<>(),
+            realTime, duration, comment,  servers, false);
     }
 
     @NotNull

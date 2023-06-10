@@ -1,15 +1,26 @@
 package me.kvalbrus.multibans.api.punishment
 
-import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator
+import me.kvalbrus.multibans.api.punishment.action.ActivationAction
+import me.kvalbrus.multibans.api.punishment.action.DeactivationAction
+import me.kvalbrus.multibans.api.punishment.executor.PunishmentExecutor
 
 interface Cancelable {
 
-    fun deactivate(cancellationCreator: PunishmentCreator,
-                   cancellationDate: Long = System.currentTimeMillis(),
-                   cancellationReason: String = "")
+    fun activate(action: ActivationAction) : Boolean
+    fun activate(executor: PunishmentExecutor, date: Long, reason: String) : Boolean
+    fun deactivate(action: DeactivationAction) : Boolean
+    fun deactivate(executor: PunishmentExecutor, date: Long, reason: String) : Boolean
 
-    var cancellationCreator: PunishmentCreator?
-    var cancellationDate: Long
-    var cancellationReason: String
-    var cancelled: Boolean
+    val activations: List<ActivationAction>
+    val deactivations: List<DeactivationAction>
+
+    fun lastActivator() : PunishmentExecutor
+    fun lastDeactivator() : PunishmentExecutor?
+
+    val cancelled : Boolean
+
+//    var cancellationCreator: PunishmentCreator?
+//    var cancellationDate: Long
+//    var cancellationReason: String
+//    var cancelled: Boolean
 }

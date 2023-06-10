@@ -1,41 +1,15 @@
-plugins {
-    id 'java'
-    id 'kotlin'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
-}
-
-repositories {
-    maven {
-        name = "sonatype-oss-snapshots1"
-        url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-    }
-    mavenCentral()
-}
-
 dependencies {
-    implementation project(path: ':api')
-    compileJava {
-        options.encoding = "UTF-8"
-    }
+    implementation(project(":api"))
 
-    implementation project(':api')
+    implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation("mysql:mysql-connector-java:8.0.32")
+    implementation("com.moandjiezana.toml:toml4j:0.7.2")
+    implementation("net.kyori:adventure-text-minimessage:4.13.1")
+    implementation("net.kyori:adventure-text-serializer-legacy:4.13.1")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21")
 
-    implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.1'
-    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.32'
-    implementation group: 'com.moandjiezana.toml', name : 'toml4j', version: '0.7.2'
-
-    implementation 'net.kyori:adventure-text-minimessage:4.13.1'
-    implementation 'net.kyori:adventure-text-serializer-legacy:4.13.1'
-    implementation 'net.kyori:adventure-platform-bukkit:4.3.0'
-
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
-    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
-
-    compileOnly 'org.jetbrains:annotations:16.0.2'
-
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21'
-}
-
-shadowJar {
-    archiveFileName = "MultiBansCommon-0.1.0.jar"
+    annotationProcessor("org.projectlombok:lombok:1.18.22")
+    compileOnly("org.projectlombok:lombok:1.18.22")
+    compileOnly("org.jetbrains:annotations:16.0.2")
 }

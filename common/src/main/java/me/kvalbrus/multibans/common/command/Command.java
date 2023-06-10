@@ -34,7 +34,12 @@ public abstract class Command {
 
     public boolean execute(@NotNull CommandSender sender, String[] args) {
         if (hasPermission(sender, args)) {
-            return this.cmd(sender, args);
+            try {
+                return this.cmd(sender, args);
+            } catch (Exception exception) {
+                // TODO: Send message for player
+                return false;
+            }
         } else {
             sender.sendMessage(this.getNotPermissionMessage());
             return false;
@@ -49,7 +54,7 @@ public abstract class Command {
         }
     }
 
-    public abstract boolean cmd(@NotNull CommandSender sender, String[] args);
+    public abstract boolean cmd(@NotNull CommandSender sender, String[] args) throws Exception;
 
     public abstract String getNotPermissionMessage();
 

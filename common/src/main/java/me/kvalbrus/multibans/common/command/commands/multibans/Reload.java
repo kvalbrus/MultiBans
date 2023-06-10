@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class Reload extends Command {
 
     public Reload(@NotNull PluginManager pluginManager) {
-        super(pluginManager, "reload", Permission.COMMAND_RELOAD.getName(), null);
+        super(pluginManager, "reload", Permission.COMMAND_RELOAD.getPerm(), null);
     }
 
     @Override

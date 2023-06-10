@@ -4,7 +4,7 @@ import me.kvalbrus.multibans.api.Player;
 import me.kvalbrus.multibans.api.punishment.PermanentlyPunishment;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment;
-import me.kvalbrus.multibans.api.punishment.creator.PunishmentCreator;
+import me.kvalbrus.multibans.api.punishment.executor.PunishmentExecutor;
 
 public class ReplacedString {
 
@@ -18,7 +18,7 @@ public class ReplacedString {
         return this.replace("%player_name%", player.getName());
     }
 
-    public ReplacedString replaceExecutorName(PunishmentCreator creator) {
+    public ReplacedString replaceExecutorName(PunishmentExecutor creator) {
         return this.replace("%executor_name%", creator.getName());
     }
 

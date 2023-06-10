@@ -1,29 +1,8 @@
-plugins {
-    id 'java'
-    id 'kotlin'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
-}
-
-repositories {
-    maven {
-        name = "sonatype-oss-snapshots1"
-        url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-    }
-
-    mavenCentral()
-}
-
 dependencies {
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
-    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
-
-    compileOnly 'org.jetbrains:annotations:16.0.2'
-    implementation 'net.kyori:adventure-text-minimessage:4.13.1'
-    implementation 'net.kyori:adventure-text-serializer-legacy:4.13.1'
-
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21'
-}
-
-shadowJar {
-    archiveFileName = "MultiBansAPI-0.1.0.jar"
+    annotationProcessor("org.projectlombok:lombok:1.18.22")
+    compileOnly("org.projectlombok:lombok:1.18.22")
+    compileOnly("org.jetbrains:annotations:16.0.2")
+    compileOnly("net.kyori:adventure-text-minimessage:4.13.1")
+    compileOnly("net.kyori:adventure-text-serializer-legacy:4.13.1")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21")
 }
