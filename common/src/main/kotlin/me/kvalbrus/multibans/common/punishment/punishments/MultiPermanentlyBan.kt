@@ -1,5 +1,6 @@
 package me.kvalbrus.multibans.common.punishment.punishments
 
+import me.kvalbrus.multibans.api.punishment.action.Action
 import me.kvalbrus.multibans.api.punishment.action.ActivationAction
 import me.kvalbrus.multibans.api.punishment.action.CreationAction
 import me.kvalbrus.multibans.api.punishment.action.DeactivationAction
@@ -18,8 +19,8 @@ final class MultiPermanentlyBan : MultiPermanentlyPunishment, PermanentlyBan {
         pluginManager: PluginManager,
         id: String,
         creationAction: CreationAction,
-        activations: MutableList<ActivationAction> = mutableListOf(),
-        deactivations: MutableList<DeactivationAction> = mutableListOf(),
+        activations: MutableList<Action> = mutableListOf(),
+        deactivations: MutableList<Action> = mutableListOf(),
         comment: String,
         servers: List<String>,
         cancelled: Boolean) : super(pluginManager, PunishmentType.BAN, id, creationAction,

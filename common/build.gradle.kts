@@ -9,6 +9,8 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21")
 
+
+
     annotationProcessor("org.projectlombok:lombok:1.18.22")
     compileOnly("org.projectlombok:lombok:1.18.22")
     compileOnly("org.jetbrains:annotations:16.0.2")

@@ -2,6 +2,7 @@ package me.kvalbrus.multibans.bukkit.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
+import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.punishment.punishments.PunishmentType;
 import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyBan;
@@ -24,6 +25,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class PlayerListener implements Listener {
@@ -267,5 +270,17 @@ public class PlayerListener implements Listener {
         } catch (Exception exception) {
             // TODO:
         }
+    }
+
+    @EventHandler
+    public void onJoinEvent(PlayerJoinEvent event) {
+        OnlinePlayer player = new BukkitOnlinePlayer(event.getPlayer());
+        ((MultiBansPluginManager) this.pluginManager).playerJoin(player);
+    }
+
+    @EventHandler
+    public void onQuitEvent(PlayerQuitEvent event) {
+        OnlinePlayer player = new BukkitOnlinePlayer(event.getPlayer());
+        ((MultiBansPluginManager) this.pluginManager).playerQuit(player);
     }
 }

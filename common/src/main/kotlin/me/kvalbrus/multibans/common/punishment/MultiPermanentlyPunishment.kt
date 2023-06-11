@@ -1,6 +1,7 @@
 package me.kvalbrus.multibans.common.punishment
 
 import me.kvalbrus.multibans.api.punishment.PermanentlyPunishment
+import me.kvalbrus.multibans.api.punishment.action.Action
 import me.kvalbrus.multibans.api.punishment.action.ActivationAction
 import me.kvalbrus.multibans.api.punishment.action.CreationAction
 import me.kvalbrus.multibans.api.punishment.action.DeactivationAction
@@ -10,12 +11,11 @@ import me.kvalbrus.multibans.api.punishment.executor.PunishmentExecutor
 import me.kvalbrus.multibans.common.managers.PluginManager
 import me.kvalbrus.multibans.common.punishment.action.MultiActivationAction
 import me.kvalbrus.multibans.common.punishment.action.MultiDeactivationAction
-import me.kvalbrus.multibans.common.punishment.punishments.ActionLoader
 
-abstract class MultiPermanentlyPunishment : MultiPunishment, PermanentlyPunishment, ActionLoader {
+abstract class MultiPermanentlyPunishment : MultiPunishment, PermanentlyPunishment {
 
-    private var _activations: MutableList<ActivationAction> = mutableListOf()
-    private var _deactivations: MutableList<DeactivationAction> = mutableListOf()
+    private var _activations: MutableList<Action> = mutableListOf()
+    private var _deactivations: MutableList<Action> = mutableListOf()
     private var _cancelled: Boolean
 
     constructor(
@@ -34,8 +34,8 @@ abstract class MultiPermanentlyPunishment : MultiPunishment, PermanentlyPunishme
         type: PunishmentType,
         id: String,
         creationAction: CreationAction,
-        activations: MutableList<ActivationAction>,
-        deactivations: MutableList<DeactivationAction>,
+        activations: MutableList<Action>,
+        deactivations: MutableList<Action>,
         comment: String,
         servers: List<String>,
         cancelled: Boolean) : this(pluginManager, type, id, creationAction, comment, servers, cancelled) {
@@ -43,10 +43,10 @@ abstract class MultiPermanentlyPunishment : MultiPunishment, PermanentlyPunishme
             this._deactivations = deactivations
     }
 
-    final override val activations: List<ActivationAction>
+    final override val activations: List<Action>
         get() = ArrayList(this._activations)
 
-    final override val deactivations: List<DeactivationAction>
+    final override val deactivations: List<Action>
         get() = ArrayList(this._deactivations)
 
     final override val cancelled: Boolean
@@ -132,14 +132,6 @@ abstract class MultiPermanentlyPunishment : MultiPunishment, PermanentlyPunishme
 
             return deactivations[maxTimeIndex].executor
         }
-    }
-
-    override fun loadActivationsFromDataProvider(activations: MutableList<ActivationAction>) {
-        this._activations = activations
-    }
-
-    override fun loadDeactivationsFromDataProvider(deactivations: MutableList<DeactivationAction>) {
-        this._deactivations = deactivations
     }
 
     private fun sendMessageAboutActivate() {

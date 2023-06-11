@@ -31,7 +31,7 @@ subprojects {
     }
 
     tasks.withType<ShadowJar> {
-        minimize()
+       // minimize()
 
         relocations()
 

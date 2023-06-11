@@ -10,9 +10,13 @@ import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import me.kvalbrus.multibans.api.DataProvider;
+import me.kvalbrus.multibans.api.OnlinePlayer;
+import me.kvalbrus.multibans.common.session.MultiSession;
 import me.kvalbrus.multibans.common.storage.DataProviderSettings;
 import me.kvalbrus.multibans.common.storage.DataProviderType;
 import me.kvalbrus.multibans.common.storage.mysql.MySqlProvider;
@@ -28,6 +32,8 @@ public abstract class MultiBansPluginManager implements PluginManager {
     private DataProvider dataProvider;
 
     private MultiBansSettings settings;
+
+    private Map<UUID, MultiSession> playerSessions = new HashMap<>();
 
     public MultiBansPluginManager() {
         this.punishmentManager = new PunishmentManager(this);
@@ -47,8 +53,20 @@ public abstract class MultiBansPluginManager implements PluginManager {
     public void onEnable() {
         if (!this.loadDataProvider()) {
             this.disable();
-            return;
         }
+    }
+
+    @Override
+    public void onDisable() {
+        for (var session : this.playerSessions.values()) {
+            session.quit();
+
+            try {
+                this.dataProvider.createPlayerSession(session);
+            } catch (Exception exception) {}
+        }
+
+        this.playerSessions = new HashMap<>();
     }
 
     @Override
@@ -73,12 +91,30 @@ public abstract class MultiBansPluginManager implements PluginManager {
         return this.punishmentManager;
     }
 
+    public void playerJoin(OnlinePlayer player) {
+        MultiSession session = new MultiSession(player);
+        session.join();
+        this.playerSessions.put(player.getUniqueId(), session);
+    }
+
+    public void playerQuit(OnlinePlayer player) {
+        MultiSession session = this.playerSessions.get(player.getUniqueId());
+        if (session != null) {
+            session.quit();
+            this.playerSessions.remove(player.getUniqueId());
+
+            try {
+                this.dataProvider.createPlayerSession(session);
+            } catch (Exception e) {
+            }
+        }
+    }
+
     private boolean loadDataProvider() {
         DataProviderSettings dataProviderSettings = new DataProviderSettings(this).load();
 
         if (dataProviderSettings.getType() == DataProviderType.MY_SQL) {
             this.dataProvider = new MySqlProvider(this, dataProviderSettings);
-
             try {
                 this.dataProvider.initialization();
             } catch (Exception exception) {

@@ -4,6 +4,7 @@ import me.kvalbrus.multibans.api.OnlinePlayer
 import me.kvalbrus.multibans.api.punishment.Punishment
 import me.kvalbrus.multibans.api.punishment.punishments.PunishmentType
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment
+import me.kvalbrus.multibans.api.punishment.action.Action
 import me.kvalbrus.multibans.api.punishment.action.ActivationAction
 import me.kvalbrus.multibans.api.punishment.action.CreationAction
 import me.kvalbrus.multibans.api.punishment.action.DeactivationAction
@@ -165,7 +166,7 @@ abstract class MultiPunishment(
         val dataProvider = pluginManager.dataProvider
 
         if (dataProvider?.hasPunishment(id) == true) {
-            dataProvider.updatePunishment(this)
+            dataProvider.savePunishment(this)
         } else {
             dataProvider?.createPunishment(this)
         }
@@ -234,50 +235,13 @@ abstract class MultiPunishment(
     }
 
     companion object {
-//        fun <T : Punishment?> constructPunishment(
-//            pluginManager: PluginManager,
-//            type: PunishmentType,
-//            id: String,
-//            creationAction: CreationAction,
-//            startedDate: Long,
-//            duration: Long,
-//            comment: String,
-//            servers: List<String>,
-//            cancelled: Boolean): T {
-//            val punishment: Punishment = when (type) {
-//                PunishmentType.BAN -> MultiPermanentlyBan(
-//                    pluginManager, id, creationAction, comment = comment, servers =  servers, cancelled = cancelled)
-//
-//                PunishmentType.TEMP_BAN -> MultiTemporaryBan(pluginManager, id, creationAction,
-//                    startedDate = startedDate, duration = duration, comment = comment, servers = servers, cancelled = cancelled)
-//
-//                PunishmentType.BAN_IP -> MultiPermanentlyBanIp(
-//                    pluginManager, id, creationAction, comment = comment, servers =  servers, cancelled = cancelled)
-//
-//                PunishmentType.TEMP_BAN_IP -> MultiTemporaryBanIp(pluginManager, id, creationAction,
-//                    startedDate = startedDate, duration = duration, comment = comment, servers = servers, cancelled = cancelled)
-//
-//                PunishmentType.MUTE -> MultiPermanentlyChatMute(
-//                    pluginManager, id, creationAction,  comment = comment, servers =  servers, cancelled = cancelled)
-//
-//                PunishmentType.TEMP_MUTE -> MultiTemporaryChatMute(pluginManager, id, creationAction,
-//                    startedDate = startedDate, duration = duration, comment = comment, servers = servers, cancelled = cancelled)
-//
-//                PunishmentType.KICK -> Kick(pluginManager, id, creationAction, comment, servers)
-//
-//                else -> throw IllegalArgumentException("Punishment type hasn't its constructor")
-//            }
-//
-//            return punishment as T
-//        }
-
         fun <T : Punishment?> constructPunishment(
             pluginManager: PluginManager,
             type: PunishmentType,
             id: String,
             creationAction: CreationAction,
-            activations: MutableList<ActivationAction> = mutableListOf(),
-            deactivations: MutableList<DeactivationAction> = mutableListOf(),
+            activations: MutableList<Action> = mutableListOf(),
+            deactivations: MutableList<Action> = mutableListOf(),
             startedDate: Long,
             duration: Long,
             comment: String,

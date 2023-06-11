@@ -10,6 +10,9 @@ import kotlin.jvm.Throws
 interface PunishmentManager {
 
     @Throws(Exception::class)
+    fun <T : Punishment> getPlayerHistory(name: String) : List<T>
+
+    @Throws(Exception::class)
     fun <T : Punishment> getPlayerHistory(uuid: UUID) : List<T>
 
     @Throws(Exception::class)

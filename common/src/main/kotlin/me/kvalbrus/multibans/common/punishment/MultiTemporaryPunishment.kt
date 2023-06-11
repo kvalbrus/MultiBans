@@ -3,6 +3,7 @@ package me.kvalbrus.multibans.common.punishment
 import me.kvalbrus.multibans.api.punishment.punishments.PunishmentStatus
 import me.kvalbrus.multibans.api.punishment.punishments.PunishmentType
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment
+import me.kvalbrus.multibans.api.punishment.action.Action
 import me.kvalbrus.multibans.api.punishment.action.ActivationAction
 import me.kvalbrus.multibans.api.punishment.action.CreationAction
 import me.kvalbrus.multibans.api.punishment.action.DeactivationAction
@@ -10,12 +11,11 @@ import me.kvalbrus.multibans.api.punishment.executor.PunishmentExecutor
 import me.kvalbrus.multibans.common.managers.PluginManager
 import me.kvalbrus.multibans.common.punishment.action.MultiActivationAction
 import me.kvalbrus.multibans.common.punishment.action.MultiDeactivationAction
-import me.kvalbrus.multibans.common.punishment.punishments.ActionLoader
 
-abstract class MultiTemporaryPunishment : MultiPunishment, TemporaryPunishment, ActionLoader {
+abstract class MultiTemporaryPunishment : MultiPunishment, TemporaryPunishment {
 
-    private var _activations: MutableList<ActivationAction> = mutableListOf()
-    private var _deactivations: MutableList<DeactivationAction> = mutableListOf()
+    private var _activations: MutableList<Action> = mutableListOf()
+    private var _deactivations: MutableList<Action> = mutableListOf()
     private var _startedDate: Long
     private var _duration: Long
     private var _cancelled: Boolean
@@ -40,8 +40,8 @@ abstract class MultiTemporaryPunishment : MultiPunishment, TemporaryPunishment, 
         type: PunishmentType,
         id: String,
         creationAction: CreationAction,
-        activations: MutableList<ActivationAction>,
-        deactivations: MutableList<DeactivationAction>,
+        activations: MutableList<Action>,
+        deactivations: MutableList<Action>,
         startedDate: Long,
         duration: Long,
         comment: String,
@@ -51,10 +51,10 @@ abstract class MultiTemporaryPunishment : MultiPunishment, TemporaryPunishment, 
         this._deactivations = deactivations
     }
 
-    final override val activations: List<ActivationAction>
+    final override val activations: List<Action>
         get() = ArrayList(this._activations)
 
-    final override val deactivations: List<DeactivationAction>
+    final override val deactivations: List<Action>
         get() = ArrayList(this._deactivations)
 
     final override val cancelled: Boolean
@@ -65,6 +65,22 @@ abstract class MultiTemporaryPunishment : MultiPunishment, TemporaryPunishment, 
 
     final override val startedDate: Long
         get() = this._startedDate
+
+    @Synchronized
+    override fun create() {
+        val activePunishments = pluginManager
+            .punishmentManager.getActivePunishments(this.target.uniqueId, this.javaClass)
+        val size = activePunishments.size
+        if (size > 0) {
+            activePunishments.sorted()
+            val last = activePunishments[size - 1]
+            this._startedDate = last.startedDate + last.duration
+        } else {
+            this._startedDate = this.createdDate
+        }
+
+        super.create()
+    }
 
     @Synchronized
     override fun activate(executor: PunishmentExecutor, date: Long, reason: String) : Boolean {
@@ -173,14 +189,6 @@ abstract class MultiTemporaryPunishment : MultiPunishment, TemporaryPunishment, 
         }
     }
 
-    override fun loadActivationsFromDataProvider(activations: MutableList<ActivationAction>) {
-        this._activations = activations
-    }
-
-    override fun loadDeactivationsFromDataProvider(deactivations: MutableList<DeactivationAction>) {
-        this._deactivations = deactivations
-    }
-
     private fun sendMessageAboutActivate() {
         sendMessageToListeners(this.activateMessageForListener)
         sendMessageToCreator(this.activateMessageForExecutor)
@@ -215,7 +223,7 @@ abstract class MultiTemporaryPunishment : MultiPunishment, TemporaryPunishment, 
         }
 
         history.removeIf { obj: MultiTemporaryPunishment -> obj.cancelled }
-        history.sorted()
+        history.sort()
         val size = history.size
         if (size > 0) {
             var prev: MultiTemporaryPunishment? = null

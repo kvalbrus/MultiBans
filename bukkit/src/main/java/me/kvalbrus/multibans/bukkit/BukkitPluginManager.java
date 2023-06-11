@@ -66,6 +66,8 @@ public class BukkitPluginManager extends MultiBansPluginManager {
 
     @Override
     public void onDisable() {
+        super.onDisable();
+
         if (this.getDataProvider() != null) {
             this.getDataProvider().shutdown();
             // TODO: this.dataProvider = null;
