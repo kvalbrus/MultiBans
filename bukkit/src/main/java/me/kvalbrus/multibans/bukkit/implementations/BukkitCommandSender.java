@@ -33,13 +33,6 @@ public abstract class BukkitCommandSender implements CommandSender {
     }
 
     @Override
-    public void sendMessage(String... messages) {
-        for (String message : messages) {
-            this.sendMessage(message);
-        }
-    }
-
-    @Override
     public boolean hasPermission(@NotNull String permission) {
         return this.commandSender.hasPermission(permission);
     }

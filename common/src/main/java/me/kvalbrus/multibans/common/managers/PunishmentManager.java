@@ -110,23 +110,40 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
     }
 
     @Override
-    public boolean hasActiveBanIp(UUID uuid) throws Exception {
-        List<Punishment> punishments = this.getPlayerHistory(uuid);
-        for (Punishment punishment : punishments) {
-            if (punishment.getType() == PunishmentType.BAN_IP || punishment.getType() == PunishmentType.TEMP_BAN_IP) {
-                if (punishment.getStatus() == PunishmentStatus.ACTIVE) {
-                    return true;
+    public boolean hasActiveBanIp(String ip) {
+        try {
+            List<Punishment> punishments = this.getPlayerHistoryByIp(ip);
+            for (Punishment punishment : punishments) {
+                if (punishment.getType() == PunishmentType.BAN_IP ||
+                punishment.getType() == PunishmentType.TEMP_BAN_IP) {
+                    if (punishment.getStatus() == PunishmentStatus.ACTIVE) {
+                        return true;
+                    }
                 }
             }
-        }
+        } catch (Exception exception) {}
 
         return false;
     }
 
-    @Override
-    public boolean hasActiveBanIp(String name) {
-        return false;
-    }
+//    @Override
+//    public boolean hasActiveBanIp(UUID uuid) throws Exception {
+//        List<Punishment> punishments = this.getPlayerHistory(uuid);
+//        for (Punishment punishment : punishments) {
+//            if (punishment.getType() == PunishmentType.BAN_IP || punishment.getType() == PunishmentType.TEMP_BAN_IP) {
+//                if (punishment.getStatus() == PunishmentStatus.ACTIVE) {
+//                    return true;
+//                }
+//            }
+//        }
+//
+//        return false;
+//    }
+
+//    @Override
+//    public boolean hasActiveBanIp(String name) {t
+//        return false;
+//    }
 
     @Override
     public boolean hasActiveChatMute(UUID uuid) throws Exception {
@@ -195,5 +212,11 @@ public class PunishmentManager implements me.kvalbrus.multibans.api.managers.Pun
         }
 
         return builder.toString();
+    }
+
+    @NotNull
+    @Override
+    public <T extends Punishment> List<T> getPlayerHistoryByIp(@NotNull String ip) throws Exception {
+        return this.pluginManager.getDataProvider().getTargetHistoryByIp(ip);
     }
 }

@@ -1,3 +1,9 @@
 package me.kvalbrus.multibans.api
 
-interface CommandSender : Nameable, Permissible, MessageRecipient 
+import java.util.UUID
+
+interface CommandSender : Permissible, MessageRecipient {
+
+    val uniqueId: UUID?
+    val name: String
+}

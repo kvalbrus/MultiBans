@@ -40,12 +40,10 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onJoinEvent(AsyncPlayerPreLoginEvent event) {
         PunishmentManager punManager = (PunishmentManager) pluginManager.getPunishmentManager();
-
         try {
             if (punManager.hasActiveBan(event.getUniqueId()) ||
-                punManager.hasActiveBanIp(event.getUniqueId())) {
+                punManager.hasActiveBanIp(event.getAddress().getHostAddress())) {
                 List<Punishment> activeBans = new ArrayList<>();
-
                 activeBans.addAll(this.pluginManager.getPunishmentManager()
                     .getActivePunishments(event.getUniqueId(), PermanentlyBanIp.class));
 

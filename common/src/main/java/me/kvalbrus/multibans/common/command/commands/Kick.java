@@ -14,8 +14,8 @@ import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget;
 import me.kvalbrus.multibans.common.command.Command;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.permissions.Permission;
-import me.kvalbrus.multibans.common.punishment.creator.MultiConsolePunishmentExecutor;
-import me.kvalbrus.multibans.common.punishment.creator.MultiOnlinePlayerPunishmentExecutor;
+import me.kvalbrus.multibans.common.punishment.creator.MultiOnlinePunishmentExecutor;
+import me.kvalbrus.multibans.common.punishment.creator.MultiPunishmentExecutor;
 import me.kvalbrus.multibans.common.punishment.target.MultiOnlinePunishmentTarget;
 import me.kvalbrus.multibans.common.punishment.target.MultiPunishmentTarget;
 import me.kvalbrus.multibans.common.utils.Message;
@@ -47,14 +47,7 @@ public class Kick extends Command {
                 target = new MultiPunishmentTarget(player);
             }
 
-            PunishmentExecutor creator;
-            if (sender instanceof OnlinePlayer onlinePlayer) {
-                creator = new MultiOnlinePlayerPunishmentExecutor(onlinePlayer);
-            } else if(sender instanceof Console console) {
-                creator = new MultiConsolePunishmentExecutor(console);
-            } else {
-                throw new IllegalArgumentException("Creator is illegal");
-            }
+            PunishmentExecutor creator = new MultiOnlinePunishmentExecutor(sender);
 
             StringBuilder reason = new StringBuilder();
             for (int i = 1; i < length; ++i) {
@@ -62,10 +55,10 @@ public class Kick extends Command {
             }
 
             try {
-
                 Punishment punishment = super.getPluginManager().getPunishmentManager()
                     .generatePunishment(PunishmentType.KICK, target, creator, -1,
                         reason.toString());
+                creator.setPunishment(punishment);
                 punishment.create();
             } catch (Exception exception) {
                 // TODO: Send message for player

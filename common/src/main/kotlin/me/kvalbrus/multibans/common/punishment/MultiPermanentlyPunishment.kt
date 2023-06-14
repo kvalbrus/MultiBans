@@ -64,7 +64,7 @@ abstract class MultiPermanentlyPunishment : MultiPunishment, PermanentlyPunishme
 
             this._activations.add(action)
             this.updateData()
-            this.pluginManager.activatePunishment(this)
+            this.pluginManager.activatePunishment(this, action)
             this.sendMessageAboutActivate()
 
             return true
@@ -85,7 +85,7 @@ abstract class MultiPermanentlyPunishment : MultiPunishment, PermanentlyPunishme
 
             this._deactivations.add(action)
             this.updateData()
-            this.pluginManager.deactivatePunishment(this)
+            this.pluginManager.deactivatePunishment(this, action)
             this.sendMessageAboutDeactivate()
 
             return true

@@ -9,20 +9,22 @@ import me.kvalbrus.multibans.api.punishment.action.*
 import me.kvalbrus.multibans.api.punishment.executor.PunishmentExecutor
 import me.kvalbrus.multibans.common.managers.PluginManager
 import me.kvalbrus.multibans.common.punishment.action.MultiActivationAction
+import me.kvalbrus.multibans.common.punishment.action.MultiCreationAction
 import me.kvalbrus.multibans.common.punishment.action.MultiDeactivationAction
-import me.kvalbrus.multibans.common.punishment.creator.MultiConsolePunishmentExecutor
-import me.kvalbrus.multibans.common.punishment.creator.MultiPlayerPunishmentExecutor
+import me.kvalbrus.multibans.common.punishment.creator.MultiOnlinePunishmentExecutor
+import me.kvalbrus.multibans.common.punishment.creator.MultiPunishmentExecutor
 import me.kvalbrus.multibans.common.storage.DataProviderSettings
 import me.kvalbrus.multibans.common.storage.DataProviderType
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MySqlProvider(private val pluginManager: PluginManager, private val dataProviderSettings: DataProviderSettings) : DataProvider {
+
     private var source: HikariDataSource? = null
-    override val name: String
-        get() = "MySQL"
+    override val name: String = "MySQL"
 
     @Throws(SQLException::class)
     override fun initialization() {
@@ -91,7 +93,7 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
     }
 
     @Throws(SQLException::class)
-    override fun getPunishment(id: String): Punishment = source!!.connection.use { loadPunishment(it, id) }
+    override fun getPunishment(id: String): Punishment? = source!!.connection.use { loadPunishment(it, id) }
 
     @Throws(SQLException::class)
     override fun hasPunishment(id: String): Boolean {
@@ -143,15 +145,30 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
         val history: MutableList<T> = ArrayList()
         if (name != null) {
             source!!.connection.use { connection ->
-                connection.prepareStatement(SQLQuery.GET_PUNISHMENTS_BY_TARGET_NAME)
-                    .use { statement ->
-                        statement.setString(1, name)
-                        val resultSet = statement.executeQuery()
-                        while (resultSet.next()) {
-                            val punishment = readPunishment(connection, resultSet)
-                            history.add(punishment as T)
-                        }
+                connection.prepareStatement(SQLQuery.GET_PUNISHMENTS_BY_TARGET_NAME).use { statement ->
+                    statement.setString(1, name)
+                    val resultSet = statement.executeQuery()
+                    while (resultSet.next()) {
+                        val punishment = readPunishment(connection, resultSet)
+                        history.add(punishment as T)
                     }
+                }
+            }
+        }
+
+        return history
+    }
+
+    override fun <T : Punishment?> getTargetHistoryByIp(ip: String): List<T> {
+        val history: MutableList<T> = ArrayList()
+        source!!.connection.use { connection ->
+            connection.prepareStatement(SQLQuery.GET_PUNISHMENTS_BY_TARGET_IP).use { statement ->
+                statement.setString(1, ip)
+                val resultSet = statement.executeQuery()
+                while (resultSet.next()) {
+                    val punishment = readPunishment(connection, resultSet)
+                    history.add(punishment as T)
+                }
             }
         }
 
@@ -212,17 +229,18 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
         connection.prepareStatement(SQLQuery.CREATE_PUNISHMENT).use { statement ->
             statement.setString(1, punishment.id)
             statement.setString(2, punishment.type)
-            statement.setString(3, punishment.targetUuid)
+            statement.setString(3, punishment.targetUUID)
             statement.setString(4, punishment.targetIp)
             statement.setString(5, punishment.targetName)
-            statement.setString(6, punishment.creatorName)
-            statement.setLong(7, punishment.createDate)
-            statement.setLong(8, punishment.startDate)
-            statement.setLong(9, punishment.duration)
-            statement.setString(10, punishment.reason)
-            statement.setString(11, punishment.comment)
-            statement.setString(12, punishment.servers)
-            statement.setBoolean(13, punishment.cancelled)
+            statement.setString(6, punishment.creatorUUID)
+            statement.setString(7, punishment.creatorName)
+            statement.setLong(8, punishment.createDate)
+            statement.setLong(9, punishment.startDate)
+            statement.setLong(10, punishment.duration)
+            statement.setString(11, punishment.reason)
+            statement.setString(12, punishment.comment)
+            statement.setString(13, punishment.servers)
+            statement.setBoolean(14, punishment.cancelled)
 
             statement.executeUpdate()
         }
@@ -246,9 +264,10 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
                 statement.setString(1, action.punId)
                 statement.setInt(2, action.id)
                 statement.setString(3, action.type.name)
-                statement.setString(4, action.executor.name)
-                statement.setLong(5, action.date)
-                statement.setString(6, action.reason)
+                statement.setString(4, action.executor.uniqueId?.toString())
+                statement.setString(5, action.executor.name)
+                statement.setLong(6, action.date)
+                statement.setString(7, action.reason)
 
                 statement.executeUpdate()
             }
@@ -276,27 +295,32 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
     }
 
     @Throws(SQLException::class)
-    private fun loadAction(resultSet: ResultSet): Action? {
+    private fun loadAction(resultSet: ResultSet): Action {
         val punId = resultSet.getString("pun_id")
         val id = resultSet.getInt("id")
         val type = ActionType.valueOf(resultSet.getString("type"))
-        val executorName = resultSet.getString("executor")
+        val executorUUID = UUID.fromString(resultSet.getString("executor_uuid"))
+        val executorName = resultSet.getString("executor_name")
         val date = resultSet.getLong("date")
         val reason = resultSet.getString("reason")
 
         val executor: PunishmentExecutor
 
-        if (executorName == pluginManager.console.name) {
-            executor = MultiConsolePunishmentExecutor(pluginManager.console)
+        if (executorName.equals(this.pluginManager.console.name) && executorUUID == null) {
+            executor = MultiOnlinePunishmentExecutor(pluginManager.console)
         } else {
-            executor = MultiPlayerPunishmentExecutor(pluginManager.getOfflinePlayer(executorName))
+            if (this.pluginManager.getPlayer(executorName) != null) {
+                executor = MultiOnlinePunishmentExecutor(this.pluginManager.getPlayer(executorUUID))
+            } else {
+                executor = MultiPunishmentExecutor(executorUUID, executorName)
+            }
         }
 
-        var action: Action? = null
-        if (type === ActionType.ACTIVATE) {
-            action = MultiActivationAction(punId, id, executor, date, reason)
-        } else if (type === ActionType.DEACTIVATE) {
-            action = MultiDeactivationAction(punId, id, executor, date, reason)
+        val action: Action
+        when(type) {
+            ActionType.ACTIVATE -> action = MultiActivationAction(punId, id, executor, date, reason)
+            ActionType.DEACTIVATE -> action = MultiDeactivationAction(punId, id, executor, date, reason)
+            ActionType.CREATE -> { TODO("Not yet implemented") }
         }
 
         return action
@@ -313,9 +337,7 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
             statement.executeQuery().use { resultSet ->
                 while (resultSet.next()) {
                     val action = loadAction(resultSet)
-                    if (action != null) {
-                        actions.add(action)
-                    }
+                    actions.add(action)
                 }
             }
         }
@@ -324,11 +346,15 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
     }
 
     @Throws(SQLException::class)
-    private fun loadPunishment(connection: Connection, id: String) : Punishment {
+    private fun loadPunishment(connection: Connection, id: String) : Punishment? {
         connection.prepareStatement(SQLQuery.GET_PUNISHMENT).use { statement ->
             statement.setString(1, id)
             statement.executeQuery().use { resultSet ->
-                return readPunishment(connection, resultSet)
+                if (resultSet.next()) {
+                    return readPunishment(connection, resultSet)
+                } else {
+                    return null
+                }
             }
         }
     }
@@ -340,6 +366,7 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
         val targetUUID = resultSet.getString("target_uuid")
         val targetIp = resultSet.getString("target_ip")
         val targetName = resultSet.getString("target_name")
+        val creatorUUID = resultSet.getString("creator_uuid")
         val creatorName = resultSet.getString("creator_name")
         val createdDate = resultSet.getLong("create_date")
         val startDate = resultSet.getLong("start_date")
@@ -351,8 +378,8 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
         val activations = loadActionsByType(connection, id, ActionType.ACTIVATE)
         val deactivations = loadActionsByType(connection, id, ActionType.DEACTIVATE)
 
-        return SQLPunishment(id, type, targetUUID, targetIp, targetName, creatorName,
-            createdDate, startDate, duration, reason, comment, servers, cancelled,
+        return SQLPunishment(id, type, targetUUID, targetIp, targetName, creatorUUID, creatorName,
+             createdDate, startDate, duration, reason, comment, servers, cancelled,
             activations, deactivations).getPunishment(this.pluginManager)
     }
 

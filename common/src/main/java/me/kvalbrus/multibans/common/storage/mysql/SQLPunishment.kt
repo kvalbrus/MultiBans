@@ -5,8 +5,6 @@ import me.kvalbrus.multibans.api.punishment.Cancelable
 import me.kvalbrus.multibans.api.punishment.Punishment
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment
 import me.kvalbrus.multibans.api.punishment.action.Action
-import me.kvalbrus.multibans.api.punishment.action.ActivationAction
-import me.kvalbrus.multibans.api.punishment.action.DeactivationAction
 import me.kvalbrus.multibans.api.punishment.executor.PunishmentExecutor
 import me.kvalbrus.multibans.api.punishment.punishments.PunishmentType
 import me.kvalbrus.multibans.api.punishment.target.OnlinePunishmentTarget
@@ -14,8 +12,8 @@ import me.kvalbrus.multibans.api.punishment.target.PunishmentTarget
 import me.kvalbrus.multibans.common.managers.PluginManager
 import me.kvalbrus.multibans.common.punishment.MultiPunishment
 import me.kvalbrus.multibans.common.punishment.action.MultiCreationAction
-import me.kvalbrus.multibans.common.punishment.creator.MultiConsolePunishmentExecutor
-import me.kvalbrus.multibans.common.punishment.creator.MultiPlayerPunishmentExecutor
+import me.kvalbrus.multibans.common.punishment.creator.MultiOnlinePunishmentExecutor
+import me.kvalbrus.multibans.common.punishment.creator.MultiPunishmentExecutor
 import me.kvalbrus.multibans.common.punishment.target.MultiOnlinePunishmentTarget
 import me.kvalbrus.multibans.common.punishment.target.MultiPunishmentTarget
 import java.util.*
@@ -25,10 +23,11 @@ class SQLPunishment {
 
     val id: String
     val type: String
-    val targetUuid: String
+    val targetUUID: String
     val targetIp: String
     val targetName: String
     val creatorName: String
+    val creatorUUID: String?
     val createDate: Long
     val startDate: Long
     val duration: Long
@@ -42,20 +41,20 @@ class SQLPunishment {
     constructor(punishment: Punishment) {
         this.id = punishment.id
         this.type = punishment.type.prefix
-        this.targetUuid = punishment.target.uniqueId.toString()
+        this.targetUUID = punishment.target.uniqueId.toString()
 
         val target = punishment.target
 
         if (target is OnlinePunishmentTarget) {
             this.targetIp = target.hostAddress
         } else{
-            this.targetIp = ""
+            this.targetIp = "unknown"
         }
 
         this.targetName = punishment.target.name
         this.creatorName = punishment.creator.name
+        this.creatorUUID = punishment.creator.uniqueId?.toString()
         this.createDate = punishment.createdDate
-
 
         if (punishment is TemporaryPunishment) {
             this.startDate = punishment.startedDate
@@ -81,15 +80,16 @@ class SQLPunishment {
         }
     }
 
-    constructor(id: String, type: String, targetUuid: String, targetIp: String, targetName: String,
-                creatorName: String, createDate: Long, startDate: Long, duration: Long, reason: String,
+    constructor(id: String, type: String, targetUUID: String, targetIp: String, targetName: String,
+                creatorUUID: String?, creatorName: String, createDate: Long, startDate: Long, duration: Long, reason: String,
                 comment: String, servers: String, cancelled: Boolean, activations: List<Action>,
                 deactivations: List<Action>) {
         this.id = id
         this.type = type
-        this.targetUuid = targetUuid
+        this.targetUUID = targetUUID
         this.targetIp = targetIp
         this.targetName = targetName
+        this.creatorUUID = creatorUUID
         this.creatorName = creatorName
         this.createDate = createDate
         this.startDate = startDate
@@ -133,7 +133,7 @@ class SQLPunishment {
         val target: PunishmentTarget
         val creator: PunishmentExecutor
 
-        var player = pluginManager.getOfflinePlayer(UUID.fromString(this.targetUuid))
+        var player = pluginManager.getOfflinePlayer(UUID.fromString(this.targetUUID))
         if (player is OnlinePlayer) {
             target = MultiOnlinePunishmentTarget(player)
         } else {
@@ -141,9 +141,14 @@ class SQLPunishment {
         }
 
         if (this.creatorName.equals(pluginManager.console.name)) {
-            creator = MultiConsolePunishmentExecutor(pluginManager.console)
+            creator = MultiOnlinePunishmentExecutor(pluginManager.console)
         } else {
-            creator = MultiPlayerPunishmentExecutor(pluginManager.getOfflinePlayer(this.creatorName))
+            if (pluginManager.getPlayer(this.creatorUUID) != null) {
+                creator = MultiOnlinePunishmentExecutor(pluginManager.getPlayer(this.creatorUUID))
+            } else {
+                val uuid = if (this.creatorUUID != null) UUID.fromString(this.creatorUUID) else null
+                creator = MultiPunishmentExecutor(uuid, this.creatorName)
+            }
         }
 
         val creationAction = MultiCreationAction(this.id, 1, target, creator, this.createDate, this.reason)

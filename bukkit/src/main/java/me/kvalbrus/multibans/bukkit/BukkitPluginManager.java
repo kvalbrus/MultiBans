@@ -4,9 +4,15 @@ import java.io.File;
 import java.util.Collection;
 import java.util.UUID;
 import me.kvalbrus.multibans.api.Console;
-import me.kvalbrus.multibans.api.MultiBans;
+import me.kvalbrus.multibans.api.MultiBansAPI;
 import me.kvalbrus.multibans.api.OnlinePlayer;
+import me.kvalbrus.multibans.bukkit.events.ActivatePunishmentEvent;
+import me.kvalbrus.multibans.bukkit.events.CreatePunishmentEvent;
+import me.kvalbrus.multibans.bukkit.events.DeactivatePunishmentEvent;
 import me.kvalbrus.multibans.api.punishment.Punishment;
+import me.kvalbrus.multibans.api.punishment.action.ActivationAction;
+import me.kvalbrus.multibans.api.punishment.action.CreationAction;
+import me.kvalbrus.multibans.api.punishment.action.DeactivationAction;
 import me.kvalbrus.multibans.bukkit.commands.BanBukkit;
 import me.kvalbrus.multibans.bukkit.commands.BanIpBukkit;
 import me.kvalbrus.multibans.bukkit.commands.KickBukkit;
@@ -14,6 +20,7 @@ import me.kvalbrus.multibans.bukkit.commands.MuteChatBukkit;
 import me.kvalbrus.multibans.bukkit.commands.PunishBukkit;
 import me.kvalbrus.multibans.bukkit.commands.UnbanBukkit;
 import me.kvalbrus.multibans.bukkit.commands.UnmuteChatBukkit;
+import me.kvalbrus.multibans.bukkit.events.DeletePunishmentEvent;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitConsole;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitPlayer;
 import me.kvalbrus.multibans.bukkit.implementations.BukkitOnlinePlayer;
@@ -28,8 +35,6 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import me.kvalbrus.multibans.bukkit.events.ActivatePunishmentEvent;
-import me.kvalbrus.multibans.bukkit.events.DeactivatePunishmentEvent;
 import me.kvalbrus.multibans.api.punishment.punishments.PunishmentType;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,9 +59,9 @@ public class BukkitPluginManager extends MultiBansPluginManager {
 
     @Override
     public void onEnable() {
-        MultiBans multiBansProvider = new MultiBansBukkit(this);
+        MultiBansAPI multiBansAPIProvider = new MultiBansAPIBukkit(this);
         this.plugin.getServer().getServicesManager()
-            .register(MultiBans.class, multiBansProvider, this.plugin, ServicePriority.Normal);
+            .register(MultiBansAPI.class, multiBansAPIProvider, this.plugin, ServicePriority.Normal);
         this.registerCommands();
         this.registerListeners();
 
@@ -167,7 +172,7 @@ public class BukkitPluginManager extends MultiBansPluginManager {
     }
 
     @Override
-    public void activatePunishment(@NotNull Punishment punishment) {
+    public void createPunishment(@NotNull Punishment punishment, @NotNull CreationAction action) {
         if (punishment.getType() == PunishmentType.BAN) {
             Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
             if (player != null) {
@@ -216,14 +221,86 @@ public class BukkitPluginManager extends MultiBansPluginManager {
             }
         }
 
-        Event event = new ActivatePunishmentEvent(punishment);
-        this.plugin.getServer().getPluginManager().callEvent(event);
+        Event event = new CreatePunishmentEvent(punishment, action);
+
+        this.plugin.getServer().getScheduler().runTask(this.plugin, () ->
+            this.plugin.getServer().getPluginManager().callEvent(event)
+        );
     }
 
     @Override
-    public void deactivatePunishment(@NotNull Punishment punishment) {
-        Event event = new DeactivatePunishmentEvent(punishment);
-        this.plugin.getServer().getPluginManager().callEvent(event);
+    public void activatePunishment(@NotNull Punishment punishment, @NotNull ActivationAction action) {
+        if (punishment.getType() == PunishmentType.BAN) {
+            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
+            if (player != null) {
+                ReplacedString title = new ReplacedString(Message.TITLE_HEADER.getMessage() +
+                    Message.TITLE_BAN.getMessage() + Message.TITLE_FOOTER.getMessage())
+                    .replacePunishment(punishment);
+
+                player.kickPlayer(title.string());
+            }
+        } else if (punishment.getType() == PunishmentType.TEMP_BAN) {
+            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
+            if (player != null) {
+                ReplacedString title = new ReplacedString(
+                    Message.TITLE_HEADER.getMessage() + Message.TITLE_TEMPBAN.getMessage() +
+                        Message.TITLE_FOOTER.getMessage())
+                    .replacePunishment(punishment);
+
+                player.kickPlayer(title.string());
+            }
+        } else if (punishment.getType() == PunishmentType.BAN_IP) {
+            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
+            if (player != null) {
+                ReplacedString title = new ReplacedString(
+                    Message.TITLE_HEADER.getMessage() + Message.TITLE_BANIP.getMessage() +
+                        Message.TITLE_FOOTER.getMessage())
+                    .replacePunishment(punishment);
+
+                player.kickPlayer(title.string());
+            }
+        } else if (punishment.getType() == PunishmentType.TEMP_BAN_IP) {
+            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
+            if (player != null) {
+                ReplacedString title = new ReplacedString(
+                    Message.TITLE_HEADER.getMessage() + Message.TITLE_TEMPBANIP.getMessage() +
+                        Message.TITLE_FOOTER.getMessage())
+                    .replacePunishment(punishment);
+
+                player.kickPlayer(title.string());
+            }
+        } else if (punishment.getType() == PunishmentType.KICK) {
+            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
+            if (player != null) {
+                ReplacedString punishmentMessage = new ReplacedString(Message.KICK_ACTIVATE_TARGET.getMessage())
+                    .replacePunishment(punishment);
+                player.kickPlayer(punishmentMessage.string());
+            }
+        }
+
+        Event event = new ActivatePunishmentEvent(punishment, action);
+
+        this.plugin.getServer().getScheduler().runTask(this.plugin, () ->
+            this.plugin.getServer().getPluginManager().callEvent(event)
+        );
+    }
+
+    @Override
+    public void deactivatePunishment(@NotNull Punishment punishment, @NotNull DeactivationAction action) {
+        Event event = new DeactivatePunishmentEvent(punishment, action);
+
+        this.plugin.getServer().getScheduler().runTask(this.plugin, () ->
+            this.plugin.getServer().getPluginManager().callEvent(event)
+        );
+    }
+
+    @Override
+    public void deletePunishment(@NotNull Punishment punishment) {
+        Event event = new DeletePunishmentEvent(punishment);
+
+        this.plugin.getServer().getScheduler().runTask(this.plugin, () ->
+            this.plugin.getServer().getPluginManager().callEvent(event)
+        );
     }
 
     @NotNull

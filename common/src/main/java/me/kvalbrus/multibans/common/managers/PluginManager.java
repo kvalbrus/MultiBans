@@ -8,6 +8,9 @@ import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.Player;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.managers.PunishmentManager;
+import me.kvalbrus.multibans.api.punishment.action.ActivationAction;
+import me.kvalbrus.multibans.api.punishment.action.CreationAction;
+import me.kvalbrus.multibans.api.punishment.action.DeactivationAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,7 +56,11 @@ public interface PluginManager {
     @NotNull
     Console getConsole();
 
-    void activatePunishment(@NotNull Punishment punishment);
+    void createPunishment(@NotNull Punishment punishment, @NotNull CreationAction action);
 
-    void deactivatePunishment(@NotNull Punishment punishment);
+    void activatePunishment(@NotNull Punishment punishment, @NotNull ActivationAction action);
+
+    void deactivatePunishment(@NotNull Punishment punishment, @NotNull DeactivationAction action);
+
+    void deletePunishment(@NotNull Punishment punishment);
 }

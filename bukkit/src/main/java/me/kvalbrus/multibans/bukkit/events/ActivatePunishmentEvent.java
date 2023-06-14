@@ -1,5 +1,6 @@
 package me.kvalbrus.multibans.bukkit.events;
 
+import me.kvalbrus.multibans.api.punishment.action.ActivationAction;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -11,8 +12,11 @@ public class ActivatePunishmentEvent extends Event {
 
     private final Punishment punishment;
 
-    public ActivatePunishmentEvent(@NotNull Punishment punishment) {
+    private final ActivationAction action;
+
+    public ActivatePunishmentEvent(@NotNull Punishment punishment, @NotNull ActivationAction action) {
         this.punishment = punishment;
+        this.action = action;
     }
 
     @NotNull
@@ -24,6 +28,11 @@ public class ActivatePunishmentEvent extends Event {
     @NotNull
     public Punishment getPunishment() {
         return this.punishment;
+    }
+
+    @NotNull
+    public ActivationAction getAction() {
+        return this.action;
     }
 
     @NotNull

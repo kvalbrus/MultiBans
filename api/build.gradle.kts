@@ -5,4 +5,5 @@ dependencies {
     compileOnly("net.kyori:adventure-text-minimessage:4.13.1")
     compileOnly("net.kyori:adventure-text-serializer-legacy:4.13.1")
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21")
+    compileOnly("org.spigotmc:spigot-api:1.19.4-R0.1-SNAPSHOT")
 }

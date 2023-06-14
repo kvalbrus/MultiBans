@@ -106,7 +106,7 @@ abstract class MultiTemporaryPunishment : MultiPunishment, TemporaryPunishment {
             }
 
             this.updateData()
-            this.pluginManager.activatePunishment(this)
+            this.pluginManager.activatePunishment(this, action)
             this.sendMessageAboutActivate()
 
             return true
@@ -129,7 +129,7 @@ abstract class MultiTemporaryPunishment : MultiPunishment, TemporaryPunishment {
 
             this._deactivations.add(action)
             this.updateData()
-            this.pluginManager.deactivatePunishment(this)
+            this.pluginManager.deactivatePunishment(this, action)
             this.sendMessageAboutDeactivate()
 
             return true

@@ -16,8 +16,8 @@ import me.kvalbrus.multibans.common.command.Command;
 import me.kvalbrus.multibans.common.exceptions.IllegalDateFormatException;
 import me.kvalbrus.multibans.common.exceptions.NotMatchArgumentsException;
 import me.kvalbrus.multibans.common.managers.PluginManager;
-import me.kvalbrus.multibans.common.punishment.creator.MultiConsolePunishmentExecutor;
-import me.kvalbrus.multibans.common.punishment.creator.MultiOnlinePlayerPunishmentExecutor;
+import me.kvalbrus.multibans.common.punishment.creator.MultiOnlinePunishmentExecutor;
+import me.kvalbrus.multibans.common.punishment.creator.MultiPunishmentExecutor;
 import me.kvalbrus.multibans.common.punishment.target.MultiOnlinePunishmentTarget;
 import me.kvalbrus.multibans.common.punishment.target.MultiPunishmentTarget;
 import me.kvalbrus.multibans.common.utils.Message;
@@ -69,19 +69,12 @@ public class TempMuteChat extends Command {
                         reason.append(args[i]);
                     }
 
-                    PunishmentExecutor creator;
-                    if (sender instanceof OnlinePlayer onlinePlayer) {
-                        creator = new MultiOnlinePlayerPunishmentExecutor(onlinePlayer);
-                    } else if(sender instanceof Console console) {
-                        creator = new MultiConsolePunishmentExecutor(console);
-                    } else {
-                        throw new IllegalArgumentException("Creator is illegal");
-                    }
+                    PunishmentExecutor creator = new MultiOnlinePunishmentExecutor(sender);
 
                     Punishment punishment = super.getPluginManager().getPunishmentManager()
                         .generatePunishment(PunishmentType.TEMP_MUTE, target, creator,
                             date, reason.toString());
-
+                    creator.setPunishment(punishment);
                     punishment.create();
 
                     return true;

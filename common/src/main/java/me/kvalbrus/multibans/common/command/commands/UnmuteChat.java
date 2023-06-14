@@ -11,8 +11,8 @@ import me.kvalbrus.multibans.api.punishment.executor.PunishmentExecutor;
 import me.kvalbrus.multibans.common.command.Command;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.permissions.Permission;
-import me.kvalbrus.multibans.common.punishment.creator.MultiConsolePunishmentExecutor;
-import me.kvalbrus.multibans.common.punishment.creator.MultiOnlinePlayerPunishmentExecutor;
+import me.kvalbrus.multibans.common.punishment.creator.MultiOnlinePunishmentExecutor;
+import me.kvalbrus.multibans.common.punishment.creator.MultiPunishmentExecutor;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiPermanentlyChatMute;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiTemporaryChatMute;
 import me.kvalbrus.multibans.common.utils.Message;
@@ -47,17 +47,10 @@ public class UnmuteChat extends Command {
                 .getPunishmentManager()
                 .getActivePunishments(player.getUniqueId(), MultiPermanentlyChatMute.class);
 
-            PunishmentExecutor cancellationCreator;
-            if (sender instanceof OnlinePlayer onlinePlayer) {
-                cancellationCreator = new MultiOnlinePlayerPunishmentExecutor(onlinePlayer);
-            } else if (sender instanceof Console console) {
-                cancellationCreator = new MultiConsolePunishmentExecutor(console);
-            } else {
-                throw new IllegalArgumentException("Creator is illegal");
-            }
+            PunishmentExecutor executor = new MultiOnlinePunishmentExecutor(sender);
 
             for (MultiPermanentlyChatMute punishment : activeMutes) {
-                punishment.deactivate(cancellationCreator, System.currentTimeMillis(),
+                punishment.deactivate(executor, System.currentTimeMillis(),
                     reason.toString());
             }
 
@@ -66,7 +59,7 @@ public class UnmuteChat extends Command {
                 .getActivePunishments(player.getUniqueId(), MultiTemporaryChatMute.class);
 
             for (MultiTemporaryChatMute punishment : activeTempMutes) {
-                punishment.deactivate(cancellationCreator, System.currentTimeMillis(),
+                punishment.deactivate(executor, System.currentTimeMillis(),
                     reason.toString());
             }
         } catch (Exception exception) {

@@ -5,9 +5,7 @@ import me.kvalbrus.multibans.api.punishment.Punishment
 import me.kvalbrus.multibans.api.punishment.punishments.PunishmentType
 import me.kvalbrus.multibans.api.punishment.TemporaryPunishment
 import me.kvalbrus.multibans.api.punishment.action.Action
-import me.kvalbrus.multibans.api.punishment.action.ActivationAction
 import me.kvalbrus.multibans.api.punishment.action.CreationAction
-import me.kvalbrus.multibans.api.punishment.action.DeactivationAction
 import me.kvalbrus.multibans.api.punishment.executor.OnlinePunishmentExecutor
 import me.kvalbrus.multibans.api.punishment.executor.PunishmentExecutor
 import me.kvalbrus.multibans.api.punishment.target.OnlinePunishmentTarget
@@ -114,8 +112,8 @@ abstract class MultiPunishment(
 
     @Synchronized
     override fun create() {
-        this.pluginManager.activatePunishment(this)
         this.updateData()
+        this.pluginManager.createPunishment(this, this.creationAction)
         this.sendMessageAboutCreation()
     }
 
@@ -123,6 +121,7 @@ abstract class MultiPunishment(
     override fun delete() {
         this.pluginManager.dataProvider?.deletePunishment(this)
         this.deleteData()
+        this.pluginManager.deletePunishment(this)
         this.sendMessageAboutDelete()
     }
 
@@ -199,9 +198,9 @@ abstract class MultiPunishment(
     }
 
     protected fun sendMessageToCreator(message: String?) {
-        if (creator is OnlinePunishmentExecutor) {
+        if (this.creator is OnlinePunishmentExecutor) {
             val creatorMessage = ReplacedString(message).replacePunishment(this)
-            (creator as OnlinePunishmentExecutor).sendMessage(creatorMessage.string())
+            (this.creator as OnlinePunishmentExecutor).sendMessage(creatorMessage.string())
         }
     }
 

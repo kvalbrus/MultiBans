@@ -19,9 +19,4 @@ interface Cancelable {
     fun lastDeactivator() : PunishmentExecutor?
 
     val cancelled : Boolean
-
-//    var cancellationCreator: PunishmentCreator?
-//    var cancellationDate: Long
-//    var cancellationReason: String
-//    var cancelled: Boolean
 }
