@@ -17,7 +17,7 @@ public class Reload extends Command {
     @Override
     public boolean cmd(@NotNull CommandSender sender, String[] args) {
         this.getPluginManager().reload();
-        sender.sendMessage(Message.RELOAD.getMessage());
+        sender.sendMessage(Message.RELOAD.getText());
         return true;
     }
 

@@ -15,8 +15,11 @@ interface DataProvider {
     @Throws(Exception::class) fun deletePunishment(punishment: Punishment)
     @Throws(Exception::class) fun hasPunishment(id: String): Boolean
     @Throws(Exception::class) fun getPunishment(id: String): Punishment?
+    @Throws(Exception::class) fun getAllPunishments(): List<Punishment>
     @Throws(Exception::class) fun <T : Punishment?> getTargetHistory(uuid: UUID?): List<T>
     @Throws(Exception::class) fun <T : Punishment?> getTargetHistory(name: String?): List<T>
-    @Throws(Exception::class) fun <T : Punishment?> getTargetHistoryByIp(ip: String): List<T>
+    @Throws(Exception::class) fun getTargetHistoryByIp(ip: String): List<Punishment>
     @Throws(Exception::class) fun <T : Punishment?> getCreatorHistory(creator: String?): List<T>
+    @Throws(Exception::class) fun getSessionHistory(uuid: UUID): List<Session>
+    @Throws(Exception::class) fun getSessionHistory(name: String): List<Session>
 }

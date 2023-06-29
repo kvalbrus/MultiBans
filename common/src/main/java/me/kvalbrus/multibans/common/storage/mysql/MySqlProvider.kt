@@ -13,6 +13,7 @@ import me.kvalbrus.multibans.common.punishment.action.MultiCreationAction
 import me.kvalbrus.multibans.common.punishment.action.MultiDeactivationAction
 import me.kvalbrus.multibans.common.punishment.creator.MultiOnlinePunishmentExecutor
 import me.kvalbrus.multibans.common.punishment.creator.MultiPunishmentExecutor
+import me.kvalbrus.multibans.common.session.MultiSession
 import me.kvalbrus.multibans.common.storage.DataProviderSettings
 import me.kvalbrus.multibans.common.storage.DataProviderType
 import java.sql.Connection
@@ -28,19 +29,35 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
 
     @Throws(SQLException::class)
     override fun initialization() {
-        if (dataProviderSettings.type == DataProviderType.MY_SQL) {
-            source = HikariDataSource()
+        if (dataProviderSettings.type == DataProviderType.MYSQL) {
+            this.source = HikariDataSource()
             val properties = dataProviderSettings.properties
-            source!!.jdbcUrl = "jdbc:mysql://" +
+            this.source!!.poolName = "multibans-hikari"
+            this.source!!.jdbcUrl = "jdbc:mysql://" +
                     properties.getProperty("dataSource.serverName") + ":" +
                     properties.getProperty("dataSource.portNumber") + "/" + properties.getProperty("dataSource.databaseName")
-            source!!.username = properties.getProperty("dataSource.user")
-            source!!.password = properties.getProperty("dataSource.password")
+            this.source!!.username = properties.getProperty("dataSource.user")
+            this.source!!.password = properties.getProperty("dataSource.password")
+        } else if (dataProviderSettings.type == DataProviderType.MARIADB) {
+            val properties = dataProviderSettings.properties
+            val config = HikariConfig()
+            for (property in this.dataProviderSettings.properties.entries) {
+                config.addDataSourceProperty(property.key.toString(), property.value)
+            }
+
+            config.poolName = "multibans-hikari"
+            config.driverClassName = "org.mariadb.jdbc.Driver"
+            config.jdbcUrl = "jdbc:mariadb://" + properties.getProperty("dataSource.serverName") +
+                    ":" + properties.getProperty("dataSource.portNumber") + "/" +
+                    properties.getProperty("dataSource.databaseName")
+            config.username = properties.getProperty("dataSource.user")
+            config.password = properties.getProperty("dataSource.password")
+
+            this.source = HikariDataSource(config)
         } else {
-            source = HikariDataSource(HikariConfig(dataProviderSettings.properties))
+            this.source = HikariDataSource(HikariConfig(dataProviderSettings.properties))
         }
 
-        source!!.poolName = "MultiBans-Pool"
 
         createTables()
     }
@@ -94,6 +111,21 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
 
     @Throws(SQLException::class)
     override fun getPunishment(id: String): Punishment? = source!!.connection.use { loadPunishment(it, id) }
+    override fun getAllPunishments(): List<Punishment> {
+        val punishments = mutableListOf<Punishment>()
+        this.source!!.connection.use { connection ->
+            connection.prepareStatement(SQLQuery.GET_ALL_PUNISHMENTS).use { statement ->
+                statement.executeQuery().use { resultSet ->
+                    while(resultSet.next()) {
+                        val punishment = readPunishment(connection, resultSet);
+                        punishments.add(punishment)
+                    }
+                }
+            }
+        }
+
+        return punishments
+    }
 
     @Throws(SQLException::class)
     override fun hasPunishment(id: String): Boolean {
@@ -159,15 +191,15 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
         return history
     }
 
-    override fun <T : Punishment?> getTargetHistoryByIp(ip: String): List<T> {
-        val history: MutableList<T> = ArrayList()
+    override fun getTargetHistoryByIp(ip: String): List<Punishment> {
+        val history: MutableList<Punishment> = ArrayList()
         source!!.connection.use { connection ->
             connection.prepareStatement(SQLQuery.GET_PUNISHMENTS_BY_TARGET_IP).use { statement ->
                 statement.setString(1, ip)
                 val resultSet = statement.executeQuery()
                 while (resultSet.next()) {
                     val punishment = readPunishment(connection, resultSet)
-                    history.add(punishment as T)
+                    history.add(punishment)
                 }
             }
         }
@@ -188,6 +220,42 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
                     while (resultSet.next()) {
                         val punishment = readPunishment(connection, resultSet)
                         history.add(punishment as T)
+                    }
+                }
+            }
+        }
+
+        return history
+    }
+
+    override fun getSessionHistory(uuid: UUID): List<Session> {
+        val history = mutableListOf<Session>()
+        this.source!!.connection.use { connection ->
+            connection.prepareStatement(SQLQuery.GET_SESSION_HISTORY_BY_UUID).use { statement ->
+                statement.setString(1, uuid.toString())
+
+                statement.executeQuery().use { resultSet ->
+                    while(resultSet.next()) {
+                        val session = loadSession(resultSet)
+                        history.add(session)
+                    }
+                }
+            }
+        }
+
+        return history
+    }
+
+    override fun getSessionHistory(name: String): List<Session> {
+        val history = mutableListOf<Session>()
+        this.source!!.connection.use { connection ->
+            connection.prepareStatement(SQLQuery.GET_SESSION_HISTORY_BY_NAME).use { statement ->
+                statement.setString(1, name)
+
+                statement.executeQuery().use { resultSet ->
+                    while(resultSet.next()) {
+                        val session = loadSession(resultSet)
+                        history.add(session)
                     }
                 }
             }
@@ -343,6 +411,17 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
         }
 
         return actions
+    }
+
+    @Throws(SQLException::class)
+    private fun loadSession(resultSet: ResultSet): Session {
+        val uuid = UUID.fromString(resultSet.getString(1))
+        val name = resultSet.getString(2)
+        val ip = resultSet.getString(3)
+        val join = resultSet.getLong(4)
+        val quit = resultSet.getLong(5)
+
+        return MultiSession(uuid, name, ip, join, quit)
     }
 
     @Throws(SQLException::class)

@@ -15,6 +15,7 @@ import me.kvalbrus.multibans.common.managers.PluginManager
 import me.kvalbrus.multibans.common.permissions.Permission
 import me.kvalbrus.multibans.common.punishment.action.MultiCreationAction
 import me.kvalbrus.multibans.common.punishment.punishments.*
+import me.kvalbrus.multibans.common.utils.Message
 import me.kvalbrus.multibans.common.utils.ReplacedString
 import java.util.*
 
@@ -85,16 +86,16 @@ abstract class MultiPunishment(
             this.updateData()
         }
 
-    abstract val createMessageForListener: String
-    abstract val createMessageForExecutor: String
-    abstract val createMessageForTarget: String
-    abstract val deleteMessageForListener: String
-    abstract val deleteMessageForExecutor: String
-    abstract val deleteMessageForTarget: String
-    abstract val reasonChangeMessageForExecutor: String
-    abstract val reasonChangeMessageForListener: String
-    abstract val commentChangeMessageForExecutor: String
-    abstract val commentChangeMessageForListener: String
+    abstract val createMessageForListener: Message
+    abstract val createMessageForExecutor: Message
+    abstract val createMessageForTarget: Message
+    abstract val deleteMessageForListener: Message
+    abstract val deleteMessageForExecutor: Message
+    abstract val deleteMessageForTarget: Message
+    abstract val reasonChangeMessageForExecutor: Message
+    abstract val reasonChangeMessageForListener: Message
+    abstract val commentChangeMessageForExecutor: Message
+    abstract val commentChangeMessageForListener: Message
     abstract val permissionForListener: Permission
 
     constructor(
@@ -180,8 +181,8 @@ abstract class MultiPunishment(
         }
     }
 
-    protected fun sendMessageToListeners(message: String?) {
-        val listenMessage = ReplacedString(message).replacePunishment(this)
+    protected fun sendMessageToListeners(message: Message) {
+        val listenMessage = ReplacedString(message.getText()).replacePunishment(this)
 
         // Listener #1 - online players
         Arrays.stream(pluginManager.onlinePlayers)
@@ -197,16 +198,16 @@ abstract class MultiPunishment(
         }
     }
 
-    protected fun sendMessageToCreator(message: String?) {
+    protected fun sendMessageToCreator(message: Message) {
         if (this.creator is OnlinePunishmentExecutor) {
-            val creatorMessage = ReplacedString(message).replacePunishment(this)
+            val creatorMessage = ReplacedString(message.getText()).replacePunishment(this)
             (this.creator as OnlinePunishmentExecutor).sendMessage(creatorMessage.string())
         }
     }
 
-    protected fun sendMessageToTarget(message: String?) {
+    protected fun sendMessageToTarget(message: Message) {
         if (this.target is OnlinePunishmentTarget) {
-            val targetMessage = ReplacedString(message).replacePunishment(this)
+            val targetMessage = ReplacedString(message.getText()).replacePunishment(this)
             (this.target as OnlinePunishmentTarget).sendMessage(targetMessage.string())
         }
     }

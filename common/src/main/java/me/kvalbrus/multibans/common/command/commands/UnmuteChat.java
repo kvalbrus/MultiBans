@@ -4,15 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import me.kvalbrus.multibans.api.CommandSender;
-import me.kvalbrus.multibans.api.Console;
-import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.Player;
 import me.kvalbrus.multibans.api.punishment.executor.PunishmentExecutor;
 import me.kvalbrus.multibans.common.command.Command;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.permissions.Permission;
 import me.kvalbrus.multibans.common.punishment.creator.MultiOnlinePunishmentExecutor;
-import me.kvalbrus.multibans.common.punishment.creator.MultiPunishmentExecutor;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiPermanentlyChatMute;
 import me.kvalbrus.multibans.common.punishment.punishments.MultiTemporaryChatMute;
 import me.kvalbrus.multibans.common.utils.Message;
@@ -27,13 +24,13 @@ public class UnmuteChat extends Command {
     @Override
     public boolean cmd(@NotNull CommandSender sender, String[] args) {
         if (args.length < 2) {
-            sender.sendMessage(Message.NOT_ENOUGH_ARGUMENTS.getMessage());
+            sender.sendMessage(Message.NOT_ENOUGH_ARGUMENTS.getText());
             return false;
         }
 
         Player player = super.getPluginManager().getOfflinePlayer(args[0]);
         if(player == null) {
-            sender.sendMessage(Message.NOT_FOUND_PLAYER.getMessage());
+            sender.sendMessage(Message.NOT_FOUND_PLAYER.getText());
             return false;
         }
 
@@ -71,7 +68,7 @@ public class UnmuteChat extends Command {
 
     @Override
     public String getNotPermissionMessage() {
-        return Message.NOT_PERMISSION_UNMUTECHAT_EXECUTE.getMessage();
+        return Message.NOT_PERMISSION_UNMUTECHAT_EXECUTE.getText();
     }
 
     @Override

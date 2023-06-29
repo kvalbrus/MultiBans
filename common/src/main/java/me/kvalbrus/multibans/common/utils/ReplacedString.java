@@ -38,7 +38,7 @@ public class ReplacedString {
                 temporary.getDuration(),
                 temporary.getStartedDate() + temporary.getDuration() - System.currentTimeMillis())));
         } else if (punishment instanceof PermanentlyPunishment) {
-            this.replace("%punishment_duration%", Message.PERMANENTLY.getMessage());
+            this.replace("%punishment_duration%", Message.PERMANENTLY.getText());
         }
 
         return this;
@@ -66,17 +66,17 @@ public class ReplacedString {
 
     public ReplacedString replacePunishmentCreatedDate(Punishment punishment) {
         return this.replace("%punishment_date_created%",
-            StringUtil.getStringDate(punishment.getCreatedDate(), Message.DATE_FORMAT.getMessage()));
+            StringUtil.getStringDate(punishment.getCreatedDate(), Message.DATE_FORMAT.getText()));
     }
 
     public ReplacedString replacePunishmentStartedDate(TemporaryPunishment punishment) {
         return this.replace("%punishment_date_started%",
-            StringUtil.getStringDate(punishment.getStartedDate(), Message.DATE_FORMAT.getMessage()));
+            StringUtil.getStringDate(punishment.getStartedDate(), Message.DATE_FORMAT.getText()));
     }
 
     public ReplacedString replacePunishmentEndDate(TemporaryPunishment punishment) {
         return this.replace("%punishment_date_end%",
-            StringUtil.getStringDate(punishment.getStartedDate() + punishment.getDuration(), Message.DATE_FORMAT.getMessage()));
+            StringUtil.getStringDate(punishment.getStartedDate() + punishment.getDuration(), Message.DATE_FORMAT.getText()));
     }
 
     public ReplacedString replacePunishmentDuration(TemporaryPunishment punishment) {

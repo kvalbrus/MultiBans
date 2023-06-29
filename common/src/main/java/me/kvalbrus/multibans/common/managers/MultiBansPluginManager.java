@@ -16,6 +16,7 @@ import java.util.Properties;
 import java.util.UUID;
 import me.kvalbrus.multibans.api.DataProvider;
 import me.kvalbrus.multibans.api.OnlinePlayer;
+import me.kvalbrus.multibans.api.managers.SessionManager;
 import me.kvalbrus.multibans.common.session.MultiSession;
 import me.kvalbrus.multibans.common.storage.DataProviderSettings;
 import me.kvalbrus.multibans.common.storage.DataProviderType;
@@ -27,7 +28,9 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class MultiBansPluginManager implements PluginManager {
 
-    private final me.kvalbrus.multibans.api.managers.PunishmentManager punishmentManager;
+    private final MultiPunishmentManager punishmentManager;
+
+    private final SessionManager sessionManager;
 
     private DataProvider dataProvider;
 
@@ -36,7 +39,8 @@ public abstract class MultiBansPluginManager implements PluginManager {
     private Map<UUID, MultiSession> playerSessions = new HashMap<>();
 
     public MultiBansPluginManager() {
-        this.punishmentManager = new PunishmentManager(this);
+        this.punishmentManager = new MultiPunishmentManager(this);
+        this.sessionManager = new MultiSessionManager(this);
     }
 
     @Override
@@ -87,8 +91,14 @@ public abstract class MultiBansPluginManager implements PluginManager {
     }
 
     @NotNull
-    public final me.kvalbrus.multibans.api.managers.PunishmentManager getPunishmentManager() {
+    public final MultiPunishmentManager getPunishmentManager() {
         return this.punishmentManager;
+    }
+
+    @NotNull
+    @Override
+    public SessionManager getSessionManager() {
+        return this.sessionManager;
     }
 
     public void playerJoin(OnlinePlayer player) {
@@ -113,11 +123,12 @@ public abstract class MultiBansPluginManager implements PluginManager {
     private boolean loadDataProvider() {
         DataProviderSettings dataProviderSettings = new DataProviderSettings(this).load();
 
-        if (dataProviderSettings.getType() == DataProviderType.MY_SQL) {
+        if (dataProviderSettings.getType() == DataProviderType.MYSQL || dataProviderSettings.getType() == DataProviderType.MARIADB) {
             this.dataProvider = new MySqlProvider(this, dataProviderSettings);
             try {
                 this.dataProvider.initialization();
             } catch (Exception exception) {
+                exception.printStackTrace();
                 this.dataProvider = null;
             }
         }
@@ -147,9 +158,9 @@ public abstract class MultiBansPluginManager implements PluginManager {
 
             for (final Message message : Message.values()) {
                 if (properties.getProperty(message.getKey()) != null) {
-                    message.setMessage(properties.getProperty(message.getKey()));
+                    message.setText(properties.getProperty(message.getKey()));
                 } else {
-                    properties.put(message.getKey(), message.getMessage());
+                    properties.put(message.getKey(), message.getText());
                 }
             }
 

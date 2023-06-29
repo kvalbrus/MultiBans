@@ -1,15 +1,14 @@
 package me.kvalbrus.multibans.common.punishment.punishments
 
 import me.kvalbrus.multibans.api.punishment.action.Action
-import me.kvalbrus.multibans.api.punishment.action.ActivationAction
 import me.kvalbrus.multibans.api.punishment.action.CreationAction
-import me.kvalbrus.multibans.api.punishment.action.DeactivationAction
 import me.kvalbrus.multibans.api.punishment.punishments.PunishmentType
 import me.kvalbrus.multibans.api.punishment.punishments.PermanentlyChatMute
 import me.kvalbrus.multibans.common.managers.PluginManager
 import me.kvalbrus.multibans.common.permissions.Permission
 import me.kvalbrus.multibans.common.utils.Message.*
 import me.kvalbrus.multibans.common.punishment.MultiPermanentlyPunishment
+import me.kvalbrus.multibans.common.utils.Message
 
 final class MultiPermanentlyChatMute : MultiPermanentlyPunishment, PermanentlyChatMute {
 
@@ -24,21 +23,21 @@ final class MultiPermanentlyChatMute : MultiPermanentlyPunishment, PermanentlyCh
         cancelled: Boolean) : super(pluginManager, PunishmentType.MUTE, id, creationAction,
         activations, deactivations, comment, servers, cancelled)
 
-    override val activateMessageForListener: String = MUTECHAT_ACTIVATE_LISTEN.message
-    override val activateMessageForExecutor: String = MUTECHAT_ACTIVATE_EXECUTOR.message
-    override val activateMessageForTarget: String = MUTECHAT_ACTIVATE_TARGET.message
-    override val deactivateMessageForListener: String = MUTECHAT_DEACTIVATE_LISTEN.message
-    override val deactivateMessageForExecutor: String = MUTECHAT_DEACTIVATE_EXECUTOR.message
-    override val deactivateMessageForTarget: String = MUTECHAT_DEACTIVATE_TARGET.message
-    override val createMessageForListener: String = MUTECHAT_ACTIVATE_LISTEN.message
-    override val createMessageForExecutor: String = MUTECHAT_ACTIVATE_EXECUTOR.message
-    override val createMessageForTarget: String = MUTECHAT_ACTIVATE_TARGET.message
-    override val deleteMessageForListener: String = MUTECHAT_DELETE_LISTEN.message
-    override val deleteMessageForExecutor: String = MUTECHAT_DELETE_EXECUTOR.message
-    override val deleteMessageForTarget: String = MUTECHAT_DELETE_TARGET.message
-    override val reasonChangeMessageForExecutor: String = MUTECHAT_REASON_CREATE_CHANGE_EXECUTOR.message
-    override val reasonChangeMessageForListener: String = MUTECHAT_REASON_CREATE_CHANGE_LISTEN.message
-    override val commentChangeMessageForExecutor: String = MUTECHAT_COMMENT_CHANGE_EXECUTOR.message
-    override val commentChangeMessageForListener: String = MUTECHAT_COMMENT_CHANGE_LISTEN.message
+    override val activateMessageForListener: Message = MUTECHAT_ACTIVATE_LISTEN
+    override val activateMessageForExecutor: Message = MUTECHAT_ACTIVATE_EXECUTOR
+    override val activateMessageForTarget: Message = MUTECHAT_ACTIVATE_TARGET
+    override val deactivateMessageForListener: Message = MUTECHAT_DEACTIVATE_LISTEN
+    override val deactivateMessageForExecutor: Message = MUTECHAT_DEACTIVATE_EXECUTOR
+    override val deactivateMessageForTarget: Message = MUTECHAT_DEACTIVATE_TARGET
+    override val createMessageForListener: Message = MUTECHAT_ACTIVATE_LISTEN
+    override val createMessageForExecutor: Message = MUTECHAT_ACTIVATE_EXECUTOR
+    override val createMessageForTarget: Message = MUTECHAT_ACTIVATE_TARGET
+    override val deleteMessageForListener: Message = MUTECHAT_DELETE_LISTEN
+    override val deleteMessageForExecutor: Message = MUTECHAT_DELETE_EXECUTOR
+    override val deleteMessageForTarget: Message = MUTECHAT_DELETE_TARGET
+    override val reasonChangeMessageForExecutor: Message = MUTECHAT_REASON_CREATE_CHANGE_EXECUTOR
+    override val reasonChangeMessageForListener: Message = MUTECHAT_REASON_CREATE_CHANGE_LISTEN
+    override val commentChangeMessageForExecutor: Message = MUTECHAT_COMMENT_CHANGE_EXECUTOR
+    override val commentChangeMessageForListener: Message = MUTECHAT_COMMENT_CHANGE_LISTEN
     override val permissionForListener: Permission = Permission.PUNISHMENT_MUTECHAT_LISTEN
 }

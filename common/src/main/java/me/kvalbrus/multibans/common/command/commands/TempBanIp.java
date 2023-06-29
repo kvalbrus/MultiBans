@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import me.kvalbrus.multibans.api.CommandSender;
-import me.kvalbrus.multibans.api.Console;
 import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.Player;
 import me.kvalbrus.multibans.api.punishment.Punishment;
@@ -17,7 +16,6 @@ import me.kvalbrus.multibans.common.exceptions.IllegalDateFormatException;
 import me.kvalbrus.multibans.common.exceptions.NotMatchArgumentsException;
 import me.kvalbrus.multibans.common.managers.PluginManager;
 import me.kvalbrus.multibans.common.punishment.creator.MultiOnlinePunishmentExecutor;
-import me.kvalbrus.multibans.common.punishment.creator.MultiPunishmentExecutor;
 import me.kvalbrus.multibans.common.punishment.target.MultiOnlinePunishmentTarget;
 import me.kvalbrus.multibans.common.punishment.target.MultiPunishmentTarget;
 import me.kvalbrus.multibans.common.utils.Message;
@@ -35,12 +33,12 @@ public class TempBanIp extends Command {
         int length = args.length;
 
         if (length < 2) {
-            sender.sendMessage(Message.NOT_ENOUGH_ARGUMENTS.getMessage());
+            sender.sendMessage(Message.NOT_ENOUGH_ARGUMENTS.getText());
             return false;
         } else {
             Player player = super.getPluginManager().getOfflinePlayer(args[0]);
             if(player == null) {
-                sender.sendMessage(Message.NOT_FOUND_PLAYER.getMessage());
+                sender.sendMessage(Message.NOT_FOUND_PLAYER.getText());
                 return false;
             }
 
@@ -54,7 +52,7 @@ public class TempBanIp extends Command {
             if (length == 2) {
                 try {
                     StringUtil.getTime(args[1]);
-                    sender.sendMessage(Message.NOT_ENOUGH_ARGUMENTS.getMessage());
+                    sender.sendMessage(Message.NOT_ENOUGH_ARGUMENTS.getText());
                     return false;
                 } catch (IllegalDateFormatException exception) {
                     throw new NotMatchArgumentsException();
@@ -92,7 +90,7 @@ public class TempBanIp extends Command {
 
     @Override
     public String getNotPermissionMessage() {
-        return Message.NOT_PERMISSION_TEMPBANIP_EXECUTE.getMessage();
+        return Message.NOT_PERMISSION_TEMPBANIP_EXECUTE.getText();
     }
 
     @NotNull

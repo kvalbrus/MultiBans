@@ -173,50 +173,15 @@ public class BukkitPluginManager extends MultiBansPluginManager {
 
     @Override
     public void createPunishment(@NotNull Punishment punishment, @NotNull CreationAction action) {
-        if (punishment.getType() == PunishmentType.BAN) {
-            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
-            if (player != null) {
-                ReplacedString title = new ReplacedString(Message.TITLE_HEADER.getMessage() +
-                    Message.TITLE_BAN.getMessage() + Message.TITLE_FOOTER.getMessage())
-                    .replacePunishment(punishment);
+        var player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
+        if (player != null) {
+            if (punishment.getType() == PunishmentType.BAN || punishment.getType() == PunishmentType.TEMP_BAN ||
+                punishment.getType() == PunishmentType.BAN_IP || punishment.getType() == PunishmentType.TEMP_BAN_IP) {
+                player.kickPlayer(this.getPunishmentManager()
+                    .getBanMessage(punishment.getTarget().getUniqueId()));
 
-                player.kickPlayer(title.string());
-            }
-        } else if (punishment.getType() == PunishmentType.TEMP_BAN) {
-            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
-            if (player != null) {
-                ReplacedString title = new ReplacedString(
-                    Message.TITLE_HEADER.getMessage() + Message.TITLE_TEMPBAN.getMessage() +
-                        Message.TITLE_FOOTER.getMessage())
-                    .replacePunishment(punishment);
-
-                player.kickPlayer(title.string());
-            }
-        } else if (punishment.getType() == PunishmentType.BAN_IP) {
-            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
-            if (player != null) {
-                ReplacedString title = new ReplacedString(
-                    Message.TITLE_HEADER.getMessage() + Message.TITLE_BANIP.getMessage() +
-                        Message.TITLE_FOOTER.getMessage())
-                    .replacePunishment(punishment);
-
-                player.kickPlayer(title.string());
-            }
-        } else if (punishment.getType() == PunishmentType.TEMP_BAN_IP) {
-            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
-            if (player != null) {
-                ReplacedString title = new ReplacedString(
-                    Message.TITLE_HEADER.getMessage() + Message.TITLE_TEMPBANIP.getMessage() +
-                        Message.TITLE_FOOTER.getMessage())
-                    .replacePunishment(punishment);
-
-                player.kickPlayer(title.string());
-            }
-        } else if (punishment.getType() == PunishmentType.KICK) {
-            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
-            if (player != null) {
-                ReplacedString punishmentMessage = new ReplacedString(Message.KICK_ACTIVATE_TARGET.getMessage())
-                    .replacePunishment(punishment);
+            } else if (punishment.getType() == PunishmentType.KICK) {
+                ReplacedString punishmentMessage = new ReplacedString(Message.KICK_ACTIVATE_TARGET.getText()).replacePunishment(punishment);
                 player.kickPlayer(punishmentMessage.string());
             }
         }
@@ -230,50 +195,15 @@ public class BukkitPluginManager extends MultiBansPluginManager {
 
     @Override
     public void activatePunishment(@NotNull Punishment punishment, @NotNull ActivationAction action) {
-        if (punishment.getType() == PunishmentType.BAN) {
-            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
-            if (player != null) {
-                ReplacedString title = new ReplacedString(Message.TITLE_HEADER.getMessage() +
-                    Message.TITLE_BAN.getMessage() + Message.TITLE_FOOTER.getMessage())
-                    .replacePunishment(punishment);
+        var player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
+        if (player != null) {
+            if (punishment.getType() == PunishmentType.BAN || punishment.getType() == PunishmentType.TEMP_BAN ||
+                punishment.getType() == PunishmentType.BAN_IP || punishment.getType() == PunishmentType.TEMP_BAN_IP) {
+                player.kickPlayer(this.getPunishmentManager()
+                    .getBanMessage(punishment.getTarget().getUniqueId()));
 
-                player.kickPlayer(title.string());
-            }
-        } else if (punishment.getType() == PunishmentType.TEMP_BAN) {
-            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
-            if (player != null) {
-                ReplacedString title = new ReplacedString(
-                    Message.TITLE_HEADER.getMessage() + Message.TITLE_TEMPBAN.getMessage() +
-                        Message.TITLE_FOOTER.getMessage())
-                    .replacePunishment(punishment);
-
-                player.kickPlayer(title.string());
-            }
-        } else if (punishment.getType() == PunishmentType.BAN_IP) {
-            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
-            if (player != null) {
-                ReplacedString title = new ReplacedString(
-                    Message.TITLE_HEADER.getMessage() + Message.TITLE_BANIP.getMessage() +
-                        Message.TITLE_FOOTER.getMessage())
-                    .replacePunishment(punishment);
-
-                player.kickPlayer(title.string());
-            }
-        } else if (punishment.getType() == PunishmentType.TEMP_BAN_IP) {
-            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
-            if (player != null) {
-                ReplacedString title = new ReplacedString(
-                    Message.TITLE_HEADER.getMessage() + Message.TITLE_TEMPBANIP.getMessage() +
-                        Message.TITLE_FOOTER.getMessage())
-                    .replacePunishment(punishment);
-
-                player.kickPlayer(title.string());
-            }
-        } else if (punishment.getType() == PunishmentType.KICK) {
-            Player player = this.plugin.getServer().getPlayer(punishment.getTarget().getUniqueId());
-            if (player != null) {
-                ReplacedString punishmentMessage = new ReplacedString(Message.KICK_ACTIVATE_TARGET.getMessage())
-                    .replacePunishment(punishment);
+            } else if (punishment.getType() == PunishmentType.KICK) {
+                ReplacedString punishmentMessage = new ReplacedString(Message.KICK_ACTIVATE_TARGET.getText()).replacePunishment(punishment);
                 player.kickPlayer(punishmentMessage.string());
             }
         }

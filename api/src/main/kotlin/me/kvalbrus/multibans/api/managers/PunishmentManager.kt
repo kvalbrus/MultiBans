@@ -9,16 +9,19 @@ import java.util.*
 interface PunishmentManager {
 
     @Throws(Exception::class)
-    fun <T : Punishment> getPlayerHistory(name: String) : List<T>
+    fun getAllPunishments(): List<Punishment>
 
     @Throws(Exception::class)
-    fun <T : Punishment> getPlayerHistory(uuid: UUID) : List<T>
+    fun <T : Punishment> getPlayerHistory(name: String): List<T>
+
+    @Throws(Exception::class)
+    fun <T : Punishment> getPlayerHistory(uuid: UUID): List<T>
 
     @Throws(Exception::class)
     fun <T : Punishment> getPlayerHistory(uuid: UUID, clazz: Class<T>): List<T>
 
     @Throws(Exception::class)
-    fun <T : Punishment> getPlayerHistoryByIp(ip: String) : List<T>
+    fun getPlayerHistoryByIp(ip: String): List<Punishment>
 
     @Throws(Exception::class)
     fun <T : Punishment> getCreatorHistory(creatorName: String): List<T>
@@ -33,7 +36,7 @@ interface PunishmentManager {
     fun hasPunishment(id: String): Boolean
 
     @Throws(Exception::class)
-    fun getPunishment(i: String): Punishment
+    fun getPunishment(id: String): Punishment
 
     @Throws(Exception::class)
     fun hasActiveBan(uuid: UUID): Boolean

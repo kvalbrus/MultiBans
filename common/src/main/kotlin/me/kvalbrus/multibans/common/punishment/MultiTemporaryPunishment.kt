@@ -11,6 +11,7 @@ import me.kvalbrus.multibans.api.punishment.executor.PunishmentExecutor
 import me.kvalbrus.multibans.common.managers.PluginManager
 import me.kvalbrus.multibans.common.punishment.action.MultiActivationAction
 import me.kvalbrus.multibans.common.punishment.action.MultiDeactivationAction
+import me.kvalbrus.multibans.common.utils.Message
 
 abstract class MultiTemporaryPunishment : MultiPunishment, TemporaryPunishment {
 
@@ -201,13 +202,13 @@ abstract class MultiTemporaryPunishment : MultiPunishment, TemporaryPunishment {
         sendMessageToTarget(this.deactivateMessageForTarget)
     }
 
-    abstract val activateMessageForListener: String
-    abstract val activateMessageForExecutor: String
-    abstract val activateMessageForTarget: String
+    abstract val activateMessageForListener: Message
+    abstract val activateMessageForExecutor: Message
+    abstract val activateMessageForTarget: Message
 
-    abstract val deactivateMessageForListener: String
-    abstract val deactivateMessageForExecutor: String
-    abstract val deactivateMessageForTarget: String
+    abstract val deactivateMessageForListener: Message
+    abstract val deactivateMessageForExecutor: Message
+    abstract val deactivateMessageForTarget: Message
 
     @Synchronized
     private fun deleteAndSortPunishments() {

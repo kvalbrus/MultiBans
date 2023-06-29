@@ -6,13 +6,13 @@ import org.jetbrains.annotations.Nullable;
 
 public enum DataProviderType {
 
-    MY_SQL("MySql");
+    MYSQL("MySQL"),
+    MARIADB("MariaDB");
 
-    @Getter
-    private final String name;
+    public final String typeName;
 
-    DataProviderType(@NotNull final String name) {
-        this.name = name;
+    DataProviderType(@NotNull final String typeName) {
+        this.typeName = typeName;
     }
 
     @Nullable
@@ -22,7 +22,7 @@ public enum DataProviderType {
         }
 
         for (DataProviderType type : DataProviderType.values()) {
-            if (type.name.equals(name)) {
+            if (type.typeName.equalsIgnoreCase(name)) {
                 return type;
             }
         }

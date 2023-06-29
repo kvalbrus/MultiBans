@@ -7,6 +7,7 @@ import me.kvalbrus.multibans.common.managers.PluginManager
 import me.kvalbrus.multibans.common.permissions.Permission
 import me.kvalbrus.multibans.common.utils.Message.*
 import me.kvalbrus.multibans.common.punishment.MultiPunishment
+import me.kvalbrus.multibans.common.utils.Message
 
 final class Kick : MultiPunishment {
 
@@ -17,26 +18,16 @@ final class Kick : MultiPunishment {
                 servers: List<String>) :
             super(pluginManager, PunishmentType.KICK, id, creationAction, comment, servers)
 
-//    constructor(pluginManager: PluginManager,
-//                id: String,
-//                target: PunishmentTarget,
-//                creator: PunishmentExecutor,
-//                createdDate: Long,
-//                reason: String,
-//                comment: String,
-//                servers: List<String>) : super(pluginManager, PunishmentType.KICK, id, target,
-//        creator, createdDate, reason, comment, servers)
-
-    override val createMessageForListener: String = KICK_ACTIVATE_LISTEN.message
-    override val createMessageForExecutor: String = KICK_ACTIVATE_EXECUTOR.message
-    override val createMessageForTarget: String = KICK_ACTIVATE_TARGET.message
-    override val deleteMessageForListener: String = KICK_DELETE_LISTEN.message
-    override val deleteMessageForExecutor: String = KICK_ACTIVATE_EXECUTOR.message
-    override val deleteMessageForTarget: String = KICK_ACTIVATE_TARGET.message
-    override val reasonChangeMessageForExecutor: String = KICK_REASON_CREATE_CHANGE_EXECUTOR.message
-    override val reasonChangeMessageForListener: String = KICK_REASON_CREATE_CHANGE_LISTEN.message
-    override val commentChangeMessageForExecutor: String = KICK_COMMENT_CHANGE_EXECUTOR.message
-    override val commentChangeMessageForListener: String = KICK_COMMENT_CHANGE_LISTEN.message
+    override val createMessageForListener: Message = KICK_ACTIVATE_LISTEN
+    override val createMessageForExecutor: Message = KICK_ACTIVATE_EXECUTOR
+    override val createMessageForTarget: Message = KICK_ACTIVATE_TARGET
+    override val deleteMessageForListener: Message = KICK_DELETE_LISTEN
+    override val deleteMessageForExecutor: Message = KICK_ACTIVATE_EXECUTOR
+    override val deleteMessageForTarget: Message = KICK_ACTIVATE_TARGET
+    override val reasonChangeMessageForExecutor: Message = KICK_REASON_CREATE_CHANGE_EXECUTOR
+    override val reasonChangeMessageForListener: Message = KICK_REASON_CREATE_CHANGE_LISTEN
+    override val commentChangeMessageForExecutor: Message = KICK_COMMENT_CHANGE_EXECUTOR
+    override val commentChangeMessageForListener: Message = KICK_COMMENT_CHANGE_LISTEN
     override val permissionForListener: Permission = Permission.PUNISHMENT_KICK_LISTEN
 
     override fun getStatus(): PunishmentStatus = PunishmentStatus.ACTIVE

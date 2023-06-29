@@ -6,6 +6,7 @@ import me.kvalbrus.multibans.api.Console;
 import me.kvalbrus.multibans.api.DataProvider;
 import me.kvalbrus.multibans.api.OnlinePlayer;
 import me.kvalbrus.multibans.api.Player;
+import me.kvalbrus.multibans.api.managers.SessionManager;
 import me.kvalbrus.multibans.api.punishment.Punishment;
 import me.kvalbrus.multibans.api.managers.PunishmentManager;
 import me.kvalbrus.multibans.api.punishment.action.ActivationAction;
@@ -33,6 +34,9 @@ public interface PluginManager {
 
     @NotNull
     PunishmentManager getPunishmentManager();
+
+    @NotNull
+    SessionManager getSessionManager();
 
     @NotNull
     File getDataFolder();

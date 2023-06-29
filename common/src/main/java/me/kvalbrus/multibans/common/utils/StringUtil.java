@@ -115,7 +115,7 @@ public class StringUtil {
     @NotNull
     public static String getDuration(long milliseconds) {
         if (milliseconds < 0) {
-            return Message.PERMANENTLY.getMessage();
+            return Message.PERMANENTLY.getText();
         } else if (milliseconds < TimeType.SECOND.getDuration()) {
             return "0 " + getWordSecond(0);
         }
@@ -160,9 +160,9 @@ public class StringUtil {
     @NotNull
     public static String getWordSecond(int seconds) {
         if (seconds <= 1) {
-            return Message.SECOND.getMessage();
+            return Message.SECOND.getText();
         } else {
-            return Message.SECONDS.getMessage();
+            return Message.SECONDS.getText();
         }
     }
 
@@ -173,9 +173,9 @@ public class StringUtil {
     @NotNull
     public static String getWordMinute(int minutes) {
         if (minutes <= 1) {
-            return Message.MINUTE.getMessage();
+            return Message.MINUTE.getText();
         } else {
-            return Message.MINUTES.getMessage();
+            return Message.MINUTES.getText();
         }
     }
 
@@ -186,9 +186,9 @@ public class StringUtil {
     @NotNull
     public static String getWordHour(int hours) {
         if (hours <= 1) {
-            return Message.HOUR.getMessage();
+            return Message.HOUR.getText();
         } else {
-            return Message.HOURS.getMessage();
+            return Message.HOURS.getText();
         }
     }
 
@@ -199,9 +199,9 @@ public class StringUtil {
     @NotNull
     public static String getWordDay(int days) {
         if (days <= 1) {
-            return Message.DAY.getMessage();
+            return Message.DAY.getText();
         } else {
-            return Message.DAYS.getMessage();
+            return Message.DAYS.getText();
         }
     }
 

@@ -2,7 +2,6 @@ package me.kvalbrus.multibans.common.storage
 
 import com.moandjiezana.toml.Toml
 import com.moandjiezana.toml.TomlWriter
-import lombok.Getter
 import me.kvalbrus.multibans.common.managers.PluginManager
 import java.io.File
 import java.io.IOException
@@ -10,7 +9,7 @@ import java.util.*
 
 class DataProviderSettings(private val pluginManager: PluginManager) {
 
-    var type = DataProviderType.MY_SQL
+    var type = DataProviderType.MYSQL
     val properties: Properties
 
     init {
@@ -36,7 +35,7 @@ class DataProviderSettings(private val pluginManager: PluginManager) {
         }
         properties.setProperty(
             "dataSource.databaseName",
-            if (toml.getString("databaseName") != null) toml.getString("databaseName") else "MultiPunishments"
+            if (toml.getString("databaseName") != null) toml.getString("databaseName") else "MultiBans"
         )
         properties.setProperty(
             "dataSource.serverName",
@@ -53,7 +52,8 @@ class DataProviderSettings(private val pluginManager: PluginManager) {
             "dataSource.password",
             if (toml.getString("password") != null) toml.getString("password") else ""
         )
-        map["name"] = this.type.name
+
+        map["name"] = this.type.typeName
         map["databaseName"] = properties.getProperty("dataSource.databaseName")
         map["address"] = properties.getProperty("dataSource.serverName")
         map["port"] = port

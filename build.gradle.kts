@@ -90,6 +90,7 @@ dependencies {
 fun ShadowJar.relocations() {
     relocate("com.zaxxer.hikari", "${_group}.libs.com.zaxxer.hikari")
     relocate("com.mysql", "${_group}.libs.com.mysql")
+    relocate("org.mariadb.jdbc", "${_group}.libs.org.mariadb.jdbc")
     relocate("com.moandjiezana.toml", "${_group}.libs.com.moandjiezana.toml")
     relocate("com.google.protobuf", "${_group}.libs.com.google.protobuf")
     relocate("com.google.gson", "${_group}.libs.com.google.gson")
