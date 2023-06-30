@@ -78,7 +78,7 @@ public abstract class Command {
         List<String> resultList = new ArrayList<>();
 
         for (var string : list) {
-            if (string != null && string.startsWith(arg)) {
+            if (string != null && string.toLowerCase().startsWith(arg.toLowerCase())) {
                 resultList.add(string);
             }
         }

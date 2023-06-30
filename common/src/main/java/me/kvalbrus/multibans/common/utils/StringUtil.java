@@ -233,4 +233,18 @@ public class StringUtil {
 
         return null;
     }
+
+    public static String maskIP(String ip) {
+        String[] args = ip.split("\\.");
+        if (args.length >= 4) {
+            args[1] = args[1].replaceAll("\\p{Digit}", "*");
+            args[2] = args[2].replaceAll("\\p{Digit}", "*");
+        } else {
+            for (var arg : args) {
+                arg.replaceAll("\\p{Digit}", "*");
+            }
+        }
+
+        return args[0] + "." + args[1] + "." + args[2] + "." + args[3];
+    }
 }

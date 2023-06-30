@@ -6,6 +6,9 @@ import java.util.UUID;
 import me.kvalbrus.multibans.api.Console;
 import me.kvalbrus.multibans.api.MultiBansAPI;
 import me.kvalbrus.multibans.api.OnlinePlayer;
+import me.kvalbrus.multibans.bukkit.commands.HistoryBukkit;
+import me.kvalbrus.multibans.bukkit.commands.IPCheckBukkit;
+import me.kvalbrus.multibans.bukkit.commands.IPHistoryBukkit;
 import me.kvalbrus.multibans.bukkit.events.ActivatePunishmentEvent;
 import me.kvalbrus.multibans.bukkit.events.CreatePunishmentEvent;
 import me.kvalbrus.multibans.bukkit.events.DeactivatePunishmentEvent;
@@ -247,6 +250,9 @@ public class BukkitPluginManager extends MultiBansPluginManager {
         new UnmuteChatBukkit(this, this.plugin);
         new PunishBukkit(this, this.plugin);
         new me.kvalbrus.multibans.bukkit.commands.MultiBansBukkit(this, this.plugin);
+        new HistoryBukkit(this, this.plugin);
+        new IPHistoryBukkit(this, this.plugin);
+        new IPCheckBukkit(this, this.plugin);
     }
 
     private void registerListeners() {

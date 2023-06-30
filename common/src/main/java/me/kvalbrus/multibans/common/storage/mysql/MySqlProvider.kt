@@ -235,7 +235,7 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
                 statement.setString(1, uuid.toString())
 
                 statement.executeQuery().use { resultSet ->
-                    while(resultSet.next()) {
+                    while (resultSet.next()) {
                         val session = loadSession(resultSet)
                         history.add(session)
                     }
@@ -253,7 +253,25 @@ class MySqlProvider(private val pluginManager: PluginManager, private val dataPr
                 statement.setString(1, name)
 
                 statement.executeQuery().use { resultSet ->
-                    while(resultSet.next()) {
+                    while (resultSet.next()) {
+                        val session = loadSession(resultSet)
+                        history.add(session)
+                    }
+                }
+            }
+        }
+
+        return history
+    }
+
+    override fun getSessionHistoryByIP(ip: String): List<Session> {
+        val history = mutableListOf<Session>()
+        this.source!!.connection.use { connection ->
+            connection.prepareStatement(SQLQuery.GET_SESSION_HISTORY_BY_IP).use { statement ->
+                statement.setString(1, ip)
+
+                statement.executeQuery().use { resultSet ->
+                    while (resultSet.next()) {
                         val session = loadSession(resultSet)
                         history.add(session)
                     }

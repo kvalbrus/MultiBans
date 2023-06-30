@@ -19,5 +19,8 @@ enum class Permission(val perm: String) {
     PUNISHMENT_UNBAN_LISTEN("multibans.punishment.unban.listen"),
     PUNISHMENT_UNMUTECHAT_EXECUTE("multibans.punishment.unmutechat.execute"),
     PUNISHMENT_UNMUTECHAT_LISTEN("multibans.punishment.unmutechat.listen"),
-    COMMAND_RELOAD("multibans.command.reload")
+    COMMAND_RELOAD("multibans.command.reload"),
+    COMMAND_HISTORY("multibans.command.history"),
+    COMMAND_IPHISTORY("multibans.command.iphistory"),
+    COMMAND_IPCHECK("multibans.command.ipcheck")
 }

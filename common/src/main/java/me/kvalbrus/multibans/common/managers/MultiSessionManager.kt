@@ -1,5 +1,6 @@
 package me.kvalbrus.multibans.common.managers
 
+import me.kvalbrus.multibans.api.Player
 import me.kvalbrus.multibans.api.Session
 import me.kvalbrus.multibans.api.managers.SessionManager
 import java.util.*
@@ -28,5 +29,18 @@ class MultiSessionManager(private val pluginManager: PluginManager) : SessionMan
 
     override fun getSessionHistory(name: String): List<Session> {
         return this.pluginManager.dataProvider?.getSessionHistory(name) ?: listOf()
+    }
+
+    override fun getPlayersByIP(ip: String): List<Player> {
+        val history = this.pluginManager.dataProvider?.getSessionHistoryByIP(ip) ?: listOf()
+        val players = mutableListOf<Player>()
+        for (session in history) {
+            val player = this.pluginManager.getOfflinePlayer(session.playerUUID)
+            if (players.stream().noneMatch { it.uniqueId == player.uniqueId }) {
+                players.add(player);
+            }
+        }
+
+        return players
     }
 }

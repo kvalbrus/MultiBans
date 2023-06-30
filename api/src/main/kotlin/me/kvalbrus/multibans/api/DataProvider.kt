@@ -22,4 +22,5 @@ interface DataProvider {
     @Throws(Exception::class) fun <T : Punishment?> getCreatorHistory(creator: String?): List<T>
     @Throws(Exception::class) fun getSessionHistory(uuid: UUID): List<Session>
     @Throws(Exception::class) fun getSessionHistory(name: String): List<Session>
+    @Throws(Exception::class) fun getSessionHistoryByIP(ip: String): List<Session>
 }

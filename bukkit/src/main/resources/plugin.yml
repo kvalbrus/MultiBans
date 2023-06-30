@@ -23,7 +23,12 @@ commands:
   multibans:
     permission: multibans.command.reload
     aliases: [ mb ]
-
+  history:
+    permission: multibans.command.history
+  iphistory:
+    permission: multibans.command.iphistory
+  ipcheck:
+    permission: multibans.command.ipcheck
 permissions:
   multibans.punishment.ban.*:
     children:
@@ -75,4 +80,11 @@ permissions:
   multibans.command.comment:
     default: op
   multibans.command.reason:
+    default: op
+
+  multibans.command.history:
+    default: op
+  multibans.command.iphistory:
+    default: op
+  multibans.command.ipcheck:
     default: op

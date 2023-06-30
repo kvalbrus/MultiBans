@@ -1,5 +1,6 @@
 package me.kvalbrus.multibans.api.managers
 
+import me.kvalbrus.multibans.api.Player
 import me.kvalbrus.multibans.api.Session
 import java.util.UUID
 
@@ -12,4 +13,6 @@ interface SessionManager {
     fun getSessionHistory(uuid: UUID): List<Session>
 
     fun getSessionHistory(name: String): List<Session>
+
+    fun getPlayersByIP(ip: String): List<Player>
 }

@@ -14,11 +14,8 @@ class BukkitOnlinePlayer : BukkitPlayer, OnlinePlayer {
     }
 
     override fun sendMessage(message: String) {
-        if (message != null && message.length > 0) {
-            BukkitPluginManager.getAudiences().sender(player).sendMessage(
-                MiniMessage.miniMessage()
-                    .deserialize(message)
-            )
+        if (message.length > 0) {
+            BukkitPluginManager.getAudiences().sender(player).sendMessage(MiniMessage.miniMessage().deserialize(message))
         }
     }
 
